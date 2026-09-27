@@ -1,0 +1,611 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <title>
+        Registrar Administrador | Futbol y Gol
+    </title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+
+    <!-- ================================================= -->
+    <!-- FAVICON -->
+    <!-- ================================================= -->
+
+    <link
+        href="{% static 'img/logo.png' %}"
+        rel="icon"
+    >
+
+
+    <!-- ================================================= -->
+    <!-- BOOTSTRAP -->
+    <!-- ================================================= -->
+
+    <link
+        href="{% static 'css/bootstrap.min.css' %}"
+        rel="stylesheet"
+    >
+
+
+    <!-- ================================================= -->
+    <!-- ESTILOS DEL PROYECTO -->
+    <!-- ================================================= -->
+
+    <link
+        href="{% static 'css/style.css' %}"
+        rel="stylesheet"
+    >
+
+
+    <style>
+
+        body {
+
+            background-color: #f5f5f5;
+        }
+
+
+        .registro-card {
+
+            border: none;
+
+            border-radius: 12px;
+        }
+
+
+        .registro-header {
+
+            background-color: #212529;
+
+            color: white;
+
+            border-radius: 12px 12px 0 0;
+
+            padding: 20px;
+        }
+
+
+        .registro-header img {
+
+            width: 80px;
+        }
+
+
+        .form-control,
+        .form-select {
+
+            min-height: 45px;
+        }
+
+
+        .ayuda {
+
+            font-size: 0.9rem;
+
+            color: #6c757d;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ===================================================== -->
+<!-- NAVBAR -->
+<!-- ===================================================== -->
+
+<div class="container-fluid bg-dark px-0">
+
+    <nav
+        class="navbar navbar-expand-lg
+               bg-dark navbar-dark
+               p-3 px-lg-5"
+    >
+
+        <a
+            href="{% url 'index' %}"
+            class="navbar-brand"
+        >
+
+            <img
+                src="{% static 'img/logo.png' %}"
+                width="90"
+                alt="Logo"
+            >
+
+        </a>
+
+
+        <button
+            type="button"
+            class="navbar-toggler"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarCollapse"
+        >
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+
+        <div
+            class="collapse navbar-collapse"
+            id="navbarCollapse"
+        >
+
+            <div class="navbar-nav">
+
+
+                <a
+                    href="{% url 'index' %}"
+                    class="nav-link"
+                >
+
+                    Inicio
+
+                </a>
+
+
+                <a
+                    href="{% url 'login' %}"
+                    class="nav-link"
+                >
+
+                    Administrador
+
+                </a>
+
+
+                <a
+                    href="{% url 'registrar_administrador' %}"
+                    class="nav-link active"
+                >
+
+                    Registrar Administrador
+
+                </a>
+
+
+            </div>
+
+        </div>
+
+    </nav>
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- CONTENIDO -->
+<!-- ===================================================== -->
+
+<main class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7 col-md-9">
+
+
+            <div class="card shadow registro-card">
+
+
+                <!-- ===================================== -->
+                <!-- ENCABEZADO -->
+                <!-- ===================================== -->
+
+                <div
+                    class="registro-header text-center"
+                >
+
+                    <img
+                        src="{% static 'img/logo.png' %}"
+                        alt="Logo"
+                        class="mb-3"
+                    >
+
+                    <h2 class="mb-1">
+
+                        Registrar Administrador
+
+                    </h2>
+
+                    <p class="mb-0">
+
+                        Crea una nueva cuenta
+                        administrativa para
+                        Futbol y Gol.
+
+                    </p>
+
+                </div>
+
+
+                <!-- ===================================== -->
+                <!-- CUERPO -->
+                <!-- ===================================== -->
+
+                <div class="card-body p-4 p-md-5">
+
+
+                    <div
+                        class="alert alert-info"
+                    >
+
+                        La cuenta se creará con una
+                        <strong>
+                            contraseña temporal
+                        </strong>.
+
+                        <br>
+
+                        El nuevo administrador deberá
+                        cambiarla en su primer inicio
+                        de sesión.
+
+                    </div>
+
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+
+                        <!-- ============================= -->
+                        <!-- ERRORES GENERALES -->
+                        <!-- ============================= -->
+
+                        {% if form.non_field_errors %}
+
+                            <div class="alert alert-danger">
+
+                                {% for error in form.non_field_errors %}
+
+                                    <div>
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- ============================= -->
+                        <!-- USUARIO -->
+                        <!-- ============================= -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="{{ form.username.id_for_label }}"
+                                class="form-label"
+                            >
+
+                                Nombre de usuario
+
+                            </label>
+
+
+                            {{ form.username }}
+
+
+                            {% for error in form.username.errors %}
+
+                                <div class="text-danger mt-1">
+
+                                    {{ error }}
+
+                                </div>
+
+                            {% endfor %}
+
+
+                            <div class="ayuda">
+
+                                El nombre de usuario debe
+                                ser único.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ============================= -->
+                        <!-- NOMBRE -->
+                        <!-- ============================= -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="{{ form.first_name.id_for_label }}"
+                                class="form-label"
+                            >
+
+                                Nombre
+
+                            </label>
+
+
+                            {{ form.first_name }}
+
+
+                            {% for error in form.first_name.errors %}
+
+                                <div class="text-danger mt-1">
+
+                                    {{ error }}
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- ============================= -->
+                        <!-- APELLIDO -->
+                        <!-- ============================= -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="{{ form.last_name.id_for_label }}"
+                                class="form-label"
+                            >
+
+                                Apellido
+
+                            </label>
+
+
+                            {{ form.last_name }}
+
+
+                            {% for error in form.last_name.errors %}
+
+                                <div class="text-danger mt-1">
+
+                                    {{ error }}
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- ============================= -->
+                        <!-- CORREO -->
+                        <!-- ============================= -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="{{ form.email.id_for_label }}"
+                                class="form-label"
+                            >
+
+                                Correo electrónico
+
+                            </label>
+
+
+                            {{ form.email }}
+
+
+                            {% for error in form.email.errors %}
+
+                                <div class="text-danger mt-1">
+
+                                    {{ error }}
+
+                                </div>
+
+                            {% endfor %}
+
+
+                            <div class="ayuda">
+
+                                Este correo se usará
+                                para recuperación
+                                de contraseña.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ============================= -->
+                        <!-- TIPO DE DOCUMENTO -->
+                        <!-- ============================= -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="{{ form.tipo_documento.id_for_label }}"
+                                class="form-label"
+                            >
+
+                                Tipo de documento
+
+                            </label>
+
+
+                            {{ form.tipo_documento }}
+
+
+                            {% for error in form.tipo_documento.errors %}
+
+                                <div class="text-danger mt-1">
+
+                                    {{ error }}
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- ============================= -->
+                        <!-- DOCUMENTO -->
+                        <!-- ============================= -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="{{ form.documento.id_for_label }}"
+                                class="form-label"
+                            >
+
+                                Número de documento
+
+                            </label>
+
+
+                            {{ form.documento }}
+
+
+                            {% for error in form.documento.errors %}
+
+                                <div class="text-danger mt-1">
+
+                                    {{ error }}
+
+                                </div>
+
+                            {% endfor %}
+
+
+                            <div class="ayuda">
+
+                                El documento también
+                                debe ser único.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ============================= -->
+                        <!-- CELULAR -->
+                        <!-- ============================= -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="{{ form.celular.id_for_label }}"
+                                class="form-label"
+                            >
+
+                                Celular
+
+                            </label>
+
+
+                            {{ form.celular }}
+
+
+                            {% for error in form.celular.errors %}
+
+                                <div class="text-danger mt-1">
+
+                                    {{ error }}
+
+                                </div>
+
+                            {% endfor %}
+
+
+                            <div class="ayuda">
+
+                                Debe contener 10 dígitos
+                                y comenzar por 3.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ============================= -->
+                        <!-- BOTONES -->
+                        <!-- ============================= -->
+
+                        <div class="d-grid gap-2">
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-lg"
+                            >
+
+                                Crear Administrador
+
+                            </button>
+
+
+                            <a
+                                href="{% url 'login' %}"
+                                class="btn btn-outline-secondary"
+                            >
+
+                                Volver a Administrador
+
+                            </a>
+
+
+                            <a
+                                href="{% url 'index' %}"
+                                class="btn btn-outline-dark"
+                            >
+
+                                Volver al Inicio
+
+                            </a>
+
+
+                        </div>
+
+
+                    </form>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- ===================================================== -->
+<!-- BOOTSTRAP -->
+<!-- ===================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+>
+</script>
+
+
+</body>
+
+</html>

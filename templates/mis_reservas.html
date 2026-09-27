@@ -1,0 +1,480 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>
+        Mis Reservas
+    </title>
+
+
+    <link
+        href="{% static 'css/bootstrap.min.css' %}"
+        rel="stylesheet"
+    >
+
+    <link
+        href="{% static 'css/style.css' %}"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="container-fluid bg-dark px-0">
+
+    <nav
+        class="navbar navbar-expand-lg
+               bg-dark navbar-dark
+               p-3 px-lg-5"
+    >
+
+        <a
+            href="{% url 'index' %}"
+            class="navbar-brand"
+        >
+
+            <img
+                src="{% static 'img/logo.png' %}"
+                width="90"
+                alt="Logo"
+            >
+
+        </a>
+
+
+        <div class="navbar-nav">
+
+            <a
+                href="{% url 'index' %}"
+                class="nav-link"
+            >
+                Inicio
+            </a>
+
+            <a
+                href="{% url 'reservar' %}"
+                class="nav-link"
+            >
+                Reservar
+            </a>
+
+            <a
+                href="{% url 'mis_reservas' %}"
+                class="nav-link active"
+            >
+                Mis Reservas
+            </a>
+
+            <a
+                href="{% url 'perfil_cliente' %}"
+                class="nav-link"
+            >
+                Mi Perfil
+            </a>
+
+            <a
+                href="{% url 'logout_cliente' %}"
+                class="nav-link"
+            >
+                Cerrar sesión
+            </a>
+
+        </div>
+
+    </nav>
+
+</div>
+
+
+<main class="container py-5">
+
+
+    <div
+        class="d-flex
+               justify-content-between
+               align-items-center
+               mb-4"
+    >
+
+        <h1>
+            Mis Reservas
+        </h1>
+
+
+        <a
+            href="{% url 'reservar' %}"
+            class="btn btn-primary"
+        >
+
+            Nueva Reserva
+
+        </a>
+
+    </div>
+
+
+    {% if mensaje %}
+
+        {% if tipo_mensaje == "error" %}
+
+            <div class="alert alert-danger">
+                {{ mensaje }}
+            </div>
+
+        {% else %}
+
+            <div class="alert alert-success">
+                {{ mensaje }}
+            </div>
+
+        {% endif %}
+
+    {% endif %}
+
+
+    <div class="table-responsive">
+
+        <table
+            class="table
+                   table-bordered
+                   align-middle"
+        >
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>
+                        Tipo de cancha
+                    </th>
+
+                    <th>
+                        Fecha
+                    </th>
+
+                    <th>
+                        Hora
+                    </th>
+
+                    <th>
+                        Duración
+                    </th>
+
+                    <th>
+                        Comprobante
+                    </th>
+
+                    <th>
+                        Pago
+                    </th>
+
+                    <th>
+                        Acción
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            {% for reserva in reservas %}
+
+                <tr>
+
+
+                    <td>
+
+                        {% if reserva.cancha == "futbol5" %}
+
+                            Fútbol 5
+
+                        {% elif reserva.cancha == "futbol7" %}
+
+                            Fútbol 7
+
+                        {% elif reserva.cancha == "futbol11" %}
+
+                            Fútbol 11
+
+                        {% else %}
+
+                            {{ reserva.cancha }}
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+                        {{ reserva.fecha }}
+                    </td>
+
+
+                    <td>
+                        {{ reserva.hora }}
+                    </td>
+
+
+                    <td>
+
+                        {{ reserva.duracion }}
+
+                        hora{% if reserva.duracion != 1 %}s{% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if reserva.comprobante_pago %}
+
+                            <a
+                                href="{% url 'ver_comprobante' reserva.id %}"
+                                target="_blank"
+                                class="btn btn-sm btn-outline-primary"
+                            >
+
+                                Ver comprobante
+
+                            </a>
+
+                        {% else %}
+
+                            <span class="text-muted">
+
+                                Sin comprobante
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        <span
+                            id="estado-reserva-{{ reserva.id }}"
+                            class="
+                                badge
+                                {% if reserva.pago %}
+                                    bg-success
+                                {% else %}
+                                    bg-warning text-dark
+                                {% endif %}
+                            "
+                        >
+
+                            {% if reserva.pago %}
+
+                                Pagado
+
+                            {% else %}
+
+                                Pendiente
+
+                            {% endif %}
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+
+                        <form
+                            method="post"
+                            enctype="multipart/form-data"
+                        >
+
+                            {% csrf_token %}
+
+
+                            <input
+                                type="hidden"
+                                name="accion"
+                                value="subir_comprobante"
+                            >
+
+
+                            <input
+                                type="hidden"
+                                name="reserva_id"
+                                value="{{ reserva.id }}"
+                            >
+
+
+                            <input
+                                type="file"
+                                name="comprobante_pago"
+                                class="form-control
+                                       form-control-sm
+                                       mb-2"
+                                accept="image/jpeg,image/png,image/webp"
+                                required
+                            >
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-sm btn-primary"
+                            >
+
+                                {% if reserva.comprobante_pago %}
+
+                                    Reemplazar comprobante
+
+                                {% else %}
+
+                                    Anexar comprobante
+
+                                {% endif %}
+
+                            </button>
+
+                        </form>
+
+                    </td>
+
+
+                </tr>
+
+
+            {% empty %}
+
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="text-center"
+                    >
+
+                        No tienes reservas.
+
+                    </td>
+
+                </tr>
+
+
+            {% endfor %}
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <a
+        href="{% url 'perfil_cliente' %}"
+        class="btn btn-secondary mt-4"
+    >
+
+        Volver a Mi Perfil
+
+    </a>
+
+
+</main>
+
+
+<script>
+
+    async function actualizarEstados() {
+
+        try {
+
+            const respuesta = await fetch(
+                "{% url 'estado_reservas_cliente' %}"
+            );
+
+
+            if (!respuesta.ok) {
+                return;
+            }
+
+
+            const datos =
+                await respuesta.json();
+
+
+            datos.reservas.forEach(
+                function (reserva) {
+
+                    const elemento =
+                        document.getElementById(
+                            "estado-reserva-"
+                            + reserva.id
+                        );
+
+
+                    if (!elemento) {
+                        return;
+                    }
+
+
+                    if (reserva.pago) {
+
+                        elemento.textContent =
+                            "Pagado";
+
+                        elemento.className =
+                            "badge bg-success";
+
+                    } else {
+
+                        elemento.textContent =
+                            "Pendiente";
+
+                        elemento.className =
+                            "badge bg-warning text-dark";
+                    }
+                }
+            );
+
+        } catch (error) {
+
+            console.log(
+                "No se pudo actualizar el estado."
+            );
+        }
+    }
+
+
+    setInterval(
+        actualizarEstados,
+        5000
+    );
+
+</script>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+>
+</script>
+
+
+</body>
+
+</html>

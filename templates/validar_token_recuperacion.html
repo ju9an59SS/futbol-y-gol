@@ -1,0 +1,142 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <title>
+        Validar código
+    </title>
+
+
+    <link
+        href="{% static 'css/bootstrap.min.css' %}"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-5">
+
+
+            <h2>
+                Código de recuperación
+            </h2>
+
+
+            <p>
+
+                Revisa tu correo.
+
+                El código tiene
+                <strong>6 dígitos</strong>
+                y vence en
+                <strong>10 minutos</strong>.
+
+            </p>
+
+
+            {% if mensaje %}
+
+                <div class="alert alert-warning">
+
+                    {{ mensaje }}
+
+                </div>
+
+            {% endif %}
+
+
+            {% if not expirado %}
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Código
+
+                        </label>
+
+
+                        <input
+                            type="text"
+                            name="token"
+                            maxlength="6"
+                            pattern="[0-9]{6}"
+                            inputmode="numeric"
+                            class="form-control"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+
+                        Validar código
+
+                    </button>
+
+                </form>
+
+            {% else %}
+
+
+                {% if tipo == "admin" %}
+
+                    <a
+                        href="{% url 'recuperar_password_admin' %}"
+                        class="btn btn-primary"
+                    >
+
+                        Solicitar nuevo código
+
+                    </a>
+
+                {% else %}
+
+                    <a
+                        href="{% url 'recuperar_password_cliente' %}"
+                        class="btn btn-primary"
+                    >
+
+                        Solicitar nuevo código
+
+                    </a>
+
+                {% endif %}
+
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,163 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <title>
+        Nueva contraseña
+    </title>
+
+
+    <link
+        href="{% static 'css/bootstrap.min.css' %}"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+
+
+            {% if cambiada %}
+
+                <div class="alert alert-success">
+
+                    Contraseña cambiada
+                    correctamente.
+
+                </div>
+
+
+                {% if tipo == "admin" %}
+
+                    <a
+                        href="{% url 'login' %}"
+                        class="btn btn-primary"
+                    >
+
+                        Ingresar como administrador
+
+                    </a>
+
+                {% else %}
+
+                    <a
+                        href="{% url 'login_cliente' %}"
+                        class="btn btn-primary"
+                    >
+
+                        Ingresar como cliente
+
+                    </a>
+
+                {% endif %}
+
+
+            {% elif valido %}
+
+
+                <h2>
+                    Crear nueva contraseña
+                </h2>
+
+
+                {% if mensaje %}
+
+                    <div class="alert alert-danger">
+
+                        {{ mensaje }}
+
+                    </div>
+
+                {% endif %}
+
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Nueva contraseña
+
+                        </label>
+
+                        <input
+                            type="password"
+                            name="password1"
+                            class="form-control"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Confirmar contraseña
+
+                        </label>
+
+                        <input
+                            type="password"
+                            name="password2"
+                            class="form-control"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+
+                        Cambiar contraseña
+
+                    </button>
+
+                </form>
+
+
+            {% else %}
+
+
+                <div class="alert alert-danger">
+
+                    {{ mensaje }}
+
+                </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>
