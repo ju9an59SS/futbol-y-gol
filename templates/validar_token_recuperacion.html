@@ -1,7 +1,6 @@
 {% load static %}
 
 <!DOCTYPE html>
-
 <html lang="es">
 
 <head>
@@ -9,14 +8,40 @@
     <meta charset="utf-8">
 
     <title>
-        Validar código
+        Validar código - Futbol y Gol
     </title>
 
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <link
+        href="{% static 'img/logo.png' %}"
+        rel="icon">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap"
+        rel="stylesheet">
+
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css"
+        rel="stylesheet">
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+        rel="stylesheet">
 
     <link
         href="{% static 'css/bootstrap.min.css' %}"
-        rel="stylesheet"
-    >
+        rel="stylesheet">
+
+    <link
+        href="{% static 'css/style.css' %}"
+        rel="stylesheet">
 
 </head>
 
@@ -24,117 +49,232 @@
 <body>
 
 
-<div class="container py-5">
+    <!-- HEADER -->
 
-    <div class="row justify-content-center">
+    <div class="container-fluid bg-dark px-0">
 
-        <div class="col-md-5">
+        <div class="row gx-0">
+
+            <nav
+                class="navbar navbar-expand-lg
+                       bg-dark navbar-dark
+                       p-3 p-lg-0 px-lg-5">
+
+                <a
+                    href="{% url 'index' %}"
+                    class="navbar-brand">
+
+                    <img
+                        src="{% static 'img/logo.png' %}"
+                        alt="Logo"
+                        width="100">
+
+                </a>
 
 
-            <h2>
-                Código de recuperación
-            </h2>
+                <div class="navbar-nav">
 
+                    <a
+                        href="{% url 'index' %}"
+                        class="nav-item nav-link">
 
-            <p>
+                        Inicio
 
-                Revisa tu correo.
-
-                El código tiene
-                <strong>6 dígitos</strong>
-                y vence en
-                <strong>10 minutos</strong>.
-
-            </p>
-
-
-            {% if mensaje %}
-
-                <div class="alert alert-warning">
-
-                    {{ mensaje }}
+                    </a>
 
                 </div>
 
-            {% endif %}
-
-
-            {% if not expirado %}
-
-                <form method="post">
-
-                    {% csrf_token %}
-
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-
-                            Código
-
-                        </label>
-
-
-                        <input
-                            type="text"
-                            name="token"
-                            maxlength="6"
-                            pattern="[0-9]{6}"
-                            inputmode="numeric"
-                            class="form-control"
-                            required
-                        >
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary"
-                    >
-
-                        Validar código
-
-                    </button>
-
-                </form>
-
-            {% else %}
-
-
-                {% if tipo == "admin" %}
-
-                    <a
-                        href="{% url 'recuperar_password_admin' %}"
-                        class="btn btn-primary"
-                    >
-
-                        Solicitar nuevo código
-
-                    </a>
-
-                {% else %}
-
-                    <a
-                        href="{% url 'recuperar_password_cliente' %}"
-                        class="btn btn-primary"
-                    >
-
-                        Solicitar nuevo código
-
-                    </a>
-
-                {% endif %}
-
-
-            {% endif %}
-
+            </nav>
 
         </div>
 
     </div>
 
-</div>
+
+    <!-- CONTENIDO -->
+
+    <main class="container py-5">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-6 col-md-8">
+
+                <div class="card shadow border-0">
+
+                    <div class="card-body p-5">
+
+
+                        <div class="text-center mb-4">
+
+                            <i
+                                class="fas fa-envelope
+                                       fa-3x text-primary
+                                       mb-3">
+                            </i>
+
+
+                            <h2>
+
+                                Revisar correo
+
+                            </h2>
+
+
+                            <p class="text-muted">
+
+                                Hemos enviado un código
+                                de recuperación al correo
+                                registrado en su cuenta.
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="alert alert-success">
+
+                            <strong>
+                                Código enviado.
+                            </strong>
+
+                            Revise su bandeja de entrada.
+
+                            Si no aparece, revise también
+                            la carpeta de correo no deseado
+                            o Spam.
+
+                        </div>
+
+
+                        {% if mensaje %}
+
+                            <div class="alert alert-danger">
+
+                                {{ mensaje }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if not expirado %}
+
+
+                            <form method="post">
+
+                                {% csrf_token %}
+
+
+                                <div class="mb-4">
+
+                                    <label
+                                        for="token"
+                                        class="form-label">
+
+                                        Código de 6 dígitos
+
+                                    </label>
+
+
+                                    <input
+                                        type="text"
+                                        class="form-control
+                                               form-control-lg
+                                               text-center"
+                                        id="token"
+                                        name="token"
+                                        maxlength="6"
+                                        minlength="6"
+                                        inputmode="numeric"
+                                        pattern="[0-9]{6}"
+                                        placeholder="000000"
+                                        autocomplete="one-time-code"
+                                        required
+                                        style="
+                                            letter-spacing: 10px;
+                                            font-size: 28px;
+                                            font-weight: bold;
+                                        ">
+
+                                </div>
+
+
+                                <div class="d-grid">
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary">
+
+                                        Validar código
+
+                                    </button>
+
+                                </div>
+
+
+                            </form>
+
+
+                        {% else %}
+
+
+                            <div class="text-center mt-4">
+
+
+                                {% if tipo == "admin" %}
+
+                                    <a
+                                        href="{% url 'recuperar_password_admin' %}"
+                                        class="btn btn-primary">
+
+                                        Solicitar nuevo código
+
+                                    </a>
+
+                                {% else %}
+
+                                    <a
+                                        href="{% url 'recuperar_password_cliente' %}"
+                                        class="btn btn-primary">
+
+                                        Solicitar nuevo código
+
+                                    </a>
+
+                                {% endif %}
+
+
+                            </div>
+
+
+                        {% endif %}
+
+
+                        <hr class="my-4">
+
+
+                        <p class="text-muted text-center">
+
+                            El código tiene una vigencia
+                            de 10 minutos.
+
+                        </p>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
+    </script>
 
 
 </body>
