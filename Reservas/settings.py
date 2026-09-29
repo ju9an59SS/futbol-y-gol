@@ -5,7 +5,7 @@ import dj_database_url
 
 
 # =========================================================
-# RUTAS BASE
+# BASE DEL PROYECTO
 # =========================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,11 +20,13 @@ SECRET_KEY = os.environ.get(
     "django-insecure-desarrollo-local-futbol-y-gol",
 )
 
-
-DEBUG = os.environ.get(
-    "DEBUG",
-    "True",
-).lower() == "true"
+DEBUG = (
+    os.environ.get(
+        "DEBUG",
+        "True",
+    ).lower()
+    == "true"
+)
 
 
 ALLOWED_HOSTS = [
@@ -32,6 +34,17 @@ ALLOWED_HOSTS = [
     "localhost",
     ".vercel.app",
 ]
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.vercel.app",
+]
+
+
+SECURE_PROXY_SSL_HEADER = (
+    "HTTP_X_FORWARDED_PROTO",
+    "https",
+)
 
 
 # =========================================================
@@ -55,14 +68,22 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+
     "whitenoise.middleware.WhiteNoiseMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
+
     "django.middleware.common.CommonMiddleware",
+
     "django.middleware.csrf.CsrfViewMiddleware",
+
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+
     "django.contrib.messages.middleware.MessageMiddleware",
+
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
 
 # =========================================================
 # URLS
@@ -77,31 +98,28 @@ ROOT_URLCONF = "Reservas.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": (
-            "django.template.backends."
-            "django.DjangoTemplates"
-        ),
+        "BACKEND":
+            "django.template.backends.django.DjangoTemplates",
+
         "DIRS": [
             BASE_DIR / "templates"
         ],
+
         "APP_DIRS": True,
+
         "OPTIONS": {
             "context_processors": [
                 (
-                    "django.template.context_processors."
-                    "debug"
+                    "django.template.context_processors.debug"
                 ),
                 (
-                    "django.template.context_processors."
-                    "request"
+                    "django.template.context_processors.request"
                 ),
                 (
-                    "django.contrib.auth.context_processors."
-                    "auth"
+                    "django.contrib.auth.context_processors.auth"
                 ),
                 (
-                    "django.contrib.messages."
-                    "context_processors.messages"
+                    "django.contrib.messages.context_processors.messages"
                 ),
             ],
         },
@@ -113,44 +131,58 @@ TEMPLATES = [
 # WSGI
 # =========================================================
 
-WSGI_APPLICATION = "Reservas.wsgi.application"
+WSGI_APPLICATION = (
+    "Reservas.wsgi.application"
+)
 
 
 # =========================================================
 # BASE DE DATOS
-#
-# LOCAL:
-#     XAMPP / MariaDB
-#
-# VERCEL:
-#     Neon PostgreSQL mediante DATABASE_URL
 # =========================================================
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = os.environ.get(
+    "DATABASE_URL"
+)
 
 
 if DATABASE_URL:
 
-    # PRODUCCIÓN: VERCEL + NEON
+    # PRODUCCIÓN - NEON POSTGRES
+
     DATABASES = {
-        "default": dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            ssl_require=True,
-        )
+        "default":
+            dj_database_url.config(
+                default=DATABASE_URL,
+                conn_max_age=600,
+                ssl_require=True,
+            )
     }
 
 else:
 
-    # DESARROLLO LOCAL: XAMPP / MARIADB
+    # LOCAL - XAMPP MYSQL / MARIADB
+
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.mysql",
-            "NAME": "reservas",
-            "USER": "root",
-            "PASSWORD": "",
-            "HOST": "localhost",
-            "PORT": "3306",
+
+            "ENGINE":
+                "django.db.backends.mysql",
+
+            "NAME":
+                "reservas",
+
+            "USER":
+                "root",
+
+            "PASSWORD":
+                "",
+
+            "HOST":
+                "localhost",
+
+            "PORT":
+                "3306",
+
             "OPTIONS": {
                 "charset": "utf8mb4",
             },
@@ -159,37 +191,37 @@ else:
 
 
 # =========================================================
-# VALIDADORES DE CONTRASEÑA
+# VALIDACIÓN DE CONTRASEÑAS
 # =========================================================
 
 AUTH_PASSWORD_VALIDATORS = [
+
     {
         "NAME": (
-            "django.contrib.auth."
-            "password_validation."
+            "django.contrib.auth.password_validation."
             "UserAttributeSimilarityValidator"
-        )
+        ),
     },
+
     {
         "NAME": (
-            "django.contrib.auth."
-            "password_validation."
+            "django.contrib.auth.password_validation."
             "MinimumLengthValidator"
-        )
+        ),
     },
+
     {
         "NAME": (
-            "django.contrib.auth."
-            "password_validation."
+            "django.contrib.auth.password_validation."
             "CommonPasswordValidator"
-        )
+        ),
     },
+
     {
         "NAME": (
-            "django.contrib.auth."
-            "password_validation."
+            "django.contrib.auth.password_validation."
             "NumericPasswordValidator"
-        )
+        ),
     },
 ]
 
@@ -198,7 +230,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # IDIOMA Y ZONA HORARIA
 # =========================================================
 
-LANGUAGE_CODE = "es-co"
+LANGUAGE_CODE = "es"
 
 TIME_ZONE = "America/Bogota"
 
@@ -213,80 +245,116 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = (
+    BASE_DIR / "staticfiles"
+)
+
 
 STATICFILES_STORAGE = (
-    "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    "whitenoise.storage."
+    "CompressedManifestStaticFilesStorage"
 )
 
 
 # =========================================================
-# COMPROBANTES / MEDIA
+# ARCHIVOS MEDIA
 # =========================================================
+
+# IMPORTANTE:
+# Los comprobantes de pago NO se guardarán aquí en Vercel.
+# Se almacenarán en Vercel Blob.
+#
+# Estas rutas se dejan solo para desarrollo local
+# o por compatibilidad con archivos antiguos.
 
 MEDIA_URL = "/media/"
 
-MEDIA_ROOT = BASE_DIR / "media"
-
-
-DATA_UPLOAD_MAX_MEMORY_SIZE = (
-    10 * 1024 * 1024
+MEDIA_ROOT = (
+    BASE_DIR / "media"
 )
 
-FILE_UPLOAD_MAX_MEMORY_SIZE = (
+
+# =========================================================
+# LÍMITES DE CARGA
+# =========================================================
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = (
     5 * 1024 * 1024
 )
 
+FILE_UPLOAD_MAX_MEMORY_SIZE = (
+    4 * 1024 * 1024
+)
+
 
 # =========================================================
-# RESEND
+# CORREO - GMAIL SMTP
 # =========================================================
 
-RESEND_API_KEY = os.environ.get(
-    "RESEND_API_KEY",
+EMAIL_BACKEND = (
+    "django.core.mail.backends.smtp.EmailBackend"
+)
+
+EMAIL_HOST = "smtp.gmail.com"
+
+EMAIL_PORT = 587
+
+EMAIL_USE_TLS = True
+
+EMAIL_USE_SSL = False
+
+
+EMAIL_HOST_USER = os.environ.get(
+    "EMAIL_HOST_USER",
     "",
 )
 
 
-RESEND_FROM_EMAIL = os.environ.get(
-    "RESEND_FROM_EMAIL",
-    "Futbol y Gol <onboarding@resend.dev>",
+EMAIL_HOST_PASSWORD = os.environ.get(
+    "EMAIL_HOST_PASSWORD",
+    "",
 )
 
 
-# =========================================================
-# LOGIN / LOGOUT
-# =========================================================
+DEFAULT_FROM_EMAIL = (
+    EMAIL_HOST_USER
+)
 
-LOGIN_URL = "/cliente/login/"
 
-LOGIN_REDIRECT_URL = "/cliente/perfil/"
-
-LOGOUT_REDIRECT_URL = "/"
+EMAIL_TIMEOUT = 20
 
 
 # =========================================================
-# SEGURIDAD DE COOKIES
+# SESIONES
 # =========================================================
 
 SESSION_COOKIE_HTTPONLY = True
 
 SESSION_COOKIE_SAMESITE = "Lax"
 
+
+# =========================================================
+# CSRF
+# =========================================================
+
 CSRF_COOKIE_SAMESITE = "Lax"
 
 
 # =========================================================
-# SEGURIDAD HTTP
+# SEGURIDAD EN PRODUCCIÓN
 # =========================================================
 
-SECURE_CONTENT_TYPE_NOSNIFF = True
+if not DEBUG:
 
-X_FRAME_OPTIONS = "DENY"
+    SESSION_COOKIE_SECURE = True
+
+    CSRF_COOKIE_SECURE = True
 
 
 # =========================================================
-# ID AUTOMÁTICO
+# CONFIGURACIÓN DE ID AUTOMÁTICO
 # =========================================================
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+DEFAULT_AUTO_FIELD = (
+    "django.db.models.BigAutoField"
+)

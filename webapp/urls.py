@@ -5,6 +5,10 @@ from . import views
 
 urlpatterns = [
 
+    # =====================================================
+    # INICIO
+    # =====================================================
+
     path(
         "",
         views.index,
@@ -12,7 +16,9 @@ urlpatterns = [
     ),
 
 
-    # CLIENTE
+    # =====================================================
+    # CLIENTE - REGISTRO
+    # =====================================================
 
     path(
         "cliente/registro/",
@@ -26,6 +32,11 @@ urlpatterns = [
         name="registro_cliente_exitoso",
     ),
 
+
+    # =====================================================
+    # CLIENTE - LOGIN / LOGOUT
+    # =====================================================
+
     path(
         "cliente/login/",
         views.login_cliente,
@@ -38,11 +49,21 @@ urlpatterns = [
         name="logout_cliente",
     ),
 
+
+    # =====================================================
+    # CLIENTE - PERFIL
+    # =====================================================
+
     path(
         "cliente/perfil/",
         views.perfil_cliente,
         name="perfil_cliente",
     ),
+
+
+    # =====================================================
+    # CLIENTE - RESERVAS
+    # =====================================================
 
     path(
         "cliente/mis-reservas/",
@@ -57,7 +78,9 @@ urlpatterns = [
     ),
 
 
-    # RESERVA
+    # =====================================================
+    # CREAR RESERVA
+    # =====================================================
 
     path(
         "reservar/",
@@ -66,7 +89,9 @@ urlpatterns = [
     ),
 
 
-    # COMPROBANTE
+    # =====================================================
+    # COMPROBANTE PRIVADO
+    # =====================================================
 
     path(
         "reserva/<int:reserva_id>/comprobante/",
@@ -75,7 +100,9 @@ urlpatterns = [
     ),
 
 
-    # CAMBIO PASSWORD INICIAL
+    # =====================================================
+    # CAMBIO OBLIGATORIO DE CONTRASEÑA
+    # =====================================================
 
     path(
         "cambiar-password-inicial/",
@@ -84,7 +111,9 @@ urlpatterns = [
     ),
 
 
-    # ADMIN
+    # =====================================================
+    # ADMINISTRADOR - LOGIN / LOGOUT
+    # =====================================================
 
     path(
         "login/",
@@ -98,11 +127,21 @@ urlpatterns = [
         name="logout",
     ),
 
+
+    # =====================================================
+    # ADMINISTRADOR - RESERVAS
+    # =====================================================
+
     path(
         "reservas/",
         views.reservas,
         name="reservas",
     ),
+
+
+    # =====================================================
+    # ADMINISTRADOR - REGISTRO
+    # =====================================================
 
     path(
         "administrador/registro/",
@@ -111,37 +150,48 @@ urlpatterns = [
     ),
 
 
+    # =====================================================
     # RECUPERACIÓN CLIENTE
+    # =====================================================
 
     path(
         "cliente/recuperar/",
         views.recuperar_password,
         {
-            "tipo": "cliente",
+            "tipo": "cliente"
         },
         name="recuperar_password_cliente",
     ),
 
 
+    # =====================================================
     # RECUPERACIÓN ADMIN
+    # =====================================================
 
     path(
         "administrador/recuperar/",
         views.recuperar_password,
         {
-            "tipo": "admin",
+            "tipo": "admin"
         },
         name="recuperar_password_admin",
     ),
 
 
-    # TOKEN
+    # =====================================================
+    # VALIDAR TOKEN
+    # =====================================================
 
     path(
         "recuperar/validar-token/",
         views.validar_token_recuperacion,
         name="validar_token_recuperacion",
     ),
+
+
+    # =====================================================
+    # NUEVA CONTRASEÑA
+    # =====================================================
 
     path(
         "recuperar/nueva-password/",
@@ -150,7 +200,9 @@ urlpatterns = [
     ),
 
 
-    # EXCEL
+    # =====================================================
+    # EXPORTAR EXCEL
+    # =====================================================
 
     path(
         "exportar-excel/",

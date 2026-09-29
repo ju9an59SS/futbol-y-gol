@@ -8,53 +8,44 @@
     <meta charset="utf-8">
 
     <title>
-        Administrador | Futbol y Gol
+        Ingreso Administrador - Futbol y Gol
     </title>
 
     <meta
         content="width=device-width, initial-scale=1.0"
-        name="viewport"
-    >
+        name="viewport">
 
-    <!-- Favicon -->
+
     <link
         href="{% static 'img/logo.png' %}"
-        rel="icon"
-    >
+        rel="icon">
 
-    <!-- Google Fonts -->
+
     <link
         rel="preconnect"
-        href="https://fonts.gstatic.com"
-    >
+        href="https://fonts.gstatic.com">
 
     <link
         href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap"
-        rel="stylesheet"
-    >
+        rel="stylesheet">
 
-    <!-- Iconos -->
+
     <link
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css"
-        rel="stylesheet"
-    >
+        rel="stylesheet">
 
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
-        rel="stylesheet"
-    >
+        rel="stylesheet">
 
-    <!-- Bootstrap -->
+
     <link
         href="{% static 'css/bootstrap.min.css' %}"
-        rel="stylesheet"
-    >
+        rel="stylesheet">
 
-    <!-- CSS proyecto -->
     <link
         href="{% static 'css/style.css' %}"
-        rel="stylesheet"
-    >
+        rel="stylesheet">
 
 </head>
 
@@ -62,265 +53,233 @@
 <body>
 
 
-<!-- ===================================================== -->
-<!-- HEADER -->
-<!-- ===================================================== -->
+    <!-- HEADER -->
 
-<div class="container-fluid bg-dark px-0">
+    <div class="container-fluid bg-dark px-0">
 
-    <div class="row gx-0">
+        <div class="row gx-0">
 
-        <nav
-            class="navbar navbar-expand-lg
-                   bg-dark navbar-dark
-                   p-3 p-lg-0 px-lg-5"
-        >
-
-            <a
-                href="{% url 'index' %}"
-                class="navbar-brand d-block d-lg-none"
-            >
-
-                <img
-                    src="{% static 'img/logo.png' %}"
-                    alt="Logo"
-                    width="100"
-                >
-
-            </a>
+            <nav
+                class="navbar navbar-expand-lg
+                       bg-dark navbar-dark
+                       p-3 p-lg-0 px-lg-5">
 
 
-            <button
-                type="button"
-                class="navbar-toggler"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarCollapse"
-            >
-
-                <span class="navbar-toggler-icon"></span>
-
-            </button>
-
-
-            <div
-                class="collapse navbar-collapse justify-content-between"
-                id="navbarCollapse"
-            >
-
-                <div class="navbar-nav mr-auto py-0">
+                <a
+                    href="{% url 'index' %}"
+                    class="navbar-brand d-block d-lg-none">
 
                     <img
                         src="{% static 'img/logo.png' %}"
                         alt="Logo"
-                        width="100"
-                    >
+                        width="100px">
 
+                </a>
 
-                    <a
-                        href="{% url 'index' %}"
-                        class="nav-item nav-link"
-                    >
-                        Inicio
-                    </a>
 
+                <button
+                    type="button"
+                    class="navbar-toggler"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarCollapse">
 
-                    <a
-                        href="{% url 'login_cliente' %}"
-                        class="nav-item nav-link"
-                    >
-                        Ingreso Cliente
-                    </a>
+                    <span
+                        class="navbar-toggler-icon">
+                    </span>
 
+                </button>
 
-                    <a
-                        href="{% url 'registrar_cliente' %}"
-                        class="nav-item nav-link"
-                    >
-                        Registrarse
-                    </a>
 
+                <div
+                    class="collapse navbar-collapse
+                           justify-content-between"
+                    id="navbarCollapse">
 
-                    <a
-                        href="{% url 'login' %}"
-                        class="nav-item nav-link active"
-                    >
-                        Administrador
-                    </a>
 
-                </div>
+                    <div class="navbar-nav mr-auto py-0">
 
 
-                <span
-                    class="py-md-3 px-md-5
-                           d-none d-lg-block
-                           text-light"
-                >
-                    Futbol y Gol
-                </span>
+                        <img
+                            src="{% static 'img/logo.png' %}"
+                            alt="Logo"
+                            width="100px">
 
-            </div>
-
-        </nav>
-
-    </div>
-
-</div>
-
-
-<!-- ===================================================== -->
-<!-- CONTENIDO -->
-<!-- ===================================================== -->
-
-<main class="container py-5">
-
-    <div class="row justify-content-center">
-
-        <div class="col-lg-6 col-md-8">
-
-
-            <div class="card shadow">
-
-                <div class="card-body p-4 p-md-5">
-
-
-                    <h1 class="mb-3 text-center">
-                        Administración
-                    </h1>
-
-
-                    <p class="text-muted text-center mb-4">
-                        Inicia sesión o registra una nueva cuenta administrativa.
-                    </p>
-
-
-                    {% if mensaje %}
-
-                        <div class="alert alert-danger">
-
-                            {{ mensaje }}
-
-                        </div>
-
-                    {% endif %}
-
-
-                    <!-- ================================= -->
-                    <!-- LOGIN ADMIN -->
-                    <!-- ================================= -->
-
-                    <form
-                        method="post"
-                        action="{% url 'login' %}"
-                    >
-
-                        {% csrf_token %}
-
-
-                        <div class="mb-3">
-
-                            <label
-                                for="usuario"
-                                class="form-label"
-                            >
-                                Usuario
-                            </label>
-
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="usuario"
-                                name="usuario"
-                                required
-                                autocomplete="username"
-                            >
-
-                        </div>
-
-
-                        <div class="mb-3">
-
-                            <label
-                                for="password"
-                                class="form-label"
-                            >
-                                Contraseña
-                            </label>
-
-                            <input
-                                type="password"
-                                class="form-control"
-                                id="password"
-                                name="password"
-                                required
-                                autocomplete="current-password"
-                            >
-
-                        </div>
-
-
-                        <div class="d-grid">
-
-                            <button
-                                type="submit"
-                                class="btn btn-primary"
-                            >
-                                Iniciar Sesión
-                            </button>
-
-                        </div>
-
-                    </form>
-
-
-                    <!-- ================================= -->
-                    <!-- RECUPERAR PASSWORD -->
-                    <!-- ================================= -->
-
-                    <div class="text-center mt-3">
-
-                        <a
-                            href="{% url 'recuperar_password_admin' %}"
-                        >
-                            ¿Olvidaste tu contraseña?
-                        </a>
-
-                    </div>
-
-
-                    <hr class="my-4">
-
-
-                    <!-- ================================= -->
-                    <!-- REGISTRAR ADMIN -->
-                    <!-- ================================= -->
-
-                    <div class="text-center">
-
-                        <p class="mb-2">
-                            ¿Necesitas crear una cuenta administrativa?
-                        </p>
-
-
-                        <a
-                            href="{% url 'registrar_administrador' %}"
-                            class="btn btn-outline-success"
-                        >
-                            Registrar Administrador
-                        </a>
-
-                    </div>
-
-
-                    <div class="text-center mt-4">
 
                         <a
                             href="{% url 'index' %}"
-                            class="btn btn-outline-secondary"
-                        >
-                            Volver al Inicio
+                            class="nav-item nav-link">
+
+                            Inicio
+
                         </a>
 
+
+                        <a
+                            href="{% url 'login_cliente' %}"
+                            class="nav-item nav-link">
+
+                            Ingreso Cliente
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'login' %}"
+                            class="nav-item nav-link active">
+
+                            Ingreso Administrador
+
+                        </a>
+
+
                     </div>
+
+
+                    <span
+                        class="py-md-3 px-md-5
+                               d-none d-lg-block">
+
+                        Futbol y Gol
+
+                    </span>
+
+                </div>
+
+            </nav>
+
+        </div>
+
+    </div>
+
+
+    <!-- LOGIN -->
+
+    <main class="container p-4">
+
+        <div
+            class="row justify-content-center
+                   align-items-center g-2">
+
+            <div
+                class="col-lg-6
+                       col-md-8
+                       col-sm-12
+                       p-5">
+
+
+                <h1 class="mb-4">
+
+                    Ingreso Administrador
+
+                </h1>
+
+
+                {% if mensaje %}
+
+                    <div
+                        class="alert alert-danger">
+
+                        {{ mensaje }}
+
+                    </div>
+
+                {% endif %}
+
+
+                <form
+                    method="post"
+                    action="{% url 'login' %}">
+
+                    {% csrf_token %}
+
+
+                    <div class="mb-3">
+
+                        <label
+                            for="usuario"
+                            class="form-label">
+
+                            Usuario:
+
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="usuario"
+                            name="usuario"
+                            required
+                            autocomplete="username">
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label
+                            for="password"
+                            class="form-label">
+
+                            Contraseña:
+
+                        </label>
+
+                        <input
+                            type="password"
+                            class="form-control"
+                            id="password"
+                            name="password"
+                            required
+                            autocomplete="current-password">
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Iniciar sesión
+
+                    </button>
+
+
+                </form>
+
+
+                <hr class="my-4">
+
+
+                <div class="text-center">
+
+
+                    <p class="mb-3">
+
+                        Opciones de administrador
+
+                    </p>
+
+
+                    <a
+                        href="{% url 'registrar_administrador' %}"
+                        class="btn btn-outline-primary m-1">
+
+                        <i class="fas fa-user-plus"></i>
+
+                        Registrar administrador
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'recuperar_password_admin' %}"
+                        class="btn btn-outline-secondary m-1">
+
+                        <i class="fas fa-key"></i>
+
+                        Recuperar contraseña
+
+                    </a>
 
 
                 </div>
@@ -329,54 +288,49 @@
 
         </div>
 
-    </div>
-
-</main>
+    </main>
 
 
-<!-- ===================================================== -->
-<!-- FOOTER -->
-<!-- ===================================================== -->
+    <!-- FOOTER -->
 
-<footer>
+    <footer>
 
-    <div
-        class="container-fluid
-               bg-dark
-               text-secondary
-               px-5
-               mt-5"
-    >
+        <div
+            class="container-fluid
+                   bg-dark text-secondary
+                   px-5 mt-5">
 
-        <div class="row gx-5">
+            <div class="row gx-5">
 
-            <div class="col-lg-8 col-md-6">
+                <div class="col-lg-8 col-md-6">
 
-                <p class="text-light py-3">
+                    <p class="text-light">
 
-                    <img
-                        src="{% static 'img/logo.png' %}"
-                        alt="Logo"
-                        width="100"
-                    >
+                        <img
+                            src="{% static 'img/logo.png' %}"
+                            alt="Logo"
+                            width="100px">
 
-                    2024 &copy; Futbol y Gol
+                        Futbol y Gol
 
-                </p>
+                    </p>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
 
-</footer>
+        <script
+            src="https://code.jquery.com/jquery-3.4.1.min.js">
+        </script>
 
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
+        </script>
 
-<script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
->
-</script>
+    </footer>
 
 
 </body>

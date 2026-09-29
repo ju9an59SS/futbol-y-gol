@@ -1,43 +1,69 @@
-from datetime import datetime, timedelta
-from functools import wraps
 import mimetypes
+import os
 import secrets
 
+from datetime import datetime, timedelta
+from functools import wraps
+from uuid import uuid4
+
 import openpyxl
-import resend
 
 from django.conf import settings
+
 from django.contrib.auth import (
     authenticate,
     login as auth_login,
     logout as auth_logout,
 )
-from django.contrib.auth.decorators import login_required
+
+from django.contrib.auth.decorators import (
+    login_required,
+)
+
 from django.contrib.auth.hashers import (
     check_password,
     make_password,
 )
+
 from django.contrib.auth.models import User
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
+
+from django.contrib.auth.password_validation import (
+    validate_password,
+)
+
+from django.core.exceptions import (
+    ValidationError,
+)
+
+from django.core.mail import (
+    send_mail,
+)
+
 from django.http import (
-    FileResponse,
     Http404,
     HttpResponse,
     JsonResponse,
 )
+
 from django.shortcuts import (
     get_object_or_404,
     redirect,
     render,
 )
+
 from django.utils import timezone
-from django.utils.crypto import get_random_string
+
+from django.utils.crypto import (
+    get_random_string,
+)
+
+from vercel.blob import BlobClient
 
 from .forms import (
     RegistroAdministradorForm,
     RegistroClienteForm,
 )
+
 from .models import (
     EstadoAcceso,
     PerfilAdministrador,
@@ -47,13 +73,22 @@ from .models import (
 
 
 # =========================================================
-# CONFIGURACIÓN RESEND
+# CONFIGURACIÓN GENERAL
 # =========================================================
 
-resend.api_key = settings.RESEND_API_KEY
-
 TOKEN_EXPIRACION_MINUTOS = 10
+
 MAX_INTENTOS_TOKEN = 5
+
+MAX_COMPROBANTE_BYTES = (
+    4 * 1024 * 1024
+)
+
+TIPOS_COMPROBANTE = {
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+}
 
 
 # =========================================================
@@ -69,20 +104,26 @@ def generar_password_temporal():
             allowed_chars=(
                 "ABCDEFGHJKLMNPQRSTUVWXYZ"
                 "abcdefghijkmnopqrstuvwxyz"
-                "23456789@#$%"
+                "23456789"
+                "@#$%"
             ),
         )
 
         try:
-            validate_password(password)
+
+            validate_password(
+                password
+            )
+
             return password
 
         except ValidationError:
+
             continue
 
 
 # =========================================================
-# CAMBIO OBLIGATORIO DE CONTRASEÑA
+# ESTADO DE CAMBIO DE CONTRASEÑA
 # =========================================================
 
 def marcar_cambio_password(
@@ -90,11 +131,15 @@ def marcar_cambio_password(
     requerido=True,
 ):
 
-    estado, _ = EstadoAcceso.objects.get_or_create(
-        usuario=usuario
+    estado, _ = (
+        EstadoAcceso.objects.get_or_create(
+            usuario=usuario
+        )
     )
 
-    estado.debe_cambiar_password = requerido
+    estado.debe_cambiar_password = (
+        requerido
+    )
 
     estado.save(
         update_fields=[
@@ -103,19 +148,28 @@ def marcar_cambio_password(
     )
 
 
-def requiere_cambio_password(usuario):
+def requiere_cambio_password(
+    usuario
+):
 
     if not usuario.is_authenticated:
+
         return False
 
-    estado, _ = EstadoAcceso.objects.get_or_create(
-        usuario=usuario
+    estado, _ = (
+        EstadoAcceso.objects.get_or_create(
+            usuario=usuario
+        )
     )
 
-    return estado.debe_cambiar_password
+    return (
+        estado.debe_cambiar_password
+    )
 
 
-def cambio_password_obligatorio(view_func):
+def cambio_password_obligatorio(
+    view_func
+):
 
     @wraps(view_func)
     def wrapper(
@@ -127,6 +181,7 @@ def cambio_password_obligatorio(view_func):
         if requiere_cambio_password(
             request.user
         ):
+
             return redirect(
                 "cambiar_password_inicial"
             )
@@ -144,27 +199,209 @@ def cambio_password_obligatorio(view_func):
 # VALIDAR COMPROBANTE
 # =========================================================
 
-def validar_comprobante(archivo):
+def validar_comprobante(
+    archivo
+):
 
     if not archivo:
+
         return
 
-    tipos_permitidos = [
-        "image/jpeg",
-        "image/png",
-        "image/webp",
-    ]
-
-    if archivo.content_type not in tipos_permitidos:
+    if archivo.size > MAX_COMPROBANTE_BYTES:
 
         raise ValidationError(
-            "El comprobante debe ser JPG, PNG o WEBP."
+            "El comprobante no puede "
+            "superar los 4 MB."
         )
 
-    if archivo.size > (5 * 1024 * 1024):
+    content_type = getattr(
+        archivo,
+        "content_type",
+        "",
+    )
+
+    if content_type not in TIPOS_COMPROBANTE:
 
         raise ValidationError(
-            "El comprobante no puede superar 5 MB."
+            "Solo se permiten imágenes "
+            "JPG, PNG o WEBP."
+        )
+
+
+# =========================================================
+# VALIDAR CONFIGURACIÓN VERCEL BLOB
+# =========================================================
+
+def validar_configuracion_blob():
+
+    token = os.environ.get(
+        "BLOB_READ_WRITE_TOKEN",
+        "",
+    )
+
+    if not token:
+
+        raise RuntimeError(
+            "BLOB_READ_WRITE_TOKEN "
+            "no está configurado."
+        )
+
+
+# =========================================================
+# SUBIR ARCHIVO A VERCEL BLOB
+# =========================================================
+
+def subir_comprobante_blob(
+    archivo,
+    reserva_id,
+):
+
+    validar_configuracion_blob()
+
+    validar_comprobante(
+        archivo
+    )
+
+    extension = os.path.splitext(
+        archivo.name
+    )[1].lower()
+
+    if extension not in [
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".webp",
+    ]:
+
+        raise ValidationError(
+            "La extensión del archivo "
+            "no está permitida."
+        )
+
+    pathname = (
+        f"comprobantes/"
+        f"reserva-{reserva_id}/"
+        f"{uuid4().hex}"
+        f"{extension}"
+    )
+
+    archivo.seek(0)
+
+    contenido = archivo.read()
+
+    with BlobClient() as client:
+
+        resultado = client.put(
+            pathname,
+            contenido,
+            access="private",
+            content_type=(
+                archivo.content_type
+                or
+                "application/octet-stream"
+            ),
+        )
+
+    return resultado.url
+
+
+# =========================================================
+# LEER ARCHIVO DE VERCEL BLOB
+# =========================================================
+
+def leer_comprobante_blob(
+    url
+):
+
+    validar_configuracion_blob()
+
+    with BlobClient() as client:
+
+        resultado = client.get(
+            str(url)
+        )
+
+    # -----------------------------------------------------
+    # SDK puede devolver directamente bytes
+    # -----------------------------------------------------
+
+    if isinstance(
+        resultado,
+        bytes,
+    ):
+
+        return resultado
+
+
+    # -----------------------------------------------------
+    # Algunas respuestas exponen content
+    # -----------------------------------------------------
+
+    contenido = getattr(
+        resultado,
+        "content",
+        None,
+    )
+
+    if isinstance(
+        contenido,
+        bytes,
+    ):
+
+        return contenido
+
+
+    # -----------------------------------------------------
+    # Algunas respuestas exponen stream
+    # -----------------------------------------------------
+
+    stream = getattr(
+        resultado,
+        "stream",
+        None,
+    )
+
+    if stream is not None:
+
+        return b"".join(
+            stream
+        )
+
+
+    raise RuntimeError(
+        "Vercel Blob no devolvió "
+        "contenido legible."
+    )
+
+
+# =========================================================
+# ELIMINAR ARCHIVO DE VERCEL BLOB
+# =========================================================
+
+def eliminar_comprobante_blob(
+    url
+):
+
+    if not url:
+
+        return
+
+    url = str(
+        url
+    )
+
+    if not url.startswith(
+        "https://"
+    ):
+
+        return
+
+    validar_configuracion_blob()
+
+    with BlobClient() as client:
+
+        client.delete(
+            [url]
         )
 
 
@@ -172,7 +409,9 @@ def validar_comprobante(archivo):
 # INICIO
 # =========================================================
 
-def index(request):
+def index(
+    request
+):
 
     return render(
         request,
@@ -184,13 +423,16 @@ def index(request):
 # REGISTRAR CLIENTE
 # =========================================================
 
-def registrar_cliente(request):
+def registrar_cliente(
+    request
+):
 
     if request.user.is_authenticated:
 
         if requiere_cambio_password(
             request.user
         ):
+
             return redirect(
                 "cambiar_password_inicial"
             )
@@ -199,6 +441,7 @@ def registrar_cliente(request):
             request.user.is_staff
             or request.user.is_superuser
         ):
+
             return redirect(
                 "reservas"
             )
@@ -242,8 +485,8 @@ def registrar_cliente(request):
             )
 
             usuario.is_staff = False
+
             usuario.is_superuser = False
-            usuario.is_active = True
 
             usuario.set_password(
                 password_temporal
@@ -251,29 +494,34 @@ def registrar_cliente(request):
 
             usuario.save()
 
+
             PerfilCliente.objects.create(
-                usuario=usuario,
-                tipo_documento=(
+
+                usuario=
+                    usuario,
+
+                tipo_documento=
                     form.cleaned_data[
                         "tipo_documento"
-                    ]
-                ),
-                documento=(
+                    ],
+
+                documento=
                     form.cleaned_data[
                         "documento"
-                    ]
-                ),
-                celular=(
+                    ],
+
+                celular=
                     form.cleaned_data[
                         "celular"
-                    ]
-                ),
+                    ],
             )
+
 
             marcar_cambio_password(
                 usuario,
                 True,
             )
+
 
             request.session[
                 "usuario_creado"
@@ -283,19 +531,71 @@ def registrar_cliente(request):
                 "password_temporal"
             ] = password_temporal
 
+
+            # -------------------------------------------------
+            # ENVIAR CONTRASEÑA TEMPORAL POR CORREO
+            # -------------------------------------------------
+
+            if usuario.email:
+
+                try:
+
+                    send_mail(
+
+                        subject=(
+                            "Cuenta creada "
+                            "- Futbol y Gol"
+                        ),
+
+                        message=(
+                            f"Hola "
+                            f"{usuario.first_name or usuario.username}."
+                            f"\n\n"
+                            f"Tu usuario es: "
+                            f"{usuario.username}\n"
+                            f"Tu contraseña temporal es: "
+                            f"{password_temporal}\n\n"
+                            f"Debes cambiarla "
+                            f"en tu primer ingreso."
+                        ),
+
+                        from_email=(
+                            settings.DEFAULT_FROM_EMAIL
+                        ),
+
+                        recipient_list=[
+                            usuario.email
+                        ],
+
+                        fail_silently=False,
+                    )
+
+                except Exception as error:
+
+                    print(
+                        "ERROR ENVIANDO "
+                        "CORREO CLIENTE:",
+                        repr(error),
+                    )
+
+
             return redirect(
                 "registro_cliente_exitoso"
             )
 
     else:
 
-        form = RegistroClienteForm()
+        form = (
+            RegistroClienteForm()
+        )
+
 
     return render(
         request,
         "registro_cliente.html",
         {
-            "form": form,
+            "form":
+                form
         },
     )
 
@@ -304,35 +604,55 @@ def registrar_cliente(request):
 # REGISTRO CLIENTE EXITOSO
 # =========================================================
 
-def registro_cliente_exitoso(request):
+def registro_cliente_exitoso(
+    request
+):
 
-    usuario = request.session.pop(
-        "usuario_creado",
-        None,
+    usuario = request.session.get(
+        "usuario_creado"
     )
 
-    password_temporal = request.session.pop(
-        "password_temporal",
-        None,
+    password_temporal = (
+        request.session.get(
+            "password_temporal"
+        )
     )
 
     if (
         not usuario
         or not password_temporal
     ):
+
         return redirect(
             "login_cliente"
         )
 
+
+    contexto = {
+
+        "usuario":
+            usuario,
+
+        "password_temporal":
+            password_temporal,
+    }
+
+
+    request.session.pop(
+        "usuario_creado",
+        None,
+    )
+
+    request.session.pop(
+        "password_temporal",
+        None,
+    )
+
+
     return render(
         request,
         "registro_cliente_exitoso.html",
-        {
-            "usuario": usuario,
-            "password_temporal": (
-                password_temporal
-            ),
-        },
+        contexto,
     )
 
 
@@ -340,19 +660,28 @@ def registro_cliente_exitoso(request):
 # LOGIN CLIENTE
 # =========================================================
 
-def login_cliente(request):
+def login_cliente(
+    request
+):
 
     mensaje = ""
 
-    if (
-        request.user.is_authenticated
-        and not request.user.is_staff
-        and not request.user.is_superuser
-    ):
+
+    if request.user.is_authenticated:
+
+        if (
+            request.user.is_staff
+            or request.user.is_superuser
+        ):
+
+            return redirect(
+                "reservas"
+            )
 
         if requiere_cambio_password(
             request.user
         ):
+
             return redirect(
                 "cambiar_password_inicial"
             )
@@ -360,6 +689,7 @@ def login_cliente(request):
         return redirect(
             "perfil_cliente"
         )
+
 
     if request.method == "POST":
 
@@ -373,10 +703,15 @@ def login_cliente(request):
             "",
         )
 
-        if not usuario or not password:
+
+        if (
+            not usuario
+            or not password
+        ):
 
             mensaje = (
-                "Debe ingresar usuario y contraseña."
+                "Debe ingresar usuario "
+                "y contraseña."
             )
 
         else:
@@ -401,6 +736,7 @@ def login_cliente(request):
                 if requiere_cambio_password(
                     user
                 ):
+
                     return redirect(
                         "cambiar_password_inicial"
                     )
@@ -409,15 +745,19 @@ def login_cliente(request):
                     "perfil_cliente"
                 )
 
+
             mensaje = (
-                "Usuario o contraseña incorrectos."
+                "Usuario o contraseña "
+                "incorrectos."
             )
+
 
     return render(
         request,
         "login_cliente.html",
         {
-            "mensaje": mensaje,
+            "mensaje":
+                mensaje
         },
     )
 
@@ -426,9 +766,13 @@ def login_cliente(request):
 # LOGOUT CLIENTE
 # =========================================================
 
-def logout_cliente(request):
+def logout_cliente(
+    request
+):
 
-    auth_logout(request)
+    auth_logout(
+        request
+    )
 
     return redirect(
         "login_cliente"
@@ -436,11 +780,57 @@ def logout_cliente(request):
 
 
 # =========================================================
-# CAMBIO INICIAL DE CONTRASEÑA
+# PERFIL CLIENTE
+# =========================================================
+
+@login_required(
+    login_url="login_cliente"
+)
+@cambio_password_obligatorio
+def perfil_cliente(
+    request
+):
+
+    if (
+        request.user.is_staff
+        or request.user.is_superuser
+    ):
+
+        return redirect(
+            "reservas"
+        )
+
+
+    perfil = get_object_or_404(
+        PerfilCliente,
+        usuario=request.user,
+    )
+
+
+    return render(
+        request,
+        "perfil_cliente.html",
+        {
+            "usuario":
+                request.user,
+
+            "perfil":
+                perfil,
+        },
+    )
+
+
+# =========================================================
+# CAMBIO OBLIGATORIO DE CONTRASEÑA
 # =========================================================
 
 @login_required
-def cambiar_password_inicial(request):
+def cambiar_password_inicial(
+    request
+):
+
+    mensaje = ""
+
 
     if not requiere_cambio_password(
         request.user
@@ -450,6 +840,7 @@ def cambiar_password_inicial(request):
             request.user.is_staff
             or request.user.is_superuser
         ):
+
             return redirect(
                 "reservas"
             )
@@ -458,7 +849,6 @@ def cambiar_password_inicial(request):
             "perfil_cliente"
         )
 
-    mensaje = ""
 
     if request.method == "POST":
 
@@ -472,16 +862,22 @@ def cambiar_password_inicial(request):
             "",
         )
 
-        if not password1 or not password2:
+
+        if (
+            not password1
+            or not password2
+        ):
 
             mensaje = (
-                "Debe diligenciar ambos campos."
+                "Debe diligenciar "
+                "ambos campos."
             )
 
         elif password1 != password2:
 
             mensaje = (
-                "Las contraseñas no coinciden."
+                "Las contraseñas "
+                "no coinciden."
             )
 
         else:
@@ -501,99 +897,52 @@ def cambiar_password_inicial(request):
 
             else:
 
-                username = (
-                    request.user.username
+                usuario_actual = (
+                    request.user
                 )
 
-                es_admin = (
-                    request.user.is_staff
-                    or request.user.is_superuser
-                )
-
-                request.user.set_password(
+                usuario_actual.set_password(
                     password1
                 )
 
-                request.user.save(
+                usuario_actual.save(
                     update_fields=[
                         "password"
                     ]
                 )
 
                 marcar_cambio_password(
-                    request.user,
+                    usuario_actual,
                     False,
                 )
 
-                user = authenticate(
-                    request,
-                    username=username,
-                    password=password1,
+                es_admin = (
+                    usuario_actual.is_staff
+                    or
+                    usuario_actual.is_superuser
                 )
 
-                if user is not None:
-
-                    auth_login(
-                        request,
-                        user,
-                    )
+                auth_logout(
+                    request
+                )
 
                 if es_admin:
 
                     return redirect(
-                        "reservas"
+                        "login"
                     )
 
                 return redirect(
-                    "perfil_cliente"
+                    "login_cliente"
                 )
+
 
     return render(
         request,
         "cambiar_password_inicial.html",
         {
-            "mensaje": mensaje,
-        },
-    )
-
-
-# =========================================================
-# PERFIL CLIENTE
-# =========================================================
-
-@login_required(
-    login_url="login_cliente"
-)
-@cambio_password_obligatorio
-def perfil_cliente(request):
-
-    if (
-        request.user.is_staff
-        or request.user.is_superuser
-    ):
-        return redirect(
-            "reservas"
-        )
-
-    perfil = get_object_or_404(
-        PerfilCliente,
-        usuario=request.user,
-    )
-
-    total_reservas = (
-        Reservas.objects.filter(
-            cliente=request.user
-        ).count()
-    )
-
-    return render(
-        request,
-        "perfil_cliente.html",
-        {
-            "perfil": perfil,
-            "total_reservas": (
-                total_reservas
-            ),
+            "mensaje":
+                mensaje
         },
     )
 
@@ -606,18 +955,24 @@ def perfil_cliente(request):
     login_url="login_cliente"
 )
 @cambio_password_obligatorio
-def mis_reservas(request):
+def mis_reservas(
+    request
+):
 
     if (
         request.user.is_staff
         or request.user.is_superuser
     ):
+
         return redirect(
             "reservas"
         )
 
+
     mensaje = ""
+
     tipo_mensaje = ""
+
 
     if request.method == "POST":
 
@@ -626,10 +981,13 @@ def mis_reservas(request):
             "",
         )
 
+
         if accion == "subir_comprobante":
 
-            reserva_id = request.POST.get(
-                "reserva_id"
+            reserva_id = (
+                request.POST.get(
+                    "reserva_id"
+                )
             )
 
             reserva = get_object_or_404(
@@ -644,10 +1002,12 @@ def mis_reservas(request):
                 )
             )
 
+
             if not comprobante:
 
                 mensaje = (
-                    "Debe seleccionar un comprobante."
+                    "Debe seleccionar "
+                    "un comprobante."
                 )
 
                 tipo_mensaje = "error"
@@ -660,21 +1020,33 @@ def mis_reservas(request):
                         comprobante
                     )
 
-                except ValidationError as exc:
 
-                    mensaje = " ".join(
-                        exc.messages
+                    url_anterior = (
+                        str(
+                            reserva.comprobante_pago
+                        )
+                        if reserva.comprobante_pago
+                        else ""
                     )
 
-                    tipo_mensaje = "error"
 
-                else:
+                    nueva_url = (
+                        subir_comprobante_blob(
+                            comprobante,
+                            reserva.id,
+                        )
+                    )
+
 
                     reserva.comprobante_pago = (
-                        comprobante
+                        nueva_url
                     )
 
+                    # Cada comprobante nuevo
+                    # queda pendiente nuevamente.
+
                     reserva.pago = False
+
 
                     reserva.save(
                         update_fields=[
@@ -683,12 +1055,61 @@ def mis_reservas(request):
                         ]
                     )
 
+
+                    if url_anterior:
+
+                        try:
+
+                            eliminar_comprobante_blob(
+                                url_anterior
+                            )
+
+                        except Exception as error:
+
+                            print(
+                                "ERROR ELIMINANDO "
+                                "BLOB ANTERIOR:",
+                                repr(error),
+                            )
+
+
+                except ValidationError as exc:
+
+                    mensaje = " ".join(
+                        exc.messages
+                    )
+
+                    tipo_mensaje = "error"
+
+
+                except Exception as error:
+
+                    print(
+                        "ERROR SUBIENDO "
+                        "COMPROBANTE:",
+                        repr(error),
+                    )
+
                     mensaje = (
-                        "Comprobante cargado correctamente. "
-                        "Queda pendiente de validación."
+                        "No fue posible "
+                        "guardar el comprobante "
+                        "en la nube."
+                    )
+
+                    tipo_mensaje = "error"
+
+
+                else:
+
+                    mensaje = (
+                        "Comprobante cargado "
+                        "correctamente. "
+                        "Queda pendiente "
+                        "de validación."
                     )
 
                     tipo_mensaje = "exito"
+
 
     reservas_lista = (
         Reservas.objects.filter(
@@ -700,25 +1121,33 @@ def mis_reservas(request):
         )
     )
 
+
     return render(
         request,
         "mis_reservas.html",
         {
-            "reservas": reservas_lista,
-            "mensaje": mensaje,
-            "tipo_mensaje": tipo_mensaje,
+            "reservas":
+                reservas_lista,
+
+            "mensaje":
+                mensaje,
+
+            "tipo_mensaje":
+                tipo_mensaje,
         },
     )
 
 
 # =========================================================
-# ESTADO DE RESERVAS
+# ESTADO DE RESERVAS - AJAX CLIENTE
 # =========================================================
 
 @login_required(
     login_url="login_cliente"
 )
-def estado_reservas_cliente(request):
+def estado_reservas_cliente(
+    request
+):
 
     if (
         request.user.is_staff
@@ -727,12 +1156,12 @@ def estado_reservas_cliente(request):
 
         return JsonResponse(
             {
-                "error": "No autorizado"
-            },
-            status=403,
+                "reservas": []
+            }
         )
 
-    reservas = (
+
+    reservas_cliente = (
         Reservas.objects.filter(
             cliente=request.user
         )
@@ -742,17 +1171,39 @@ def estado_reservas_cliente(request):
         )
     )
 
+
+    datos = []
+
+
+    for reserva in reservas_cliente:
+
+        datos.append({
+
+            "id":
+                reserva["id"],
+
+            "pago":
+                reserva["pago"],
+
+            "estado":
+                (
+                    "Pagado"
+                    if reserva["pago"]
+                    else "Pendiente"
+                ),
+        })
+
+
     return JsonResponse(
         {
-            "reservas": list(
-                reservas
-            )
+            "reservas":
+                datos
         }
     )
 
 
 # =========================================================
-# VER COMPROBANTE
+# VER COMPROBANTE PRIVADO
 # =========================================================
 
 @login_required
@@ -766,15 +1217,18 @@ def ver_comprobante(
         id=reserva_id,
     )
 
+
     es_admin = (
         request.user.is_staff
         or request.user.is_superuser
     )
 
+
     es_propietario = (
         reserva.cliente_id
         == request.user.id
     )
+
 
     if not (
         es_admin
@@ -783,22 +1237,51 @@ def ver_comprobante(
 
         raise Http404
 
+
     if not reserva.comprobante_pago:
 
         raise Http404
 
-    archivo = (
+
+    url_comprobante = str(
         reserva.comprobante_pago
     )
 
+
+    if not url_comprobante.startswith(
+        "https://"
+    ):
+
+        raise Http404
+
+
+    try:
+
+        contenido = (
+            leer_comprobante_blob(
+                url_comprobante
+            )
+        )
+
+    except Exception as error:
+
+        print(
+            "ERROR LEYENDO BLOB:",
+            repr(error),
+        )
+
+        raise Http404
+
+
     content_type, _ = (
         mimetypes.guess_type(
-            archivo.name
+            url_comprobante
         )
     )
 
-    return FileResponse(
-        archivo.open("rb"),
+
+    response = HttpResponse(
+        contenido,
         content_type=(
             content_type
             or "application/octet-stream"
@@ -806,28 +1289,50 @@ def ver_comprobante(
     )
 
 
+    response[
+        "Content-Disposition"
+    ] = (
+        'inline; filename="comprobante"'
+    )
+
+
+    response[
+        "Cache-Control"
+    ] = (
+        "private, no-store"
+    )
+
+
+    return response
+
+
 # =========================================================
-# RESERVAR
+# CREAR RESERVA
 # =========================================================
 
 @login_required(
     login_url="login_cliente"
 )
 @cambio_password_obligatorio
-def reservar(request):
+def reservar(
+    request
+):
 
     if (
         request.user.is_staff
         or request.user.is_superuser
     ):
+
         return redirect(
             "reservas"
         )
+
 
     perfil = get_object_or_404(
         PerfilCliente,
         usuario=request.user,
     )
+
 
     datos_cliente = {
 
@@ -846,6 +1351,7 @@ def reservar(request):
         "cel_cliente":
             perfil.celular,
     }
+
 
     if request.method == "POST":
 
@@ -869,17 +1375,29 @@ def reservar(request):
             "",
         ).strip()
 
+
         comprobante = (
             request.FILES.get(
                 "comprobante_pago"
             )
         )
 
+
         contexto = {
+
             **datos_cliente,
-            "mensaje": "",
-            "tipo_mensaje": "error",
+
+            "mensaje":
+                "",
+
+            "tipo_mensaje":
+                "error",
         }
+
+
+        # -------------------------------------------------
+        # CAMPOS OBLIGATORIOS
+        # -------------------------------------------------
 
         if not all([
             cancha,
@@ -888,8 +1406,11 @@ def reservar(request):
             duracion,
         ]):
 
-            contexto["mensaje"] = (
-                "Debe completar todos los campos obligatorios."
+            contexto[
+                "mensaje"
+            ] = (
+                "Debe completar todos "
+                "los campos obligatorios."
             )
 
             return render(
@@ -897,14 +1418,22 @@ def reservar(request):
                 "reservar.html",
                 contexto,
             )
+
+
+        # -------------------------------------------------
+        # DURACIÓN
+        # -------------------------------------------------
 
         if duracion not in [
             "1",
             "2",
         ]:
 
-            contexto["mensaje"] = (
-                "La duración debe ser de 1 o 2 horas."
+            contexto[
+                "mensaje"
+            ] = (
+                "La duración debe ser "
+                "de 1 o 2 horas."
             )
 
             return render(
@@ -912,6 +1441,161 @@ def reservar(request):
                 "reservar.html",
                 contexto,
             )
+
+
+        duracion_int = int(
+            duracion
+        )
+
+
+        # -------------------------------------------------
+        # FECHA Y HORA
+        # -------------------------------------------------
+
+        try:
+
+            fecha_obj = (
+                datetime.strptime(
+                    fecha,
+                    "%Y-%m-%d",
+                ).date()
+            )
+
+
+            hora_obj = (
+                datetime.strptime(
+                    hora,
+                    "%H:%M",
+                ).time()
+            )
+
+
+        except ValueError:
+
+            contexto[
+                "mensaje"
+            ] = (
+                "La fecha o la hora "
+                "no son válidas."
+            )
+
+            return render(
+                request,
+                "reservar.html",
+                contexto,
+            )
+
+
+        # -------------------------------------------------
+        # NO RESERVAR EN EL PASADO
+        # -------------------------------------------------
+
+        inicio_nueva = (
+            datetime.combine(
+                fecha_obj,
+                hora_obj,
+            )
+        )
+
+
+        inicio_nueva = (
+            timezone.make_aware(
+                inicio_nueva,
+                timezone.get_current_timezone(),
+            )
+        )
+
+
+        if inicio_nueva <= timezone.now():
+
+            contexto[
+                "mensaje"
+            ] = (
+                "No puede reservar "
+                "una fecha u hora pasada."
+            )
+
+            return render(
+                request,
+                "reservar.html",
+                contexto,
+            )
+
+
+        fin_nueva = (
+            inicio_nueva
+            + timedelta(
+                hours=duracion_int
+            )
+        )
+
+
+        # -------------------------------------------------
+        # VALIDAR CRUCE DE HORARIOS
+        # -------------------------------------------------
+
+        reservas_existentes = (
+            Reservas.objects.filter(
+                cancha=cancha,
+                fecha=fecha_obj,
+            )
+        )
+
+
+        for existente in (
+            reservas_existentes
+        ):
+
+            inicio_existente = (
+                datetime.combine(
+                    existente.fecha,
+                    existente.hora,
+                )
+            )
+
+
+            inicio_existente = (
+                timezone.make_aware(
+                    inicio_existente,
+                    timezone.get_current_timezone(),
+                )
+            )
+
+
+            fin_existente = (
+                inicio_existente
+                + timedelta(
+                    hours=
+                        existente.duracion
+                )
+            )
+
+
+            if (
+                inicio_nueva
+                < fin_existente
+                and
+                fin_nueva
+                > inicio_existente
+            ):
+
+                contexto[
+                    "mensaje"
+                ] = (
+                    "La cancha ya está "
+                    "reservada en ese horario."
+                )
+
+                return render(
+                    request,
+                    "reservar.html",
+                    contexto,
+                )
+
+
+        # -------------------------------------------------
+        # VALIDAR COMPROBANTE
+        # -------------------------------------------------
 
         if comprobante:
 
@@ -923,10 +1607,10 @@ def reservar(request):
 
             except ValidationError as exc:
 
-                contexto["mensaje"] = (
-                    " ".join(
-                        exc.messages
-                    )
+                contexto[
+                    "mensaje"
+                ] = " ".join(
+                    exc.messages
                 )
 
                 return render(
@@ -935,94 +1619,101 @@ def reservar(request):
                     contexto,
                 )
 
-        duracion = int(
-            duracion
-        )
 
-        try:
+        # -------------------------------------------------
+        # CREAR RESERVA SIN ARCHIVO LOCAL
+        # -------------------------------------------------
 
-            inicio_nueva = (
-                datetime.strptime(
-                    f"{fecha} {hora}",
-                    "%Y-%m-%d %H:%M",
-                )
-            )
+        reserva = (
+            Reservas.objects.create(
 
-        except ValueError:
+                cliente=
+                    request.user,
 
-            contexto["mensaje"] = (
-                "La fecha o la hora no es válida."
-            )
+                nombre=
+                    request.user.first_name,
 
-            return render(
-                request,
-                "reservar.html",
-                contexto,
-            )
+                apellido=
+                    request.user.last_name,
 
-        ahora = (
-            timezone.localtime()
-            .replace(
-                tzinfo=None
-            )
-        )
+                tipo_documento=
+                    perfil.tipo_documento,
 
-        if inicio_nueva < ahora:
+                documento=
+                    perfil.documento,
 
-            contexto["mensaje"] = (
-                "No puede reservar una fecha "
-                "u hora anterior a la actual."
-            )
+                cancha=
+                    cancha,
 
-            return render(
-                request,
-                "reservar.html",
-                contexto,
-            )
+                fecha=
+                    fecha_obj,
 
-        fin_nueva = (
-            inicio_nueva
-            + timedelta(
-                hours=duracion
+                hora=
+                    hora_obj,
+
+                duracion=
+                    duracion_int,
+
+                cel=
+                    perfil.celular,
+
+                comprobante_pago=
+                    None,
+
+                pago=
+                    False,
             )
         )
 
-        reservas_dia = (
-            Reservas.objects.filter(
-                cancha=cancha,
-                fecha=fecha,
-            )
-        )
 
-        for existente in reservas_dia:
+        # -------------------------------------------------
+        # SUBIR FOTO A VERCEL BLOB
+        # -------------------------------------------------
 
-            inicio_existente = (
-                datetime.combine(
-                    existente.fecha,
-                    existente.hora,
-                )
-            )
+        if comprobante:
 
-            fin_existente = (
-                inicio_existente
-                + timedelta(
-                    hours=(
-                        existente.duracion
+            try:
+
+                nueva_url = (
+                    subir_comprobante_blob(
+                        comprobante,
+                        reserva.id,
                     )
                 )
-            )
 
-            if (
-                inicio_nueva
-                < fin_existente
-                and fin_nueva
-                > inicio_existente
-            ):
 
-                contexto["mensaje"] = (
-                    "La cancha ya está reservada "
-                    "en ese horario."
+                reserva.comprobante_pago = (
+                    nueva_url
                 )
+
+
+                reserva.save(
+                    update_fields=[
+                        "comprobante_pago"
+                    ]
+                )
+
+
+            except Exception as error:
+
+                print(
+                    "ERROR SUBIENDO "
+                    "BLOB:",
+                    repr(error),
+                )
+
+
+                reserva.delete()
+
+
+                contexto[
+                    "mensaje"
+                ] = (
+                    "No fue posible guardar "
+                    "el comprobante en la nube. "
+                    "La reserva no fue creada."
+                )
+
 
                 return render(
                     request,
@@ -1030,34 +1721,26 @@ def reservar(request):
                     contexto,
                 )
 
-        Reservas.objects.create(
-            cliente=request.user,
-            nombre=(
-                request.user.first_name
-            ),
-            apellido=(
-                request.user.last_name
-            ),
-            tipo_documento=(
-                perfil.tipo_documento
-            ),
-            documento=(
-                perfil.documento
-            ),
-            cancha=cancha,
-            fecha=fecha,
-            hora=hora,
-            duracion=duracion,
-            cel=perfil.celular,
-            comprobante_pago=(
-                comprobante
-            ),
-            pago=False,
+
+        contexto[
+            "mensaje"
+        ] = (
+            "Reserva creada "
+            "correctamente."
         )
 
-        return redirect(
-            "mis_reservas"
+
+        contexto[
+            "tipo_mensaje"
+        ] = "exito"
+
+
+        return render(
+            request,
+            "reservar.html",
+            contexto,
         )
+
 
     return render(
         request,
@@ -1067,31 +1750,224 @@ def reservar(request):
 
 
 # =========================================================
+# REGISTRAR ADMINISTRADOR
+# =========================================================
+
+def registrar_administrador(
+    request
+):
+
+    # Este registro queda público porque así
+    # se requiere para la demostración académica.
+
+    if request.user.is_authenticated:
+
+        if (
+            request.user.is_staff
+            or request.user.is_superuser
+        ):
+
+            return redirect(
+                "reservas"
+            )
+
+
+    if request.method == "POST":
+
+        form = (
+            RegistroAdministradorForm(
+                request.POST
+            )
+        )
+
+
+        if form.is_valid():
+
+            password_temporal = (
+                generar_password_temporal()
+            )
+
+
+            admin_user = form.save(
+                commit=False
+            )
+
+
+            admin_user.first_name = (
+                form.cleaned_data[
+                    "first_name"
+                ]
+            )
+
+            admin_user.last_name = (
+                form.cleaned_data[
+                    "last_name"
+                ]
+            )
+
+            admin_user.email = (
+                form.cleaned_data[
+                    "email"
+                ]
+            )
+
+
+            admin_user.is_staff = True
+
+            admin_user.is_superuser = False
+
+
+            admin_user.set_password(
+                password_temporal
+            )
+
+
+            admin_user.save()
+
+
+            PerfilAdministrador.objects.create(
+
+                usuario=
+                    admin_user,
+
+                tipo_documento=
+                    form.cleaned_data[
+                        "tipo_documento"
+                    ],
+
+                documento=
+                    form.cleaned_data[
+                        "documento"
+                    ],
+
+                celular=
+                    form.cleaned_data[
+                        "celular"
+                    ],
+            )
+
+
+            marcar_cambio_password(
+                admin_user,
+                True,
+            )
+
+
+            # -------------------------------------------------
+            # CORREO ADMIN
+            # -------------------------------------------------
+
+            if admin_user.email:
+
+                try:
+
+                    send_mail(
+
+                        subject=(
+                            "Cuenta administrativa "
+                            "- Futbol y Gol"
+                        ),
+
+                        message=(
+                            f"Hola "
+                            f"{admin_user.first_name or admin_user.username}."
+                            f"\n\n"
+                            f"Tu usuario administrador es: "
+                            f"{admin_user.username}\n"
+                            f"Tu contraseña temporal es: "
+                            f"{password_temporal}\n\n"
+                            f"Debes cambiarla "
+                            f"en tu primer ingreso."
+                        ),
+
+                        from_email=(
+                            settings.DEFAULT_FROM_EMAIL
+                        ),
+
+                        recipient_list=[
+                            admin_user.email
+                        ],
+
+                        fail_silently=False,
+                    )
+
+
+                except Exception as error:
+
+                    print(
+                        "ERROR ENVIANDO "
+                        "CORREO ADMIN:",
+                        repr(error),
+                    )
+
+
+            return render(
+                request,
+                "registro_administrador_exitoso.html",
+                {
+                    "usuario":
+                        admin_user.username,
+
+                    "password_temporal":
+                        password_temporal,
+                },
+            )
+
+
+    else:
+
+        form = (
+            RegistroAdministradorForm()
+        )
+
+
+    return render(
+        request,
+        "registro_administrador.html",
+        {
+            "form":
+                form
+        },
+    )
+
+
+# =========================================================
 # LOGIN ADMINISTRADOR
 # =========================================================
 
-def login(request):
+def login(
+    request
+):
 
     mensaje = ""
 
-    if (
-        request.user.is_authenticated
-        and (
+
+    if request.user.is_authenticated:
+
+        if (
             request.user.is_staff
             or request.user.is_superuser
-        )
-    ):
-
-        if requiere_cambio_password(
-            request.user
         ):
+
+            if requiere_cambio_password(
+                request.user
+            ):
+
+                return redirect(
+                    "cambiar_password_inicial"
+                )
+
             return redirect(
-                "cambiar_password_inicial"
+                "reservas"
             )
 
-        return redirect(
-            "reservas"
+        # Si había sesión cliente,
+        # se cierra antes de login admin.
+
+        auth_logout(
+            request
         )
+
 
     if request.method == "POST":
 
@@ -1105,10 +1981,15 @@ def login(request):
             "",
         )
 
-        if not usuario or not password:
+
+        if (
+            not usuario
+            or not password
+        ):
 
             mensaje = (
-                "Debe ingresar usuario y contraseña."
+                "Debe ingresar usuario "
+                "y contraseña."
             )
 
         else:
@@ -1119,11 +2000,13 @@ def login(request):
                 password=password,
             )
 
+
             if (
                 user is not None
                 and (
                     user.is_staff
-                    or user.is_superuser
+                    or
+                    user.is_superuser
                 )
             ):
 
@@ -1132,38 +2015,48 @@ def login(request):
                     user,
                 )
 
+
                 if requiere_cambio_password(
                     user
                 ):
+
                     return redirect(
                         "cambiar_password_inicial"
                     )
+
 
                 return redirect(
                     "reservas"
                 )
 
+
             mensaje = (
-                "Usuario o contraseña "
-                "administrativa incorrectos."
+                "Credenciales "
+                "administrativas inválidas."
             )
+
 
     return render(
         request,
         "login.html",
         {
-            "mensaje": mensaje,
+            "mensaje":
+                mensaje
         },
     )
 
 
 # =========================================================
-# LOGOUT ADMIN
+# LOGOUT ADMINISTRADOR
 # =========================================================
 
-def logout(request):
+def logout(
+    request
+):
 
-    auth_logout(request)
+    auth_logout(
+        request
+    )
 
     return redirect(
         "login"
@@ -1171,129 +2064,16 @@ def logout(request):
 
 
 # =========================================================
-# REGISTRAR ADMINISTRADOR
-# PÚBLICO DESDE LOGIN ADMIN
-# =========================================================
-
-def registrar_administrador(request):
-
-    # Si un cliente normal ya inició sesión,
-    # no debe crear administradores.
-    if request.user.is_authenticated:
-
-        if (
-            not request.user.is_staff
-            and not request.user.is_superuser
-        ):
-
-            return redirect(
-                "perfil_cliente"
-            )
-
-    if request.method == "POST":
-
-        form = RegistroAdministradorForm(
-            request.POST
-        )
-
-        if form.is_valid():
-
-            password_temporal = (
-                generar_password_temporal()
-            )
-
-            usuario = form.save(
-                commit=False
-            )
-
-            usuario.first_name = (
-                form.cleaned_data[
-                    "first_name"
-                ]
-            )
-
-            usuario.last_name = (
-                form.cleaned_data[
-                    "last_name"
-                ]
-            )
-
-            usuario.email = (
-                form.cleaned_data[
-                    "email"
-                ]
-            )
-
-            usuario.is_staff = True
-            usuario.is_superuser = False
-            usuario.is_active = True
-
-            usuario.set_password(
-                password_temporal
-            )
-
-            usuario.save()
-
-            PerfilAdministrador.objects.create(
-                usuario=usuario,
-                tipo_documento=(
-                    form.cleaned_data[
-                        "tipo_documento"
-                    ]
-                ),
-                documento=(
-                    form.cleaned_data[
-                        "documento"
-                    ]
-                ),
-                celular=(
-                    form.cleaned_data[
-                        "celular"
-                    ]
-                ),
-            )
-
-            marcar_cambio_password(
-                usuario,
-                True,
-            )
-
-            return render(
-                request,
-                "registro_administrador_exitoso.html",
-                {
-                    "usuario":
-                        usuario.username,
-
-                    "password_temporal":
-                        password_temporal,
-                },
-            )
-
-    else:
-
-        form = (
-            RegistroAdministradorForm()
-        )
-
-    return render(
-        request,
-        "registro_administrador.html",
-        {
-            "form": form,
-        },
-    )
-
-
-# =========================================================
-# ADMINISTRAR RESERVAS
+# PANEL ADMINISTRADOR - RESERVAS
 # =========================================================
 
 @login_required(
     login_url="login"
 )
 @cambio_password_obligatorio
-def reservas(request):
+def reservas(
+    request
+):
 
     if not (
         request.user.is_staff
@@ -1304,7 +2084,11 @@ def reservas(request):
             "login"
         )
 
+
     mensaje = ""
+
+    tipo_mensaje = ""
+
 
     if request.method == "POST":
 
@@ -1313,16 +2097,22 @@ def reservas(request):
             "",
         )
 
-        if accion == "actualizar_pago":
+        reserva_id = request.POST.get(
+            "reserva_id"
+        )
 
-            reserva_id = request.POST.get(
-                "reserva_id"
-            )
+
+        # -------------------------------------------------
+        # ACTUALIZAR PAGO
+        # -------------------------------------------------
+
+        if accion == "actualizar_pago":
 
             reserva = get_object_or_404(
                 Reservas,
                 id=reserva_id,
             )
+
 
             reserva.pago = (
                 request.POST.get(
@@ -1331,16 +2121,216 @@ def reservas(request):
                 == "on"
             )
 
+
             reserva.save(
                 update_fields=[
                     "pago"
                 ]
             )
 
+
+            if (
+                request.headers.get(
+                    "X-Requested-With"
+                )
+                == "XMLHttpRequest"
+            ):
+
+                return JsonResponse(
+                    {
+                        "ok":
+                            True,
+
+                        "id":
+                            reserva.id,
+
+                        "pago":
+                            reserva.pago,
+                    }
+                )
+
+
             mensaje = (
                 f"Reserva #{reserva.id} "
                 f"actualizada correctamente."
             )
+
+            tipo_mensaje = (
+                "exito"
+            )
+
+
+        # -------------------------------------------------
+        # ELIMINAR SOLAMENTE COMPROBANTE
+        # -------------------------------------------------
+
+        elif accion == (
+            "eliminar_comprobante"
+        ):
+
+            reserva = get_object_or_404(
+                Reservas,
+                id=reserva_id,
+            )
+
+
+            if not reserva.comprobante_pago:
+
+                mensaje = (
+                    "La reserva no tiene "
+                    "comprobante."
+                )
+
+                tipo_mensaje = (
+                    "error"
+                )
+
+            else:
+
+                url = str(
+                    reserva.comprobante_pago
+                )
+
+
+                try:
+
+                    eliminar_comprobante_blob(
+                        url
+                    )
+
+
+                except Exception as error:
+
+                    print(
+                        "ERROR ELIMINANDO "
+                        "COMPROBANTE:",
+                        repr(error),
+                    )
+
+
+                    mensaje = (
+                        "No fue posible eliminar "
+                        "el comprobante."
+                    )
+
+                    tipo_mensaje = (
+                        "error"
+                    )
+
+
+                else:
+
+                    reserva.comprobante_pago = (
+                        None
+                    )
+
+                    reserva.pago = False
+
+
+                    reserva.save(
+                        update_fields=[
+                            "comprobante_pago",
+                            "pago",
+                        ]
+                    )
+
+
+                    mensaje = (
+                        f"Comprobante de la "
+                        f"reserva #{reserva.id} "
+                        f"eliminado correctamente."
+                    )
+
+                    tipo_mensaje = (
+                        "exito"
+                    )
+
+
+        # -------------------------------------------------
+        # ELIMINAR RESERVA COMPLETA
+        # -------------------------------------------------
+
+        elif accion == (
+            "eliminar_reserva"
+        ):
+
+            reserva = get_object_or_404(
+                Reservas,
+                id=reserva_id,
+            )
+
+
+            numero_reserva = (
+                reserva.id
+            )
+
+
+            url = (
+                str(
+                    reserva.comprobante_pago
+                )
+                if reserva.comprobante_pago
+                else ""
+            )
+
+
+            if url:
+
+                try:
+
+                    eliminar_comprobante_blob(
+                        url
+                    )
+
+                except Exception as error:
+
+                    print(
+                        "ERROR ELIMINANDO "
+                        "BLOB DE RESERVA:",
+                        repr(error),
+                    )
+
+
+                    mensaje = (
+                        "No se eliminó la reserva "
+                        "porque no fue posible "
+                        "eliminar su comprobante."
+                    )
+
+                    tipo_mensaje = (
+                        "error"
+                    )
+
+                else:
+
+                    reserva.delete()
+
+                    mensaje = (
+                        f"Reserva "
+                        f"#{numero_reserva} "
+                        f"eliminada correctamente."
+                    )
+
+                    tipo_mensaje = (
+                        "exito"
+                    )
+
+
+            else:
+
+                reserva.delete()
+
+
+                mensaje = (
+                    f"Reserva "
+                    f"#{numero_reserva} "
+                    f"eliminada correctamente."
+                )
+
+                tipo_mensaje = (
+                    "exito"
+                )
+
 
     reservas_lista = (
         Reservas.objects.all()
@@ -1352,6 +2342,7 @@ def reservas(request):
             "-hora",
         )
     )
+
 
     return render(
         request,
@@ -1365,12 +2356,15 @@ def reservas(request):
 
             "mensaje":
                 mensaje,
+
+            "tipo_mensaje":
+                tipo_mensaje,
         },
     )
 
 
 # =========================================================
-# GENERAR TOKEN
+# GENERAR TOKEN DE RECUPERACIÓN
 # =========================================================
 
 def generar_token_recuperacion():
@@ -1384,7 +2378,7 @@ def generar_token_recuperacion():
 
 
 # =========================================================
-# LIMPIAR SESIÓN DE RECUPERACIÓN
+# LIMPIAR RECUPERACIÓN DE SESIÓN
 # =========================================================
 
 def limpiar_recuperacion_session(
@@ -1392,13 +2386,20 @@ def limpiar_recuperacion_session(
 ):
 
     claves = [
+
         "recuperacion_usuario_id",
+
         "recuperacion_tipo",
+
         "recuperacion_token_hash",
+
         "recuperacion_expira",
+
         "recuperacion_intentos",
+
         "recuperacion_token_validado",
     ]
+
 
     for clave in claves:
 
@@ -1407,11 +2408,12 @@ def limpiar_recuperacion_session(
             None,
         )
 
+
     request.session.modified = True
 
 
 # =========================================================
-# GUARDAR TOKEN EN SESIÓN
+# GUARDAR RECUPERACIÓN
 # =========================================================
 
 def guardar_recuperacion(
@@ -1421,22 +2423,15 @@ def guardar_recuperacion(
     token,
 ):
 
-    expiracion = (
-        timezone.now()
-        + timedelta(
-            minutes=(
-                TOKEN_EXPIRACION_MINUTOS
-            )
-        )
-    )
-
     request.session[
         "recuperacion_usuario_id"
     ] = usuario.id
 
+
     request.session[
         "recuperacion_tipo"
     ] = tipo
+
 
     request.session[
         "recuperacion_token_hash"
@@ -1444,42 +2439,62 @@ def guardar_recuperacion(
         token
     )
 
+
     request.session[
         "recuperacion_expira"
-    ] = expiracion.timestamp()
+    ] = (
+        timezone.now()
+        + timedelta(
+            minutes=
+                TOKEN_EXPIRACION_MINUTOS
+        )
+    ).timestamp()
+
 
     request.session[
         "recuperacion_intentos"
     ] = 0
 
+
     request.session[
         "recuperacion_token_validado"
     ] = False
+
 
     request.session.modified = True
 
 
 # =========================================================
-# TOKEN VIGENTE
+# VALIDAR VIGENCIA TOKEN
 # =========================================================
 
-def token_vigente(request):
+def token_vigente(
+    request
+):
 
     valor = request.session.get(
         "recuperacion_expira"
     )
 
+
     if not valor:
+
         return False
 
+
     try:
-        valor = float(valor)
+
+        valor = float(
+            valor
+        )
 
     except (
         TypeError,
         ValueError,
     ):
+
         return False
+
 
     return (
         timezone.now().timestamp()
@@ -1488,20 +2503,30 @@ def token_vigente(request):
 
 
 # =========================================================
-# ENVIAR TOKEN RESEND
+# ENVIAR TOKEN POR GMAIL
 # =========================================================
 
-def enviar_token_resend(
+def enviar_token_recuperacion(
     usuario,
     token,
     tipo,
 ):
 
-    if not settings.RESEND_API_KEY:
+    if not settings.EMAIL_HOST_USER:
 
         raise RuntimeError(
-            "RESEND_API_KEY no está configurada."
+            "EMAIL_HOST_USER "
+            "no está configurado."
         )
+
+
+    if not settings.EMAIL_HOST_PASSWORD:
+
+        raise RuntimeError(
+            "EMAIL_HOST_PASSWORD "
+            "no está configurado."
+        )
+
 
     tipo_cuenta = (
         "administrador"
@@ -1509,10 +2534,30 @@ def enviar_token_resend(
         else "cliente"
     )
 
+
     nombre = (
         usuario.first_name
         or usuario.username
     )
+
+
+    asunto = (
+        "Código de recuperación "
+        "- Futbol y Gol"
+    )
+
+
+    texto = (
+        f"Hola {nombre}.\n\n"
+        f"Recibimos una solicitud "
+        f"para recuperar tu cuenta "
+        f"de {tipo_cuenta}.\n\n"
+        f"Tu código es: {token}\n\n"
+        f"Este código vence en "
+        f"{TOKEN_EXPIRACION_MINUTOS} "
+        f"minutos."
+    )
+
 
     html = f"""
     <div style="
@@ -1522,16 +2567,21 @@ def enviar_token_resend(
         padding: 30px;
     ">
 
-        <h2>Futbol y Gol</h2>
+        <h2>
+            Futbol y Gol
+        </h2>
 
         <p>
-            Hola <strong>{nombre}</strong>.
+            Hola
+            <strong>
+                {nombre}
+            </strong>.
         </p>
 
         <p>
-            Recibimos una solicitud para
-            recuperar tu cuenta de
-            {tipo_cuenta}.
+            Recibimos una solicitud
+            para recuperar tu cuenta
+            de {tipo_cuenta}.
         </p>
 
         <p>
@@ -1546,7 +2596,9 @@ def enviar_token_resend(
             background: #eeeeee;
             text-align: center;
         ">
+
             {token}
+
         </div>
 
         <p>
@@ -1555,25 +2607,37 @@ def enviar_token_resend(
             minutos.
         </p>
 
+        <p>
+            Si no solicitaste
+            este código,
+            puedes ignorar este correo.
+        </p>
+
     </div>
     """
 
-    return resend.Emails.send({
 
-        "from":
-            settings.RESEND_FROM_EMAIL,
+    return send_mail(
 
-        "to": [
+        subject=
+            asunto,
+
+        message=
+            texto,
+
+        from_email=
+            settings.DEFAULT_FROM_EMAIL,
+
+        recipient_list=[
             usuario.email
         ],
 
-        "subject":
-            "Código de recuperación "
-            "- Futbol y Gol",
+        fail_silently=
+            False,
 
-        "html":
+        html_message=
             html,
-    })
+    )
 
 
 # =========================================================
@@ -1591,7 +2655,9 @@ def recuperar_password(
         else "cliente"
     )
 
+
     mensaje = ""
+
 
     if request.method == "POST":
 
@@ -1600,12 +2666,17 @@ def recuperar_password(
             "",
         ).strip()
 
+
         correo = request.POST.get(
             "correo",
             "",
         ).strip().lower()
 
-        if not username or not correo:
+
+        if (
+            not username
+            or not correo
+        ):
 
             mensaje = (
                 "Debe ingresar usuario "
@@ -1616,14 +2687,23 @@ def recuperar_password(
 
             usuario = (
                 User.objects.filter(
-                    username__iexact=username,
-                    email__iexact=correo,
-                    is_active=True,
+                    username__iexact=
+                        username,
+
+                    email__iexact=
+                        correo,
+
+                    is_active=
+                        True,
                 )
                 .first()
             )
 
-            usuario_valido = False
+
+            usuario_valido = (
+                False
+            )
+
 
             if usuario:
 
@@ -1631,21 +2711,25 @@ def recuperar_password(
 
                     usuario_valido = (
                         usuario.is_staff
-                        or usuario.is_superuser
+                        or
+                        usuario.is_superuser
                     )
 
                 else:
 
                     usuario_valido = (
                         not usuario.is_staff
-                        and not usuario.is_superuser
+                        and
+                        not usuario.is_superuser
                     )
+
 
             if not usuario_valido:
 
                 mensaje = (
                     "El usuario y el correo "
-                    "no corresponden a una cuenta válida."
+                    "no corresponden a "
+                    "una cuenta válida."
                 )
 
             else:
@@ -1654,9 +2738,11 @@ def recuperar_password(
                     generar_token_recuperacion()
                 )
 
+
                 limpiar_recuperacion_session(
                     request
                 )
+
 
                 guardar_recuperacion(
                     request,
@@ -1665,29 +2751,35 @@ def recuperar_password(
                     token,
                 )
 
+
                 try:
 
-                    enviar_token_resend(
+                    enviar_token_recuperacion(
                         usuario,
                         token,
                         tipo,
                     )
 
+
                 except Exception as error:
 
                     print(
-                        "ERROR RESEND:",
+                        "ERROR CORREO "
+                        "RECUPERACION:",
                         repr(error),
                     )
+
 
                     limpiar_recuperacion_session(
                         request
                     )
 
+
                     mensaje = (
                         "No fue posible enviar "
                         "el código al correo."
                     )
+
 
                 else:
 
@@ -1695,12 +2787,16 @@ def recuperar_password(
                         "validar_token_recuperacion"
                     )
 
+
     return render(
         request,
         "recuperar_password.html",
         {
-            "tipo": tipo,
-            "mensaje": mensaje,
+            "tipo":
+                tipo,
+
+            "mensaje":
+                mensaje,
         },
     )
 
@@ -1713,25 +2809,36 @@ def validar_token_recuperacion(
     request
 ):
 
-    usuario_id = request.session.get(
-        "recuperacion_usuario_id"
+    usuario_id = (
+        request.session.get(
+            "recuperacion_usuario_id"
+        )
     )
 
-    tipo = request.session.get(
-        "recuperacion_tipo"
+
+    tipo = (
+        request.session.get(
+            "recuperacion_tipo"
+        )
     )
 
-    token_hash = request.session.get(
-        "recuperacion_token_hash"
+
+    token_hash = (
+        request.session.get(
+            "recuperacion_token_hash"
+        )
     )
+
 
     if (
         not usuario_id
-        or tipo not in [
+        or
+        tipo not in [
             "cliente",
             "admin",
         ]
-        or not token_hash
+        or
+        not token_hash
     ):
 
         return redirect(
@@ -1740,6 +2847,7 @@ def validar_token_recuperacion(
             else "login_cliente"
         )
 
+
     if not token_vigente(
         request
     ):
@@ -1747,6 +2855,7 @@ def validar_token_recuperacion(
         limpiar_recuperacion_session(
             request
         )
+
 
         return render(
             request,
@@ -1764,7 +2873,9 @@ def validar_token_recuperacion(
             },
         )
 
+
     mensaje = ""
+
 
     if request.method == "POST":
 
@@ -1773,12 +2884,14 @@ def validar_token_recuperacion(
             "",
         ).strip()
 
+
         intentos = int(
             request.session.get(
                 "recuperacion_intentos",
                 0,
             )
         )
+
 
         if (
             len(token) != 6
@@ -1790,6 +2903,7 @@ def validar_token_recuperacion(
                 "exactamente 6 dígitos."
             )
 
+
         elif check_password(
             token,
             token_hash,
@@ -1799,32 +2913,44 @@ def validar_token_recuperacion(
                 "recuperacion_token_validado"
             ] = True
 
-            request.session.modified = True
+
+            request.session.modified = (
+                True
+            )
+
 
             return redirect(
                 "confirmar_recuperacion"
             )
 
+
         else:
 
             intentos += 1
+
 
             request.session[
                 "recuperacion_intentos"
             ] = intentos
 
-            request.session.modified = True
+
+            request.session.modified = (
+                True
+            )
+
 
             restantes = (
                 MAX_INTENTOS_TOKEN
                 - intentos
             )
 
+
             if restantes <= 0:
 
                 limpiar_recuperacion_session(
                     request
                 )
+
 
                 return render(
                     request,
@@ -1842,67 +2968,92 @@ def validar_token_recuperacion(
                     },
                 )
 
+
             mensaje = (
                 f"Código incorrecto. "
-                f"Quedan {restantes} intentos."
+                f"Quedan "
+                f"{restantes} intentos."
             )
+
 
     return render(
         request,
         "validar_token_recuperacion.html",
         {
-            "mensaje": mensaje,
-            "expirado": False,
-            "tipo": tipo,
+            "mensaje":
+                mensaje,
+
+            "expirado":
+                False,
+
+            "tipo":
+                tipo,
         },
     )
 
 
 # =========================================================
-# CONFIRMAR RECUPERACIÓN
+# CONFIRMAR NUEVA CONTRASEÑA
 # =========================================================
 
 def confirmar_recuperacion(
     request
 ):
 
-    usuario_id = request.session.get(
-        "recuperacion_usuario_id"
+    usuario_id = (
+        request.session.get(
+            "recuperacion_usuario_id"
+        )
     )
 
-    tipo = request.session.get(
-        "recuperacion_tipo"
+
+    tipo = (
+        request.session.get(
+            "recuperacion_tipo"
+        )
     )
 
-    validado = request.session.get(
-        "recuperacion_token_validado",
-        False,
+
+    validado = (
+        request.session.get(
+            "recuperacion_token_validado",
+            False,
+        )
     )
+
 
     if (
         not usuario_id
         or not validado
-        or not token_vigente(request)
+        or not token_vigente(
+            request
+        )
     ):
 
         limpiar_recuperacion_session(
             request
         )
 
+
         return render(
             request,
             "confirmar_recuperacion.html",
             {
-                "valido": False,
-                "cambiada": False,
-                "tipo": (
-                    tipo or "cliente"
-                ),
+                "valido":
+                    False,
+
+                "cambiada":
+                    False,
+
+                "tipo":
+                    tipo or "cliente",
+
                 "mensaje":
-                    "La recuperación no "
-                    "es válida o expiró.",
+                    "La recuperación "
+                    "no es válida o expiró.",
             },
         )
+
 
     usuario = get_object_or_404(
         User,
@@ -1910,7 +3061,9 @@ def confirmar_recuperacion(
         is_active=True,
     )
 
+
     mensaje = ""
+
 
     if request.method == "POST":
 
@@ -1919,22 +3072,31 @@ def confirmar_recuperacion(
             "",
         )
 
+
         password2 = request.POST.get(
             "password2",
             "",
         )
 
-        if not password1 or not password2:
+
+        if (
+            not password1
+            or not password2
+        ):
 
             mensaje = (
-                "Debe diligenciar ambos campos."
+                "Debe diligenciar "
+                "ambos campos."
             )
+
 
         elif password1 != password2:
 
             mensaje = (
-                "Las contraseñas no coinciden."
+                "Las contraseñas "
+                "no coinciden."
             )
+
 
         else:
 
@@ -1945,11 +3107,13 @@ def confirmar_recuperacion(
                     user=usuario,
                 )
 
+
             except ValidationError as exc:
 
                 mensaje = " ".join(
                     exc.messages
                 )
+
 
             else:
 
@@ -1957,55 +3121,77 @@ def confirmar_recuperacion(
                     password1
                 )
 
+
                 usuario.save(
                     update_fields=[
                         "password"
                     ]
                 )
 
+
                 marcar_cambio_password(
                     usuario,
                     False,
                 )
 
+
                 tipo_final = tipo
+
 
                 limpiar_recuperacion_session(
                     request
                 )
 
+
                 return render(
                     request,
                     "confirmar_recuperacion.html",
                     {
-                        "valido": True,
-                        "cambiada": True,
-                        "tipo": tipo_final,
-                        "mensaje": "",
+                        "valido":
+                            True,
+
+                        "cambiada":
+                            True,
+
+                        "tipo":
+                            tipo_final,
+
+                        "mensaje":
+                            "",
                     },
                 )
+
 
     return render(
         request,
         "confirmar_recuperacion.html",
         {
-            "valido": True,
-            "cambiada": False,
-            "tipo": tipo,
-            "mensaje": mensaje,
+            "valido":
+                True,
+
+            "cambiada":
+                False,
+
+            "tipo":
+                tipo,
+
+            "mensaje":
+                mensaje,
         },
     )
 
 
 # =========================================================
-# EXPORTAR EXCEL
+# EXPORTAR RESERVAS A EXCEL
 # =========================================================
 
 @login_required(
     login_url="login"
 )
 @cambio_password_obligatorio
-def exportar_excel(request):
+def exportar_excel(
+    request
+):
 
     if not (
         request.user.is_staff
@@ -2016,40 +3202,68 @@ def exportar_excel(request):
             "login"
         )
 
+
     response = HttpResponse(
+
         content_type=(
             "application/vnd.openxmlformats-"
             "officedocument.spreadsheetml.sheet"
         )
     )
 
+
     response[
         "Content-Disposition"
     ] = (
-        'attachment; filename="reservas.xlsx"'
+        'attachment; '
+        'filename="reservas.xlsx"'
     )
 
-    workbook = openpyxl.Workbook()
 
-    worksheet = workbook.active
+    workbook = (
+        openpyxl.Workbook()
+    )
 
-    worksheet.title = "Reservas"
+
+    worksheet = (
+        workbook.active
+    )
+
+
+    worksheet.title = (
+        "Reservas"
+    )
+
 
     worksheet.append([
+
         "ID Reserva",
+
         "Usuario",
+
         "Nombre",
+
         "Apellido",
+
         "Tipo documento",
+
         "Documento",
+
         "Cancha",
+
         "Fecha",
+
         "Hora",
+
         "Duración",
+
         "Celular",
+
         "Comprobante",
+
         "Estado de pago",
     ])
+
 
     reservas_lista = (
         Reservas.objects.all()
@@ -2062,7 +3276,9 @@ def exportar_excel(request):
         )
     )
 
+
     for reserva in reservas_lista:
+
 
         usuario = (
             reserva.cliente.username
@@ -2070,11 +3286,13 @@ def exportar_excel(request):
             else "No asociado"
         )
 
+
         tiene_comprobante = (
             "Sí"
             if reserva.comprobante_pago
             else "No"
         )
+
 
         estado_pago = (
             "Pagado"
@@ -2082,24 +3300,40 @@ def exportar_excel(request):
             else "Pendiente"
         )
 
+
         worksheet.append([
+
             reserva.id,
+
             usuario,
+
             reserva.nombre,
+
             reserva.apellido,
+
             reserva.get_tipo_documento_display(),
+
             reserva.documento,
+
             reserva.cancha,
+
             reserva.fecha,
+
             reserva.hora,
+
             reserva.duracion,
+
             reserva.cel,
+
             tiene_comprobante,
+
             estado_pago,
         ])
+
 
     workbook.save(
         response
     )
+
 
     return response

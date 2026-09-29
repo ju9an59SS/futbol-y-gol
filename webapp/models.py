@@ -149,9 +149,12 @@ class Reservas(models.Model):
     # =====================================================
     # COMPROBANTE
     # =====================================================
+    # Ahora NO se guarda el archivo físicamente en Django.
+    # Aquí se guarda la URL privada de Vercel Blob.
+    # =====================================================
 
-    comprobante_pago = models.ImageField(
-        upload_to="comprobantes/%Y/%m/",
+    comprobante_pago = models.URLField(
+        max_length=1000,
         null=True,
         blank=True,
     )
