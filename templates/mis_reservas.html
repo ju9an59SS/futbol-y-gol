@@ -8,36 +8,16 @@
     <meta charset="utf-8">
 
     <title>
-        Mis Reservas - Futbol y Gol
+        Mis Reservas
     </title>
 
     <meta
         content="width=device-width, initial-scale=1.0"
         name="viewport">
 
-
     <link
         href="{% static 'img/logo.png' %}"
         rel="icon">
-
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com">
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap"
-        rel="stylesheet">
-
-
-    <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css"
-        rel="stylesheet">
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
-        rel="stylesheet">
-
 
     <link
         href="{% static 'css/bootstrap.min.css' %}"
@@ -53,543 +33,516 @@
 <body>
 
 
-    <!-- HEADER -->
+<div
+    class="container-fluid bg-dark px-0">
 
-    <div class="container-fluid bg-dark px-0">
+    <nav
+        class="navbar navbar-expand-lg bg-dark navbar-dark p-3 px-lg-5">
 
-        <div class="row gx-0">
+        <a
+            href="{% url 'index' %}"
+            class="navbar-brand">
 
-            <nav
-                class="navbar navbar-expand-lg
-                       bg-dark navbar-dark
-                       p-3 p-lg-0 px-lg-5">
+            <img
+                src="{% static 'img/logo.png' %}"
+                width="90"
+                alt="Logo">
 
+        </a>
+
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarCollapse">
+
+            <span
+                class="navbar-toggler-icon">
+            </span>
+
+        </button>
+
+
+        <div
+            class="collapse navbar-collapse"
+            id="navbarCollapse">
+
+            <div
+                class="navbar-nav">
 
                 <a
                     href="{% url 'index' %}"
-                    class="navbar-brand d-block d-lg-none">
+                    class="nav-item nav-link">
 
-                    <img
-                        src="{% static 'img/logo.png' %}"
-                        alt="Logo"
-                        width="100px">
+                    Inicio
 
                 </a>
 
+                <a
+                    href="{% url 'reservar' %}"
+                    class="nav-item nav-link">
 
-                <button
-                    type="button"
-                    class="navbar-toggler"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarCollapse">
+                    Reservar
 
-                    <span
-                        class="navbar-toggler-icon">
-                    </span>
+                </a>
 
-                </button>
+                <a
+                    href="{% url 'mis_reservas' %}"
+                    class="nav-item nav-link active">
 
+                    Mis Reservas
 
-                <div
-                    class="collapse navbar-collapse
-                           justify-content-between"
-                    id="navbarCollapse">
+                </a>
 
+                <a
+                    href="{% url 'perfil_cliente' %}"
+                    class="nav-item nav-link">
 
-                    <div class="navbar-nav mr-auto py-0">
+                    Mi Perfil
 
+                </a>
 
-                        <img
-                            src="{% static 'img/logo.png' %}"
-                            alt="Logo"
-                            width="100px">
+                <a
+                    href="{% url 'logout_cliente' %}"
+                    class="nav-item nav-link">
 
+                    Cerrar sesión
 
-                        <a
-                            href="{% url 'index' %}"
-                            class="nav-item nav-link">
+                </a>
 
-                            Inicio
+            </div>
 
-                        </a>
+        </div>
 
+    </nav>
 
-                        <a
-                            href="{% url 'reservar' %}"
-                            class="nav-item nav-link">
-
-                            Reservar
-
-                        </a>
+</div>
 
 
-                        <a
-                            href="{% url 'mis_reservas' %}"
-                            class="nav-item nav-link active">
-
-                            Mis Reservas
-
-                        </a>
+<main
+    class="container-fluid px-3 px-lg-5 py-5">
 
 
-                        <a
-                            href="{% url 'perfil_cliente' %}"
-                            class="nav-item nav-link">
+    <div
+        class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
 
-                            Mi Perfil
+        <div>
 
-                        </a>
+            <h1 class="mb-1">
+
+                Mis Reservas
+
+            </h1>
+
+            <p
+                class="text-muted mb-0">
+
+                Consulta tus reservas,
+                comprobantes y estado de pago.
+
+            </p>
+
+        </div>
 
 
-                        <a
-                            href="{% url 'logout_cliente' %}"
-                            class="nav-item nav-link">
+        <div
+            class="d-flex gap-2">
 
-                            Salir
+            <a
+                href="{% url 'reservar' %}"
+                class="btn btn-primary">
 
-                        </a>
+                Nueva reserva
+
+            </a>
 
 
-                    </div>
+            <a
+                href="{% url 'index' %}"
+                class="btn btn-outline-dark">
 
+                Regresar al inicio
 
-                    <span
-                        class="py-md-3 px-md-5
-                               d-none d-lg-block">
-
-                        Futbol y Gol
-
-                    </span>
-
-                </div>
-
-            </nav>
+            </a>
 
         </div>
 
     </div>
 
 
-    <!-- CONTENIDO -->
+    {% if mensaje %}
 
-    <main class="container mt-5">
+        <div
+            class="alert {% if tipo_mensaje == 'error' %}alert-danger{% else %}alert-success{% endif %}">
 
+            {{ mensaje }}
 
-        <h1 class="mb-4">
+        </div>
 
-            Mis Reservas
+    {% endif %}
 
-        </h1>
 
+    {% if reservas %}
 
-        {% if mensaje %}
 
-            {% if tipo_mensaje == "exito" %}
+        <div
+            class="table-responsive shadow-sm">
 
-                <div class="alert alert-success">
 
-                    {{ mensaje }}
+            <table
+                class="table table-bordered table-hover align-middle bg-white mb-0">
 
-                </div>
 
-            {% else %}
+                <thead
+                    class="table-dark">
 
-                <div class="alert alert-danger">
+                    <tr>
 
-                    {{ mensaje }}
+                        <th>
+                            ID
+                        </th>
 
-                </div>
+                        <th>
+                            Tipo de cancha
+                        </th>
 
-            {% endif %}
+                        <th>
+                            Fecha reserva
+                        </th>
 
-        {% endif %}
+                        <th>
+                            Hora de inicio
+                        </th>
 
+                        <th>
+                            Duración reserva
+                        </th>
 
-        {% if reservas %}
+                        <th>
+                            Comprobante
+                        </th>
 
+                        <th>
+                            Estado de pago
+                        </th>
 
-            <div class="table-responsive">
+                    </tr>
 
+                </thead>
 
-                <table
-                    class="table table-bordered
-                           table-striped align-middle">
 
+                <tbody>
 
-                    <thead>
 
-                        <tr>
+                {% for reserva in reservas %}
 
-                            <th>ID</th>
 
-                            <th>Cancha</th>
+                    <tr>
 
-                            <th>Fecha</th>
 
-                            <th>Hora</th>
+                        <td>
+                            #{{ reserva.id }}
+                        </td>
 
-                            <th>Duración</th>
 
-                            <th>Comprobante</th>
+                        <td>
 
-                            <th>Estado pago</th>
+                            {% if reserva.cancha == 'futbol5' %}
 
-                            <th>
-                                Subir / cambiar comprobante
-                            </th>
+                                Cancha Fútbol 5
 
-                        </tr>
+                            {% elif reserva.cancha == 'futbol7' %}
 
-                    </thead>
+                                Cancha Fútbol 7
 
+                            {% elif reserva.cancha == 'futbol11' %}
 
-                    <tbody>
+                                Cancha Fútbol 11
 
+                            {% else %}
 
-                        {% for reserva in reservas %}
+                                {{ reserva.cancha }}
 
+                            {% endif %}
 
-                            <tr>
+                        </td>
 
 
-                                <td>
+                        <td>
 
-                                    {{ reserva.id }}
+                            {{ reserva.fecha }}
 
-                                </td>
+                        </td>
 
 
-                                <td>
+                        <td>
 
-                                    {% if reserva.cancha == "futbol5" %}
+                            {{ reserva.hora|time:"H:i" }}
 
-                                        Cancha Futbol 5
+                        </td>
 
-                                    {% elif reserva.cancha == "futbol7" %}
 
-                                        Cancha Futbol 7
+                        <td>
 
-                                    {% elif reserva.cancha == "futbol11" %}
+                            {{ reserva.duracion }}
+                            hora{% if reserva.duracion != 1 %}s{% endif %}
 
-                                        Cancha Futbol 11
+                        </td>
 
-                                    {% else %}
 
-                                        {{ reserva.cancha }}
+                        <td
+                            style="min-width: 250px;">
 
-                                    {% endif %}
 
-                                </td>
+                            {% if reserva.comprobante_pago %}
 
 
-                                <td>
+                                <a
+                                    href="{% url 'ver_comprobante' reserva.id %}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="btn btn-info btn-sm mb-2">
 
-                                    {{ reserva.fecha }}
+                                    Ver comprobante
 
-                                </td>
+                                </a>
 
 
-                                <td>
+                            {% else %}
 
-                                    {{ reserva.hora }}
 
-                                </td>
+                                <div
+                                    class="text-muted mb-2">
 
+                                    Sin comprobante
 
-                                <td>
+                                </div>
 
-                                    {{ reserva.duracion }}
-                                    hora{% if reserva.duracion != 1 %}s{% endif %}
 
-                                </td>
+                            {% endif %}
 
 
-                                <!-- COMPROBANTE -->
+                            <form
+                                method="post"
+                                enctype="multipart/form-data">
 
-                                <td>
+                                {% csrf_token %}
 
+                                <input
+                                    type="hidden"
+                                    name="accion"
+                                    value="subir_comprobante">
+
+                                <input
+                                    type="hidden"
+                                    name="reserva_id"
+                                    value="{{ reserva.id }}">
+
+                                <input
+                                    type="file"
+                                    name="comprobante_pago"
+                                    class="form-control form-control-sm mb-2"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    required>
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary btn-sm">
 
                                     {% if reserva.comprobante_pago %}
 
-
-                                        <a
-                                            href="{% url 'ver_comprobante' reserva.id %}"
-                                            target="_blank"
-                                            class="btn btn-info btn-sm">
-
-                                            Ver comprobante
-
-                                        </a>
-
+                                        Cambiar comprobante
 
                                     {% else %}
 
-
-                                        <span
-                                            class="badge bg-secondary">
-
-                                            Sin comprobante
-
-                                        </span>
-
+                                        Subir comprobante
 
                                     {% endif %}
 
+                                </button>
 
-                                </td>
+                            </form>
 
 
-                                <!-- PAGO -->
+                        </td>
 
-                                <td>
 
+                        <td>
 
-                                    {% if reserva.pago %}
 
+                            <span
+                                class="badge estado-pago {% if reserva.pago %}bg-success{% else %}bg-warning text-dark{% endif %}"
+                                data-reserva-id="{{ reserva.id }}">
 
-                                        <span
-                                            class="badge bg-success"
-                                            id="estado-pago-{{ reserva.id }}">
+                                {% if reserva.pago %}
 
-                                            Pagado
+                                    Pagado
 
-                                        </span>
+                                {% else %}
 
+                                    Pendiente
 
-                                    {% else %}
+                                {% endif %}
 
+                            </span>
 
-                                        <span
-                                            class="badge bg-warning text-dark"
-                                            id="estado-pago-{{ reserva.id }}">
 
-                                            Pendiente
+                        </td>
 
-                                        </span>
 
+                    </tr>
 
-                                    {% endif %}
 
+                {% endfor %}
 
-                                </td>
 
+                </tbody>
 
-                                <!-- SUBIR FOTO -->
 
-                                <td>
+            </table>
 
-
-                                    <form
-                                        method="post"
-                                        enctype="multipart/form-data">
-
-                                        {% csrf_token %}
-
-
-                                        <input
-                                            type="hidden"
-                                            name="accion"
-                                            value="subir_comprobante">
-
-
-                                        <input
-                                            type="hidden"
-                                            name="reserva_id"
-                                            value="{{ reserva.id }}">
-
-
-                                        <input
-                                            type="file"
-                                            name="comprobante_pago"
-                                            class="form-control form-control-sm mb-2"
-                                            accept="image/jpeg,image/png,image/webp"
-                                            required>
-
-
-                                        <button
-                                            type="submit"
-                                            class="btn btn-primary btn-sm">
-
-
-                                            {% if reserva.comprobante_pago %}
-
-                                                Cambiar comprobante
-
-                                            {% else %}
-
-                                                Subir comprobante
-
-                                            {% endif %}
-
-
-                                        </button>
-
-
-                                    </form>
-
-
-                                </td>
-
-
-                            </tr>
-
-
-                        {% endfor %}
-
-
-                    </tbody>
-
-
-                </table>
-
-
-            </div>
-
-
-        {% else %}
-
-
-            <div class="alert alert-info">
-
-                Todavía no tienes reservas.
-
-            </div>
-
-
-        {% endif %}
-
-
-    </main>
-
-
-    <!-- ACTUALIZACIÓN AUTOMÁTICA DEL ESTADO -->
-
-    <script>
-
-        async function actualizarEstadosPago() {
-
-            try {
-
-                const response =
-                    await fetch(
-                        "{% url 'estado_reservas_cliente' %}",
-                        {
-                            method: "GET",
-                            headers: {
-                                "X-Requested-With":
-                                    "XMLHttpRequest"
-                            }
-                        }
-                    );
-
-
-                if (!response.ok) {
-                    return;
-                }
-
-
-                const data =
-                    await response.json();
-
-
-                for (
-                    const reserva
-                    of data.reservas
-                ) {
-
-
-                    const elemento =
-                        document.getElementById(
-                            "estado-pago-"
-                            + reserva.id
-                        );
-
-
-                    if (!elemento) {
-                        continue;
-                    }
-
-
-                    if (reserva.pago) {
-
-                        elemento.textContent =
-                            "Pagado";
-
-                        elemento.className =
-                            "badge bg-success";
-
-                    } else {
-
-                        elemento.textContent =
-                            "Pendiente";
-
-                        elemento.className =
-                            "badge bg-warning text-dark";
-
-                    }
-
-                }
-
-            } catch (error) {
-
-                console.log(
-                    "No fue posible actualizar "
-                    + "los estados de pago."
-                );
-
-            }
-
-        }
-
-
-        setInterval(
-            actualizarEstadosPago,
-            5000
-        );
-
-    </script>
-
-
-    <!-- FOOTER -->
-
-    <footer>
-
-        <div
-            class="container-fluid
-                   bg-dark text-secondary
-                   px-5 mt-5">
-
-            <div class="row gx-5">
-
-                <div class="col-lg-8 col-md-6">
-
-                    <p class="text-light">
-
-                        <img
-                            src="{% static 'img/logo.png' %}"
-                            alt="Logo"
-                            width="100px">
-
-                        Futbol y Gol
-
-                    </p>
-
-                </div>
-
-            </div>
 
         </div>
 
 
-        <script
-            src="https://code.jquery.com/jquery-3.4.1.min.js">
-        </script>
+    {% else %}
 
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
-        </script>
 
-    </footer>
+        <div
+            class="alert alert-info">
+
+            Todavía no tienes
+            reservas registradas.
+
+        </div>
+
+
+    {% endif %}
+
+
+</main>
+
+
+<script>
+
+    async function actualizarEstados() {
+
+        try {
+
+            const response =
+                await fetch(
+
+                    "{% url 'estado_reservas_cliente' %}",
+
+                    {
+                        method:
+                            "GET",
+
+                        headers: {
+                            "X-Requested-With":
+                                "XMLHttpRequest"
+                        },
+
+                        cache:
+                            "no-store"
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                return;
+
+            }
+
+
+            const datos =
+                await response.json();
+
+
+            if (
+                !datos.ok
+                || !Array.isArray(
+                    datos.reservas
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            datos.reservas.forEach(
+                (item) => {
+
+                    const badge =
+                        document.querySelector(
+                            `.estado-pago[data-reserva-id="${item.id}"]`
+                        );
+
+
+                    if (!badge) {
+
+                        return;
+
+                    }
+
+
+                    badge.textContent =
+                        item.estado;
+
+
+                    badge.classList.remove(
+                        "bg-success",
+                        "bg-warning",
+                        "text-dark"
+                    );
+
+
+                    if (item.pago) {
+
+                        badge.classList.add(
+                            "bg-success"
+                        );
+
+                    } else {
+
+                        badge.classList.add(
+                            "bg-warning",
+                            "text-dark"
+                        );
+
+                    }
+
+                }
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "No fue posible actualizar "
+                + "los estados:",
+                error
+            );
+
+        }
+
+    }
+
+
+    setInterval(
+        actualizarEstados,
+        5000
+    );
+
+</script>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
+</script>
 
 
 </body>

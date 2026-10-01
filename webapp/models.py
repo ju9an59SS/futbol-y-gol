@@ -145,12 +145,8 @@ class Reservas(models.Model):
         max_length=10
     )
 
-
     # =====================================================
-    # COMPROBANTE
-    # =====================================================
-    # Ahora NO se guarda el archivo físicamente en Django.
-    # Aquí se guarda la URL privada de Vercel Blob.
+    # COMPROBANTE EN VERCEL BLOB
     # =====================================================
 
     comprobante_pago = models.URLField(
@@ -159,16 +155,13 @@ class Reservas(models.Model):
         blank=True,
     )
 
-
     # =====================================================
     # ESTADO DE PAGO
-    # SOLO ADMINISTRADOR LO CAMBIA
     # =====================================================
 
     pago = models.BooleanField(
         default=False
     )
-
 
     def __str__(self):
 

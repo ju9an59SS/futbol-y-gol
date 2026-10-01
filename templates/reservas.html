@@ -8,36 +8,16 @@
     <meta charset="utf-8">
 
     <title>
-        Administración de Reservas
+        Administrar Reservas
     </title>
 
     <meta
         content="width=device-width, initial-scale=1.0"
         name="viewport">
 
-
     <link
         href="{% static 'img/logo.png' %}"
         rel="icon">
-
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com">
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap"
-        rel="stylesheet">
-
-
-    <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css"
-        rel="stylesheet">
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
-        rel="stylesheet">
-
 
     <link
         href="{% static 'css/bootstrap.min.css' %}"
@@ -53,158 +33,142 @@
 <body>
 
 
-    <!-- HEADER -->
+<div
+    class="container-fluid bg-dark px-0">
 
-    <div class="container-fluid bg-dark px-0">
 
-        <div class="row gx-0">
+    <nav
+        class="navbar navbar-expand-lg bg-dark navbar-dark p-3 px-lg-5">
 
-            <nav
-                class="navbar navbar-expand-lg
-                       bg-dark navbar-dark
-                       p-3 p-lg-0 px-lg-5">
+
+        <a
+            href="{% url 'index' %}"
+            class="navbar-brand">
+
+            <img
+                src="{% static 'img/logo.png' %}"
+                width="90"
+                alt="Logo">
+
+        </a>
+
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarCollapse">
+
+            <span
+                class="navbar-toggler-icon">
+            </span>
+
+        </button>
+
+
+        <div
+            class="collapse navbar-collapse"
+            id="navbarCollapse">
+
+
+            <div
+                class="navbar-nav">
 
 
                 <a
                     href="{% url 'index' %}"
-                    class="navbar-brand d-block d-lg-none">
+                    class="nav-item nav-link">
 
-                    <img
-                        src="{% static 'img/logo.png' %}"
-                        alt="Logo"
-                        width="100px">
+                    Inicio
 
                 </a>
 
 
-                <button
-                    type="button"
-                    class="navbar-toggler"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarCollapse">
+                <a
+                    href="{% url 'reservas' %}"
+                    class="nav-item nav-link active">
 
-                    <span
-                        class="navbar-toggler-icon">
-                    </span>
+                    Reservas
 
-                </button>
+                </a>
 
 
-                <div
-                    class="collapse navbar-collapse
-                           justify-content-between"
-                    id="navbarCollapse">
+                <a
+                    href="{% url 'registrar_administrador' %}"
+                    class="nav-item nav-link">
+
+                    Registrar administrador
+
+                </a>
 
 
-                    <div class="navbar-nav mr-auto py-0">
+                <a
+                    href="{% url 'logout' %}"
+                    class="nav-item nav-link">
 
+                    Salir
 
-                        <img
-                            src="{% static 'img/logo.png' %}"
-                            alt="Logo"
-                            width="100px">
+                </a>
 
-
-                        <a
-                            href="{% url 'index' %}"
-                            class="nav-item nav-link">
-
-                            Inicio
-
-                        </a>
-
-
-                        <a
-                            href="{% url 'reservas' %}"
-                            class="nav-item nav-link active">
-
-                            Reservas
-
-                        </a>
-
-
-                        <a
-                            href="{% url 'registrar_administrador' %}"
-                            class="nav-item nav-link">
-
-                            Registrar administrador
-
-                        </a>
-
-
-                        <a
-                            href="{% url 'logout' %}"
-                            class="nav-item nav-link">
-
-                            Salir
-
-                        </a>
-
-
-                    </div>
-
-
-                    <span
-                        class="py-md-3 px-md-5
-                               d-none d-lg-block">
-
-                        Futbol y Gol
-
-                    </span>
-
-                </div>
-
-            </nav>
-
-        </div>
-
-    </div>
-
-
-    <!-- CONTENIDO -->
-
-    <main class="container-fluid mt-5 px-4">
-
-
-        <div
-            class="d-flex flex-wrap
-                   justify-content-between
-                   align-items-center mb-4">
-
-
-            <div>
-
-                <h1>
-
-                    Listado de reservas
-
-                </h1>
-
-                <p>
-
-                    Administrador:
-                    <strong>
-                        {{ admin_usuario }}
-                    </strong>
-
-                </p>
 
             </div>
 
 
-            <!-- EXCEL -->
+        </div>
+
+
+    </nav>
+
+
+</div>
+
+
+<main
+    class="container-fluid px-3 px-lg-5 py-5">
+
+
+    <div
+        class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+
+
+        <div>
+
+            <h1 class="mb-1">
+
+                Administrar Reservas
+
+            </h1>
+
+            <p
+                class="text-muted mb-0">
+
+                Administrador:
+
+                <strong>
+
+                    {{ admin_usuario }}
+
+                </strong>
+
+            </p>
+
+        </div>
+
+
+        <div
+            class="d-flex flex-wrap gap-2">
+
 
             <form
                 action="{% url 'exportar_excel' %}"
-                method="post">
+                method="post"
+                class="d-inline">
 
                 {% csrf_token %}
 
                 <button
                     type="submit"
                     class="btn btn-primary">
-
-                    <i class="fas fa-file-excel"></i>
 
                     Exportar a Excel
 
@@ -213,62 +177,62 @@
             </form>
 
 
+            <a
+                href="{% url 'index' %}"
+                class="btn btn-outline-dark">
+
+                Regresar al inicio
+
+            </a>
+
+
         </div>
 
 
-        <!-- MENSAJE -->
-
-        {% if mensaje %}
-
-            {% if tipo_mensaje == "error" %}
-
-                <div class="alert alert-danger">
-
-                    {{ mensaje }}
-
-                </div>
-
-            {% else %}
-
-                <div class="alert alert-success">
-
-                    {{ mensaje }}
-
-                </div>
-
-            {% endif %}
-
-        {% endif %}
+    </div>
 
 
-        <!-- TABLA -->
+    {% if mensaje %}
 
-        <div class="table-responsive">
+
+        <div
+            class="alert {% if tipo_mensaje == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+
+            {{ mensaje }}
+
+        </div>
+
+
+    {% endif %}
+
+
+    {% if reservas %}
+
+
+        <div
+            class="table-responsive shadow-sm">
 
 
             <table
-                class="table table-bordered
-                       table-striped align-middle">
+                class="table table-bordered table-hover align-middle bg-white mb-0">
 
 
-                <thead>
+                <thead
+                    class="table-dark">
+
 
                     <tr>
 
-                        <th>
-                            ID
-                        </th>
+                        <th>ID</th>
+
+                        <th>Usuario</th>
+
+                        <th>Nombre</th>
+
+                        <th>Apellido</th>
 
                         <th>
-                            Usuario
-                        </th>
-
-                        <th>
-                            Nombre
-                        </th>
-
-                        <th>
-                            Apellido
+                            Tipo documento
                         </th>
 
                         <th>
@@ -276,19 +240,19 @@
                         </th>
 
                         <th>
-                            Cancha
+                            Tipo de cancha
                         </th>
 
                         <th>
-                            Fecha
+                            Fecha reserva
                         </th>
 
                         <th>
-                            Hora
+                            Hora de inicio
                         </th>
 
                         <th>
-                            Duración
+                            Duración reserva
                         </th>
 
                         <th>
@@ -300,7 +264,7 @@
                         </th>
 
                         <th>
-                            Pago
+                            Estado de pago
                         </th>
 
                         <th>
@@ -309,255 +273,224 @@
 
                     </tr>
 
+
                 </thead>
 
 
                 <tbody>
 
 
-                    {% for reserva in reservas %}
+                {% for reserva in reservas %}
 
 
-                        <tr>
+                    <tr>
 
 
-                            <td>
+                        <td>
 
-                                {{ reserva.id }}
+                            #{{ reserva.id }}
 
-                            </td>
+                        </td>
 
 
-                            <td>
+                        <td>
 
-                                {% if reserva.cliente %}
+                            {% if reserva.cliente %}
 
-                                    {{ reserva.cliente.username }}
+                                {{ reserva.cliente.username }}
 
-                                {% else %}
+                            {% else %}
 
-                                    No asociado
+                                No asociado
 
-                                {% endif %}
+                            {% endif %}
 
-                            </td>
+                        </td>
 
 
-                            <td>
+                        <td>
 
-                                {{ reserva.nombre }}
+                            {{ reserva.nombre }}
 
-                            </td>
+                        </td>
 
 
-                            <td>
+                        <td>
 
-                                {{ reserva.apellido }}
+                            {{ reserva.apellido }}
 
-                            </td>
+                        </td>
 
 
-                            <td>
+                        <td>
 
-                                {{ reserva.tipo_documento }}
-                                {{ reserva.documento }}
+                            {{ reserva.get_tipo_documento_display }}
 
-                            </td>
+                        </td>
 
 
-                            <td>
+                        <td>
 
-                                {% if reserva.cancha == "futbol5" %}
+                            {{ reserva.documento }}
 
-                                    Cancha Futbol 5
+                        </td>
 
-                                {% elif reserva.cancha == "futbol7" %}
 
-                                    Cancha Futbol 7
+                        <td>
 
-                                {% elif reserva.cancha == "futbol11" %}
+                            {% if reserva.cancha == 'futbol5' %}
 
-                                    Cancha Futbol 11
+                                Cancha Fútbol 5
 
-                                {% else %}
+                            {% elif reserva.cancha == 'futbol7' %}
 
-                                    {{ reserva.cancha }}
+                                Cancha Fútbol 7
 
-                                {% endif %}
+                            {% elif reserva.cancha == 'futbol11' %}
 
-                            </td>
+                                Cancha Fútbol 11
 
+                            {% else %}
 
-                            <td>
+                                {{ reserva.cancha }}
 
-                                {{ reserva.fecha }}
+                            {% endif %}
 
-                            </td>
+                        </td>
 
 
-                            <td>
+                        <td>
 
-                                {{ reserva.hora }}
+                            {{ reserva.fecha }}
 
-                            </td>
+                        </td>
 
 
-                            <td>
+                        <td>
 
-                                {{ reserva.duracion }}
-                                hora{% if reserva.duracion != 1 %}s{% endif %}
+                            {{ reserva.hora|time:"H:i" }}
 
-                            </td>
+                        </td>
 
 
-                            <td>
+                        <td>
 
-                                {{ reserva.cel }}
+                            {{ reserva.duracion }}
 
-                            </td>
+                            hora{% if reserva.duracion != 1 %}s{% endif %}
 
+                        </td>
 
-                            <!-- COMPROBANTE -->
 
-                            <td>
+                        <td>
 
+                            {{ reserva.cel }}
 
-                                {% if reserva.comprobante_pago %}
+                        </td>
 
 
-                                    <a
-                                        href="{% url 'ver_comprobante' reserva.id %}"
-                                        target="_blank"
-                                        class="btn btn-info btn-sm mb-1">
+                        <!-- COMPROBANTE -->
 
-                                        Ver foto
+                        <td>
 
-                                    </a>
 
+                            {% if reserva.comprobante_pago %}
 
-                                {% else %}
 
+                                <a
+                                    href="{% url 'ver_comprobante' reserva.id %}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="btn btn-info btn-sm">
 
-                                    <span
-                                        class="badge bg-secondary">
+                                    Ver comprobante
 
-                                        Sin comprobante
+                                </a>
 
-                                    </span>
 
+                            {% else %}
 
-                                {% endif %}
 
+                                <span
+                                    class="text-muted">
 
-                            </td>
+                                    Sin comprobante
 
+                                </span>
 
-                            <!-- CHECKBOX PAGO -->
 
-                            <td class="text-center">
+                            {% endif %}
+
+
+                        </td>
+
+
+                        <!-- PAGO -->
+
+                        <td
+                            style="min-width: 150px;">
+
+
+                            <div
+                                class="form-check form-switch mb-2">
 
 
                                 <input
+                                    class="form-check-input pago-checkbox"
                                     type="checkbox"
-                                    name="pago"
-                                    {% if reserva.pago %}
-                                        checked
-                                    {% endif %}
-                                    data-reserva-id="{{ reserva.id }}">
+                                    id="pago-{{ reserva.id }}"
+                                    data-reserva-id="{{ reserva.id }}"
+                                    {% if reserva.pago %}checked{% endif %}>
 
 
-                                <div class="mt-1">
+                                <label
+                                    class="form-check-label"
+                                    for="pago-{{ reserva.id }}">
+
+                                    Confirmar pago
+
+                                </label>
 
 
-                                    {% if reserva.pago %}
-
-                                        <span
-                                            class="badge bg-success">
-
-                                            Pagado
-
-                                        </span>
-
-                                    {% else %}
-
-                                        <span
-                                            class="badge bg-warning text-dark">
-
-                                            Pendiente
-
-                                        </span>
-
-                                    {% endif %}
+                            </div>
 
 
-                                </div>
+                            <span
+                                class="badge estado-pago {% if reserva.pago %}bg-success{% else %}bg-warning text-dark{% endif %}"
+                                data-reserva-id="{{ reserva.id }}">
 
 
-                            </td>
+                                {% if reserva.pago %}
 
+                                    Pagado
 
-                            <!-- ACCIONES -->
+                                {% else %}
 
-                            <td>
-
-
-                                <!-- ELIMINAR SOLO FOTO -->
-
-                                {% if reserva.comprobante_pago %}
-
-
-                                    <form
-                                        method="post"
-                                        class="d-inline"
-                                        onsubmit="
-                                            return confirm(
-                                                '¿Eliminar solamente el comprobante de esta reserva?'
-                                            );
-                                        ">
-
-                                        {% csrf_token %}
-
-
-                                        <input
-                                            type="hidden"
-                                            name="accion"
-                                            value="eliminar_comprobante">
-
-
-                                        <input
-                                            type="hidden"
-                                            name="reserva_id"
-                                            value="{{ reserva.id }}">
-
-
-                                        <button
-                                            type="submit"
-                                            class="btn btn-warning btn-sm mb-1">
-
-                                            <i class="fas fa-image"></i>
-
-                                            Eliminar foto
-
-                                        </button>
-
-
-                                    </form>
-
+                                    Pendiente
 
                                 {% endif %}
 
 
-                                <!-- ELIMINAR RESERVA COMPLETA -->
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- ACCIONES -->
+
+                        <td
+                            style="min-width: 190px;">
+
+
+                            {% if reserva.comprobante_pago %}
 
 
                                 <form
                                     method="post"
-                                    class="d-inline"
-                                    onsubmit="
-                                        return confirm(
-                                            '¿Está seguro de eliminar completamente esta reserva?'
-                                        );
-                                    ">
+                                    class="mb-2"
+                                    onsubmit="return confirm('¿Eliminar solamente el comprobante? La reserva se conservará y volverá a Pendiente.');">
+
 
                                     {% csrf_token %}
 
@@ -565,7 +498,7 @@
                                     <input
                                         type="hidden"
                                         name="accion"
-                                        value="eliminar_reserva">
+                                        value="eliminar_comprobante">
 
 
                                     <input
@@ -576,11 +509,9 @@
 
                                     <button
                                         type="submit"
-                                        class="btn btn-danger btn-sm mb-1">
+                                        class="btn btn-warning btn-sm w-100">
 
-                                        <i class="fas fa-trash"></i>
-
-                                        Eliminar reserva
+                                        Eliminar foto
 
                                     </button>
 
@@ -588,29 +519,48 @@
                                 </form>
 
 
-                            </td>
+                            {% endif %}
 
 
-                        </tr>
+                            <form
+                                method="post"
+                                onsubmit="return confirm('¿Eliminar toda la reserva? Esta acción no se puede deshacer.');">
 
 
-                    {% empty %}
+                                {% csrf_token %}
 
 
-                        <tr>
-
-                            <td
-                                colspan="13"
-                                class="text-center">
-
-                                No hay reservas registradas.
-
-                            </td>
-
-                        </tr>
+                                <input
+                                    type="hidden"
+                                    name="accion"
+                                    value="eliminar_reserva">
 
 
-                    {% endfor %}
+                                <input
+                                    type="hidden"
+                                    name="reserva_id"
+                                    value="{{ reserva.id }}">
+
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-danger btn-sm w-100">
+
+                                    Eliminar reserva
+
+                                </button>
+
+
+                            </form>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                {% endfor %}
 
 
                 </tbody>
@@ -622,98 +572,156 @@
         </div>
 
 
-        <!-- GUARDAR PAGOS -->
-
-        <button
-            id="guardar-todo"
-            type="button"
-            class="btn btn-success mt-3">
-
-            <i class="fas fa-save"></i>
-
-            Guardar estados de pago
-
-        </button>
+    {% else %}
 
 
-    </main>
+        <div
+            class="alert alert-info">
+
+            No hay reservas registradas.
+
+        </div>
 
 
-    <!-- ACTUALIZAR TODOS LOS CHECKBOX -->
-
-    <script>
+    {% endif %}
 
 
-        const botonGuardar =
-            document.getElementById(
-                "guardar-todo"
-            );
+</main>
 
 
-        botonGuardar.addEventListener(
-            "click",
-            async function () {
+<script>
 
 
-                botonGuardar.disabled = true;
+    // =====================================================
+    // OBTENER CSRF
+    // =====================================================
+
+    function getCookie(name) {
+
+        let cookieValue = null;
 
 
-                const textoOriginal =
-                    botonGuardar.innerHTML;
+        if (
+            document.cookie
+            && document.cookie !== ""
+        ) {
+
+            const cookies =
+                document.cookie.split(";");
 
 
-                botonGuardar.innerHTML =
-                    "Guardando...";
+            for (
+                let i = 0;
+                i < cookies.length;
+                i++
+            ) {
+
+                const cookie =
+                    cookies[i].trim();
 
 
-                const checkboxes =
-                    document.querySelectorAll(
-                        'input[name="pago"]'
+                if (
+                    cookie.substring(
+                        0,
+                        name.length + 1
+                    )
+                    ===
+                    (
+                        name + "="
+                    )
+                ) {
+
+                    cookieValue =
+                        decodeURIComponent(
+                            cookie.substring(
+                                name.length + 1
+                            )
+                        );
+
+                    break;
+
+                }
+
+            }
+
+        }
+
+
+        return cookieValue;
+
+    }
+
+
+    // =====================================================
+    // CHECKBOX AUTOMÁTICO
+    // =====================================================
+
+    document
+    .querySelectorAll(
+        ".pago-checkbox"
+    )
+    .forEach(
+        (
+            checkbox
+        ) => {
+
+
+            checkbox.addEventListener(
+                "change",
+                async () => {
+
+
+                    const reservaId =
+                        checkbox.dataset
+                        .reservaId;
+
+
+                    const estadoAnterior =
+                        !checkbox.checked;
+
+
+                    const badge =
+                        document.querySelector(
+                            `.estado-pago[data-reserva-id="${reservaId}"]`
+                        );
+
+
+                    checkbox.disabled =
+                        true;
+
+
+                    const formData =
+                        new FormData();
+
+
+                    formData.append(
+                        "accion",
+                        "actualizar_pago"
                     );
 
 
-                try {
+                    formData.append(
+                        "reserva_id",
+                        reservaId
+                    );
 
 
-                    for (
-                        const checkbox
-                        of checkboxes
-                    ) {
+                    formData.append(
+                        "pago",
+                        checkbox.checked
+                            ? "on"
+                            : "off"
+                    );
 
 
-                        const reservaId =
-                            checkbox.getAttribute(
-                                "data-reserva-id"
-                            );
-
-
-                        const formData =
-                            new FormData();
-
-
-                        formData.append(
-                            "accion",
-                            "actualizar_pago"
-                        );
-
-
-                        formData.append(
-                            "reserva_id",
-                            reservaId
-                        );
-
-
-                        formData.append(
-                            "pago",
-                            checkbox.checked
-                                ? "on"
-                                : "off"
-                        );
+                    try {
 
 
                         const response =
                             await fetch(
+
                                 "{% url 'reservas' %}",
+
                                 {
 
                                     method:
@@ -722,112 +730,118 @@
                                     headers: {
 
                                         "X-CSRFToken":
-                                            "{{ csrf_token }}",
+                                            getCookie(
+                                                "csrftoken"
+                                            ),
 
                                         "X-Requested-With":
                                             "XMLHttpRequest"
-
                                     },
 
                                     body:
                                         formData
-
                                 }
                             );
 
 
-                        if (!response.ok) {
+                        if (
+                            !response.ok
+                        ) {
 
                             throw new Error(
-                                "Error en reserva "
-                                + reservaId
+                                "No fue posible guardar el estado."
                             );
 
                         }
 
 
+                        const datos =
+                            await response.json();
+
+
+                        if (!datos.ok) {
+
+                            throw new Error(
+                                datos.error
+                                ||
+                                "No fue posible guardar el estado."
+                            );
+
+                        }
+
+
+                        if (badge) {
+
+
+                            badge.textContent =
+                                datos.estado;
+
+
+                            badge.classList.remove(
+                                "bg-success",
+                                "bg-warning",
+                                "text-dark"
+                            );
+
+
+                            if (
+                                datos.pago
+                            ) {
+
+                                badge.classList.add(
+                                    "bg-success"
+                                );
+
+                            } else {
+
+                                badge.classList.add(
+                                    "bg-warning",
+                                    "text-dark"
+                                );
+
+                            }
+
+                        }
+
+
+                    } catch (error) {
+
+
+                        checkbox.checked =
+                            estadoAnterior;
+
+
+                        alert(
+                            error.message
+                            ||
+                            "Error guardando el estado de pago."
+                        );
+
+
+                    } finally {
+
+
+                        checkbox.disabled =
+                            false;
+
+
                     }
 
 
-                    alert(
-                        "Estados de pago guardados correctamente."
-                    );
-
-
-                    window.location.reload();
-
-
-                } catch (error) {
-
-
-                    console.error(
-                        error
-                    );
-
-
-                    alert(
-                        "No fue posible guardar todos los estados de pago."
-                    );
-
-
-                    botonGuardar.disabled =
-                        false;
-
-
-                    botonGuardar.innerHTML =
-                        textoOriginal;
-
-
                 }
+            );
 
 
-            }
-        );
+        }
+    );
 
 
-    </script>
+</script>
 
 
-    <!-- FOOTER -->
-
-    <footer>
-
-        <div
-            class="container-fluid
-                   bg-dark text-secondary
-                   px-5 mt-5">
-
-            <div class="row gx-5">
-
-                <div class="col-lg-8 col-md-6">
-
-                    <p class="text-light">
-
-                        <img
-                            src="{% static 'img/logo.png' %}"
-                            alt="Logo"
-                            width="100px">
-
-                        Futbol y Gol
-
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <script
-            src="https://code.jquery.com/jquery-3.4.1.min.js">
-        </script>
-
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
-        </script>
-
-    </footer>
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
+</script>
 
 
 </body>

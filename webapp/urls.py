@@ -6,7 +6,7 @@ from . import views
 urlpatterns = [
 
     # =====================================================
-    # INICIO
+    # HOME
     # =====================================================
 
     path(
@@ -15,9 +15,8 @@ urlpatterns = [
         name="index",
     ),
 
-
     # =====================================================
-    # CLIENTE - REGISTRO
+    # CLIENTE
     # =====================================================
 
     path(
@@ -32,11 +31,6 @@ urlpatterns = [
         name="registro_cliente_exitoso",
     ),
 
-
-    # =====================================================
-    # CLIENTE - LOGIN / LOGOUT
-    # =====================================================
-
     path(
         "cliente/login/",
         views.login_cliente,
@@ -49,21 +43,11 @@ urlpatterns = [
         name="logout_cliente",
     ),
 
-
-    # =====================================================
-    # CLIENTE - PERFIL
-    # =====================================================
-
     path(
         "cliente/perfil/",
         views.perfil_cliente,
         name="perfil_cliente",
     ),
-
-
-    # =====================================================
-    # CLIENTE - RESERVAS
-    # =====================================================
 
     path(
         "cliente/mis-reservas/",
@@ -72,14 +56,13 @@ urlpatterns = [
     ),
 
     path(
-        "cliente/estado-reservas/",
+        "cliente/mis-reservas/estado/",
         views.estado_reservas_cliente,
         name="estado_reservas_cliente",
     ),
 
-
     # =====================================================
-    # CREAR RESERVA
+    # RESERVAR
     # =====================================================
 
     path(
@@ -88,59 +71,8 @@ urlpatterns = [
         name="reservar",
     ),
 
-
     # =====================================================
-    # COMPROBANTE PRIVADO
-    # =====================================================
-
-    path(
-        "reserva/<int:reserva_id>/comprobante/",
-        views.ver_comprobante,
-        name="ver_comprobante",
-    ),
-
-
-    # =====================================================
-    # CAMBIO OBLIGATORIO DE CONTRASEÑA
-    # =====================================================
-
-    path(
-        "cambiar-password-inicial/",
-        views.cambiar_password_inicial,
-        name="cambiar_password_inicial",
-    ),
-
-
-    # =====================================================
-    # ADMINISTRADOR - LOGIN / LOGOUT
-    # =====================================================
-
-    path(
-        "login/",
-        views.login,
-        name="login",
-    ),
-
-    path(
-        "logout/",
-        views.logout,
-        name="logout",
-    ),
-
-
-    # =====================================================
-    # ADMINISTRADOR - RESERVAS
-    # =====================================================
-
-    path(
-        "reservas/",
-        views.reservas,
-        name="reservas",
-    ),
-
-
-    # =====================================================
-    # ADMINISTRADOR - REGISTRO
+    # ADMINISTRADOR
     # =====================================================
 
     path(
@@ -149,64 +81,75 @@ urlpatterns = [
         name="registrar_administrador",
     ),
 
+    path(
+        "administrador/login/",
+        views.login,
+        name="login",
+    ),
+
+    path(
+        "administrador/logout/",
+        views.logout,
+        name="logout",
+    ),
+
+    path(
+        "administrador/reservas/",
+        views.reservas,
+        name="reservas",
+    ),
+
+    path(
+        "administrador/exportar-excel/",
+        views.exportar_excel,
+        name="exportar_excel",
+    ),
 
     # =====================================================
-    # RECUPERACIÓN CLIENTE
+    # COMPROBANTES
     # =====================================================
 
     path(
-        "cliente/recuperar/",
-        views.recuperar_password,
-        {
-            "tipo": "cliente"
-        },
+        "comprobante/<int:reserva_id>/",
+        views.ver_comprobante,
+        name="ver_comprobante",
+    ),
+
+    # =====================================================
+    # CAMBIO PASSWORD PRIMER INGRESO
+    # =====================================================
+
+    path(
+        "cambiar-password-inicial/",
+        views.cambiar_password_inicial,
+        name="cambiar_password_inicial",
+    ),
+
+    # =====================================================
+    # RECUPERACIÓN
+    # =====================================================
+
+    path(
+        "cliente/recuperar-password/",
+        views.recuperar_password_cliente,
         name="recuperar_password_cliente",
     ),
 
-
-    # =====================================================
-    # RECUPERACIÓN ADMIN
-    # =====================================================
-
     path(
-        "administrador/recuperar/",
-        views.recuperar_password,
-        {
-            "tipo": "admin"
-        },
+        "administrador/recuperar-password/",
+        views.recuperar_password_admin,
         name="recuperar_password_admin",
     ),
 
-
-    # =====================================================
-    # VALIDAR TOKEN
-    # =====================================================
-
     path(
-        "recuperar/validar-token/",
+        "recuperar/validar-codigo/",
         views.validar_token_recuperacion,
         name="validar_token_recuperacion",
     ),
-
-
-    # =====================================================
-    # NUEVA CONTRASEÑA
-    # =====================================================
 
     path(
         "recuperar/nueva-password/",
         views.confirmar_recuperacion,
         name="confirmar_recuperacion",
-    ),
-
-
-    # =====================================================
-    # EXPORTAR EXCEL
-    # =====================================================
-
-    path(
-        "exportar-excel/",
-        views.exportar_excel,
-        name="exportar_excel",
     ),
 ]

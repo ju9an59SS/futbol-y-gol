@@ -1,6 +1,10 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.db import (
+    OperationalError,
+    connections,
+)
 
 from .models import (
     PerfilAdministrador,
@@ -10,18 +14,43 @@ from .models import (
 
 
 # =========================================================
+# CONSULTA CON REINTENTO
+# =========================================================
+
+def existe_con_reintento(queryset):
+
+    try:
+        return queryset.exists()
+
+    except OperationalError:
+
+        connections.close_all()
+
+        return queryset.exists()
+
+
+# =========================================================
 # VALIDAR DOCUMENTO
 # =========================================================
 
 def validar_documento(
     tipo_documento,
-    documento
+    documento,
 ):
 
-    documento = str(
-        documento or ""
+    documento = (
+        documento
+        or ""
     ).strip()
 
+    if tipo_documento not in dict(
+        TIPOS_DOCUMENTO
+    ):
+
+        raise ValidationError(
+            "El tipo de documento seleccionado "
+            "no es válido."
+        )
 
     if not documento:
 
@@ -29,21 +58,54 @@ def validar_documento(
             "El documento es obligatorio."
         )
 
+    if not documento.isdigit():
 
-    if tipo_documento in [
-        "CC",
-        "TI",
-    ]:
+        raise ValidationError(
+            "El documento debe contener "
+            "únicamente números."
+        )
 
-        if not documento.isdigit():
+    if (
+        len(documento) < 6
+        or len(documento) > 20
+    ):
 
-            raise ValidationError(
-                "El documento debe contener "
-                "únicamente números."
-            )
-
+        raise ValidationError(
+            "El documento debe tener "
+            "entre 6 y 20 dígitos."
+        )
 
     return documento
+
+
+# =========================================================
+# DOCUMENTO ÚNICO ENTRE CLIENTE Y ADMIN
+# =========================================================
+
+def documento_ya_registrado(
+    documento,
+):
+
+    cliente_existe = (
+        existe_con_reintento(
+            PerfilCliente.objects.filter(
+                documento=documento
+            )
+        )
+    )
+
+    administrador_existe = (
+        existe_con_reintento(
+            PerfilAdministrador.objects.filter(
+                documento=documento
+            )
+        )
+    )
+
+    return (
+        cliente_existe
+        or administrador_existe
+    )
 
 
 # =========================================================
@@ -56,11 +118,13 @@ class RegistroBaseForm(
 
     first_name = forms.CharField(
         label="Nombre",
+        max_length=150,
         required=True,
     )
 
     last_name = forms.CharField(
         label="Apellido",
+        max_length=150,
         required=True,
     )
 
@@ -69,23 +133,25 @@ class RegistroBaseForm(
         required=True,
     )
 
-    tipo_documento = forms.ChoiceField(
-        choices=TIPOS_DOCUMENTO,
-        label="Tipo de documento",
-        required=True,
+    tipo_documento = (
+        forms.ChoiceField(
+            label="Tipo de documento",
+            choices=TIPOS_DOCUMENTO,
+            required=True,
+        )
     )
 
     documento = forms.CharField(
         label="Documento",
+        max_length=20,
         required=True,
     )
 
     celular = forms.CharField(
         label="Celular",
-        required=True,
         max_length=10,
+        required=True,
     )
-
 
     class Meta:
 
@@ -98,173 +164,262 @@ class RegistroBaseForm(
             "email",
         ]
 
+        labels = {
+            "username": "Usuario",
+        }
 
     def __init__(
         self,
         *args,
-        **kwargs
+        **kwargs,
     ):
 
         super().__init__(
             *args,
-            **kwargs
+            **kwargs,
         )
 
+        for field in (
+            self.fields.values()
+        ):
 
-        for campo in self.fields.values():
+            css = (
+                field.widget.attrs.get(
+                    "class",
+                    "",
+                )
+            )
 
-            campo.widget.attrs.update({
-                "class": "form-control"
-            })
-
+            field.widget.attrs[
+                "class"
+            ] = (
+                f"{css} form-control"
+            ).strip()
 
         self.fields[
             "tipo_documento"
-        ].widget.attrs.update({
-            "class": "form-select"
-        })
-
-
-        self.fields[
-            "username"
-        ].label = "Nombre de usuario"
+        ].widget.attrs[
+            "class"
+        ] = "form-select"
 
         self.fields[
-            "username"
-        ].help_text = ""
+            "documento"
+        ].widget.attrs.update(
+            {
+                "inputmode":
+                    "numeric",
 
-
-    # =====================================================
-    # USUARIO ÚNICO
-    # =====================================================
-
-    def clean_username(self):
-
-        username = (
-            self.cleaned_data[
-                "username"
-            ]
-            .strip()
+                "autocomplete":
+                    "off",
+            }
         )
 
+        self.fields[
+            "celular"
+        ].widget.attrs.update(
+            {
+                "inputmode":
+                    "numeric",
 
-        if User.objects.filter(
-            username__iexact=username
-        ).exists():
+                "autocomplete":
+                    "tel",
+            }
+        )
+
+    # =====================================================
+    # USUARIO
+    # =====================================================
+
+    def clean_username(
+        self
+    ):
+
+        username = (
+            self.cleaned_data.get(
+                "username"
+            )
+            or ""
+        ).strip()
+
+        if not username:
+
+            raise ValidationError(
+                "El usuario es obligatorio."
+            )
+
+        if existe_con_reintento(
+            User.objects.filter(
+                username__iexact=username
+            )
+        ):
 
             raise ValidationError(
                 "Ese nombre de usuario "
                 "ya está registrado."
             )
 
-
         return username
 
-
     # =====================================================
-    # CORREO ÚNICO
+    # NOMBRE
     # =====================================================
 
-    def clean_email(self):
+    def clean_first_name(
+        self
+    ):
 
-        email = (
-            self.cleaned_data[
-                "email"
-            ]
-            .strip()
-            .lower()
-        )
+        value = (
+            self.cleaned_data.get(
+                "first_name"
+            )
+            or ""
+        ).strip()
 
-
-        if User.objects.filter(
-            email__iexact=email
-        ).exists():
+        if not value:
 
             raise ValidationError(
-                "Ese correo ya está registrado."
+                "El nombre es obligatorio."
             )
 
+        return value
+
+    # =====================================================
+    # APELLIDO
+    # =====================================================
+
+    def clean_last_name(
+        self
+    ):
+
+        value = (
+            self.cleaned_data.get(
+                "last_name"
+            )
+            or ""
+        ).strip()
+
+        if not value:
+
+            raise ValidationError(
+                "El apellido es obligatorio."
+            )
+
+        return value
+
+    # =====================================================
+    # CORREO
+    # =====================================================
+
+    def clean_email(
+        self
+    ):
+
+        email = (
+            self.cleaned_data.get(
+                "email"
+            )
+            or ""
+        ).strip().lower()
+
+        if not email:
+
+            raise ValidationError(
+                "El correo electrónico "
+                "es obligatorio."
+            )
+
+        if existe_con_reintento(
+            User.objects.filter(
+                email__iexact=email
+            )
+        ):
+
+            raise ValidationError(
+                "Ese correo electrónico "
+                "ya está registrado."
+            )
 
         return email
-
 
     # =====================================================
     # DOCUMENTO
     # =====================================================
 
-    def clean_documento(self):
+    def clean_documento(
+        self
+    ):
 
-        tipo = (
+        tipo_documento = (
             self.cleaned_data.get(
                 "tipo_documento"
             )
         )
 
-        documento = validar_documento(
-            tipo,
-            self.cleaned_data.get(
-                "documento"
+        documento = (
+            validar_documento(
+                tipo_documento,
+                self.cleaned_data.get(
+                    "documento"
+                ),
             )
         )
 
-
-        if PerfilCliente.objects.filter(
-            documento=documento
-        ).exists():
-
-            raise ValidationError(
-                "Ese documento ya está registrado."
-            )
-
-
-        if PerfilAdministrador.objects.filter(
-            documento=documento
-        ).exists():
+        if documento_ya_registrado(
+            documento
+        ):
 
             raise ValidationError(
-                "Ese documento ya está registrado."
+                "Ese documento ya está "
+                "registrado en el sistema."
             )
-
 
         return documento
-
 
     # =====================================================
     # CELULAR
     # =====================================================
 
-    def clean_celular(self):
+    def clean_celular(
+        self
+    ):
 
         celular = (
-            self.cleaned_data[
+            self.cleaned_data.get(
                 "celular"
-            ]
-            .strip()
-        )
-
+            )
+            or ""
+        ).strip()
 
         if (
-            len(celular) != 10
-            or not celular.isdigit()
-            or not celular.startswith("3")
+            not celular.isdigit()
+            or len(celular) != 10
         ):
 
             raise ValidationError(
-                "El celular debe tener "
-                "10 dígitos y comenzar por 3."
+                "El celular debe contener "
+                "exactamente 10 dígitos."
             )
-
 
         return celular
 
 
+# =========================================================
+# REGISTRO CLIENTE
+# =========================================================
+
 class RegistroClienteForm(
     RegistroBaseForm
 ):
+
     pass
 
+
+# =========================================================
+# REGISTRO ADMINISTRADOR
+# =========================================================
 
 class RegistroAdministradorForm(
     RegistroBaseForm
 ):
+
     pass
