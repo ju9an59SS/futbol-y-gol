@@ -8,31 +8,95 @@
     <meta charset="utf-8">
 
     <title>
-        Reservar Cancha
+        Reserva Canchas
     </title>
 
     <meta
         content="width=device-width, initial-scale=1.0"
         name="viewport">
 
+
+    <!-- ================================================= -->
+    <!-- FAVICON -->
+    <!-- ================================================= -->
+
     <link
         href="{% static 'img/logo.png' %}"
         rel="icon">
+
+
+    <!-- ================================================= -->
+    <!-- GOOGLE WEB FONTS -->
+    <!-- ================================================= -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap"
+        rel="stylesheet">
+
+
+    <!-- ================================================= -->
+    <!-- ICONOS -->
+    <!-- ================================================= -->
+
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css"
+        rel="stylesheet">
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+        rel="stylesheet">
+
+
+    <!-- ================================================= -->
+    <!-- BOOTSTRAP -->
+    <!-- ================================================= -->
 
     <link
         href="{% static 'css/bootstrap.min.css' %}"
         rel="stylesheet">
 
+
+    <!-- ================================================= -->
+    <!-- ESTILOS DEL PROYECTO -->
+    <!-- ================================================= -->
+
     <link
         href="{% static 'css/style.css' %}"
         rel="stylesheet">
 
+
     <style>
 
         .cancha-card img {
+
             width: 100%;
-            height: 220px;
+
+            height: 230px;
+
             object-fit: cover;
+
+        }
+
+
+        .datos-cliente {
+
+            background-color: #f8f9fa;
+
+            border-radius: 8px;
+
+            padding: 20px;
+
+        }
+
+
+        .campo-solo-lectura {
+
+            background-color: #e9ecef !important;
+
         }
 
     </style>
@@ -43,441 +107,614 @@
 <body>
 
 
-<div
-    class="container-fluid bg-dark px-0">
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
 
-    <nav
-        class="navbar navbar-expand-lg bg-dark navbar-dark p-3 px-lg-5">
+    <div class="container-fluid bg-dark px-0">
 
-        <a
-            href="{% url 'index' %}"
-            class="navbar-brand">
+        <div class="row gx-0">
 
-            <img
-                src="{% static 'img/logo.png' %}"
-                width="90"
-                alt="Logo">
-
-        </a>
+            <nav
+                class="navbar navbar-expand-lg
+                       bg-dark navbar-dark
+                       p-3 p-lg-0 px-lg-5">
 
 
-        <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarCollapse">
-
-            <span
-                class="navbar-toggler-icon">
-            </span>
-
-        </button>
-
-
-        <div
-            class="collapse navbar-collapse"
-            id="navbarCollapse">
-
-            <div
-                class="navbar-nav">
+                <!-- LOGO MÓVIL -->
 
                 <a
                     href="{% url 'index' %}"
-                    class="nav-item nav-link">
+                    class="navbar-brand d-block d-lg-none">
 
-                    Inicio
+                    <h1
+                        class="m-0 display-4
+                               text-primary text-uppercase">
 
-                </a>
+                        <img
+                            src="{% static 'img/logo.png' %}"
+                            alt="Logo"
+                            width="100px">
 
-
-                <a
-                    href="{% url 'reservar' %}"
-                    class="nav-item nav-link active">
-
-                    Reservar
-
-                </a>
-
-
-                <a
-                    href="{% url 'mis_reservas' %}"
-                    class="nav-item nav-link">
-
-                    Mis Reservas
+                    </h1>
 
                 </a>
 
 
-                <a
-                    href="{% url 'perfil_cliente' %}"
-                    class="nav-item nav-link">
+                <!-- BOTÓN RESPONSIVE -->
 
-                    Mi Perfil
+                <button
+                    type="button"
+                    class="navbar-toggler"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarCollapse">
 
-                </a>
+                    <span
+                        class="navbar-toggler-icon">
+                    </span>
 
+                </button>
 
-                <a
-                    href="{% url 'logout_cliente' %}"
-                    class="nav-item nav-link">
-
-                    Cerrar sesión
-
-                </a>
-
-            </div>
-
-        </div>
-
-    </nav>
-
-</div>
-
-
-<main
-    class="container py-5">
-
-
-    <div
-        class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
-
-        <div>
-
-            <h1 class="mb-1">
-
-                Reservar cancha
-
-            </h1>
-
-            <p
-                class="text-muted mb-0">
-
-                Selecciona el tipo de cancha
-                y el horario de tu reserva.
-
-            </p>
-
-        </div>
-
-
-        <a
-            href="{% url 'index' %}"
-            class="btn btn-outline-dark">
-
-            Regresar al inicio
-
-        </a>
-
-    </div>
-
-
-    <!-- ================================================= -->
-    <!-- TIPOS DE CANCHA -->
-    <!-- ================================================= -->
-
-    <div
-        class="row g-4 mb-5">
-
-
-        <div
-            class="col-lg-4 col-md-6">
-
-            <div
-                class="card h-100 cancha-card shadow-sm">
-
-                <img
-                    src="{% static 'img/salon.jpg' %}"
-                    class="card-img-top"
-                    alt="Fútbol 5">
 
                 <div
-                    class="card-body text-center">
-
-                    <h4>
-                        Fútbol 5
-                    </h4>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div
-            class="col-lg-4 col-md-6">
-
-            <div
-                class="card h-100 cancha-card shadow-sm">
-
-                <img
-                    src="{% static 'img/terraza.jpg' %}"
-                    class="card-img-top"
-                    alt="Fútbol 7">
-
-                <div
-                    class="card-body text-center">
-
-                    <h4>
-                        Fútbol 7
-                    </h4>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div
-            class="col-lg-4 col-md-12">
-
-            <div
-                class="card h-100 cancha-card shadow-sm">
-
-                <img
-                    src="{% static 'img/doble.png' %}"
-                    class="card-img-top"
-                    alt="Fútbol 11">
-
-                <div
-                    class="card-body text-center">
-
-                    <h4>
-                        Fútbol 11
-                    </h4>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    {% if mensaje %}
-
-        <div
-            class="alert {% if tipo_mensaje == 'error' %}alert-danger{% else %}alert-success{% endif %}">
-
-            {{ mensaje }}
-
-        </div>
-
-    {% endif %}
-
-
-    <div
-        class="row justify-content-center">
-
-        <div
-            class="col-lg-8">
-
-            <div
-                class="card shadow-sm">
-
-                <div
-                    class="card-body p-4">
+                    class="collapse navbar-collapse
+                           justify-content-between"
+                    id="navbarCollapse">
 
 
                     <div
-                        class="alert alert-info">
+                        class="navbar-nav
+                               mr-auto py-0">
 
-                        Reserva asociada a
 
-                        <strong>
+                        <!-- LOGO ESCRITORIO -->
 
-                            {{ user.first_name }}
-                            {{ user.last_name }}
+                        <img
+                            src="{% static 'img/logo.png' %}"
+                            alt="Logo"
+                            width="100px">
 
-                        </strong>
 
-                        ({{ user.username }}).
+                        <!-- INICIO -->
+
+                        <a
+                            href="{% url 'index' %}"
+                            class="nav-item nav-link">
+
+                            Inicio
+
+                        </a>
+
+
+                        <!-- RESERVAR -->
+
+                        <a
+                            href="{% url 'reservar' %}"
+                            class="nav-item nav-link active">
+
+                            Reservar
+
+                        </a>
+
+
+                        <!-- MIS RESERVAS -->
+
+                        <a
+                            href="{% url 'mis_reservas' %}"
+                            class="nav-item nav-link">
+
+                            Mis Reservas
+
+                        </a>
+
+
+                        <!-- PERFIL -->
+
+                        <a
+                            href="{% url 'perfil_cliente' %}"
+                            class="nav-item nav-link">
+
+                            Mi Perfil
+
+                        </a>
+
+
+                        <!-- CERRAR SESIÓN -->
+
+                        <a
+                            href="{% url 'logout_cliente' %}"
+                            class="nav-item nav-link">
+
+                            Cerrar sesión
+
+                        </a>
+
 
                     </div>
 
 
-                    <form
-                        method="post"
-                        enctype="multipart/form-data">
+                    <a
+                        href="{% url 'index' %}"
+                        class="py-md-3 px-md-5
+                               d-none d-lg-block">
 
-                        {% csrf_token %}
+                        Futbol y Gol
 
+                    </a>
+
+
+                </div>
+
+            </nav>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- CONTENIDO -->
+    <!-- ================================================= -->
+
+    <main
+        class="container p-4">
+
+
+        <!-- ================================================= -->
+        <!-- ENCABEZADO -->
+        <!-- ================================================= -->
+
+        <div
+            class="d-flex
+                   flex-wrap
+                   justify-content-between
+                   align-items-center
+                   gap-2
+                   mb-4">
+
+
+            <div>
+
+                <h1>
+                    Reserva de canchas
+                </h1>
+
+                <p
+                    class="text-muted">
+
+                    Selecciona el tipo de cancha,
+                    fecha, hora de inicio y duración
+                    de tu reserva.
+
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'index' %}"
+                class="btn btn-outline-dark">
+
+                <i class="bi bi-house-door"></i>
+
+                Regresar al inicio
+
+            </a>
+
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- TIPOS DE CANCHA -->
+        <!-- ================================================= -->
+
+        <div
+            class="row g-4 mb-5">
+
+
+            <!-- ================================================= -->
+            <!-- FUTBOL 5 -->
+            <!-- ================================================= -->
+
+            <div
+                class="col-lg-4 col-md-6">
+
+                <div
+                    class="card
+                           h-100
+                           cancha-card
+                           shadow-sm">
+
+                    <img
+                        src="{% static 'img/salon.jpg' %}"
+                        class="card-img-top"
+                        alt="Cancha Fútbol 5">
+
+                    <div
+                        class="card-body text-center">
 
                         <h5
-                            class="mb-3">
+                            class="card-title">
 
-                            Datos del cliente
+                            Cancha Fútbol 5
 
                         </h5>
 
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- FUTBOL 7 -->
+            <!-- ================================================= -->
+
+            <div
+                class="col-lg-4 col-md-6">
+
+                <div
+                    class="card
+                           h-100
+                           cancha-card
+                           shadow-sm">
+
+                    <img
+                        src="{% static 'img/terraza.jpg' %}"
+                        class="card-img-top"
+                        alt="Cancha Fútbol 7">
+
+                    <div
+                        class="card-body text-center">
+
+                        <h5
+                            class="card-title">
+
+                            Cancha Fútbol 7
+
+                        </h5>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- FUTBOL 11 -->
+            <!-- ================================================= -->
+
+            <div
+                class="col-lg-4 col-md-12">
+
+                <div
+                    class="card
+                           h-100
+                           cancha-card
+                           shadow-sm">
+
+                    <!--
+                        Se conserva doble.png para
+                        no renombrar el archivo existente.
+                    -->
+
+                    <img
+                        src="{% static 'img/doble.png' %}"
+                        class="card-img-top"
+                        alt="Cancha Fútbol 11">
+
+                    <div
+                        class="card-body text-center">
+
+                        <h5
+                            class="card-title">
+
+                            Cancha Fútbol 11
+
+                        </h5>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- MENSAJES -->
+        <!-- ================================================= -->
+
+        {% if mensaje %}
+
+            {% if tipo_mensaje == 'error' %}
+
+                <div
+                    class="alert alert-danger">
+
+                    {{ mensaje }}
+
+                </div>
+
+            {% else %}
+
+                <div
+                    class="alert alert-success">
+
+                    {{ mensaje }}
+
+                </div>
+
+            {% endif %}
+
+        {% endif %}
+
+
+        <!-- ================================================= -->
+        <!-- FORMULARIO -->
+        <!-- ================================================= -->
+
+        <div
+            class="row
+                   justify-content-center">
+
+
+            <div
+                class="col-lg-9">
+
+
+                <div
+                    class="card shadow-sm">
+
+
+                    <div
+                        class="card-body p-4">
+
+
+                        <h2
+                            class="mb-4">
+
+                            Formulario de reserva
+
+                        </h2>
+
+
+                        <!-- ================================================= -->
+                        <!-- DATOS CLIENTE -->
+                        <!-- ================================================= -->
 
                         <div
-                            class="row g-3 mb-4">
+                            class="datos-cliente mb-4">
+
+
+                            <h5
+                                class="mb-3">
+
+                                Datos del cliente
+
+                            </h5>
 
 
                             <div
-                                class="col-md-6">
+                                class="row g-3">
 
-                                <label
-                                    class="form-label">
 
-                                    Nombre
+                                <!-- NOMBRES -->
 
-                                </label>
+                                <div
+                                    class="col-md-6">
 
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    value="{{ nombre_cliente }}"
-                                    readonly>
+                                    <label
+                                        class="form-label">
+
+                                        Nombres
+
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control campo-solo-lectura"
+                                        value="{{ nombre_cliente }}"
+                                        readonly>
+
+                                </div>
+
+
+                                <!-- APELLIDOS -->
+
+                                <div
+                                    class="col-md-6">
+
+                                    <label
+                                        class="form-label">
+
+                                        Apellidos
+
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control campo-solo-lectura"
+                                        value="{{ apellido_cliente }}"
+                                        readonly>
+
+                                </div>
+
+
+                                <!-- TIPO DOCUMENTO -->
+
+                                <div
+                                    class="col-md-6">
+
+                                    <label
+                                        class="form-label">
+
+                                        Tipo de documento
+
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control campo-solo-lectura"
+                                        value="{% if tipo_documento_cliente == 'CC' %}Cédula de Ciudadanía{% elif tipo_documento_cliente == 'TI' %}Tarjeta de Identidad{% elif tipo_documento_cliente == 'CE' %}Cédula de Extranjería{% else %}{{ tipo_documento_cliente }}{% endif %}"
+                                        readonly>
+
+                                </div>
+
+
+                                <!-- DOCUMENTO -->
+
+                                <div
+                                    class="col-md-6">
+
+                                    <label
+                                        class="form-label">
+
+                                        Número de documento
+
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control campo-solo-lectura"
+                                        value="{{ documento_cliente }}"
+                                        readonly>
+
+                                </div>
+
+
+                                <!-- INDICATIVO -->
+
+                                <div
+                                    class="col-md-4">
+
+                                    <label
+                                        class="form-label">
+
+                                        Indicativo del país
+
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control campo-solo-lectura"
+                                        value="{{ indicativo_pais_cliente }}"
+                                        readonly>
+
+                                </div>
+
+
+                                <!-- CELULAR -->
+
+                                <div
+                                    class="col-md-8">
+
+                                    <label
+                                        class="form-label">
+
+                                        Número de celular
+
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control campo-solo-lectura"
+                                        value="{{ cel_cliente }}"
+                                        readonly>
+
+                                </div>
+
 
                             </div>
 
-
-                            <div
-                                class="col-md-6">
-
-                                <label
-                                    class="form-label">
-
-                                    Apellido
-
-                                </label>
-
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    value="{{ apellido_cliente }}"
-                                    readonly>
-
-                            </div>
-
-
-                            <div
-                                class="col-md-6">
-
-                                <label
-                                    class="form-label">
-
-                                    Tipo de documento
-
-                                </label>
-
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    value="{% if tipo_documento_cliente == 'CC' %}Cédula de Ciudadanía{% elif tipo_documento_cliente == 'TI' %}Tarjeta de Identidad{% elif tipo_documento_cliente == 'CE' %}Cédula de Extranjería{% elif tipo_documento_cliente == 'PA' %}Pasaporte{% else %}{{ tipo_documento_cliente }}{% endif %}"
-                                    readonly>
-
-                            </div>
-
-
-                            <div
-                                class="col-md-6">
-
-                                <label
-                                    class="form-label">
-
-                                    Documento
-
-                                </label>
-
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    value="{{ documento_cliente }}"
-                                    readonly>
-
-                            </div>
-
-
-                            <div
-                                class="col-md-6">
-
-                                <label
-                                    class="form-label">
-
-                                    Celular
-
-                                </label>
-
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    value="{{ cel_cliente }}"
-                                    readonly>
-
-                            </div>
 
                         </div>
 
 
-                        <hr>
+                        <!-- ================================================= -->
+                        <!-- RESERVA -->
+                        <!-- ================================================= -->
+
+                        <form
+                            method="post"
+                            enctype="multipart/form-data">
 
 
-                        <h5
-                            class="mb-3">
-
-                            Datos de la reserva
-
-                        </h5>
+                            {% csrf_token %}
 
 
-                        <!-- TIPO DE CANCHA -->
+                            <!-- ================================================= -->
+                            <!-- TIPO DE CANCHA -->
+                            <!-- ================================================= -->
 
-                        <div
-                            class="mb-3">
+                            <div
+                                class="mb-3">
 
-                            <label
-                                for="cancha"
-                                class="form-label">
+                                <label
+                                    for="cancha"
+                                    class="form-label">
 
-                                Tipo de cancha *
+                                    Tipo de cancha *
 
-                            </label>
+                                </label>
 
-                            <select
-                                name="cancha"
-                                id="cancha"
-                                class="form-select"
-                                required>
-
-                                <option
-                                    value=""
-                                    selected
-                                    disabled>
-
-                                    Seleccione una opción
-
-                                </option>
-
-                                <option value="futbol5">
-                                    Cancha Fútbol 5
-                                </option>
-
-                                <option value="futbol7">
-                                    Cancha Fútbol 7
-                                </option>
-
-                                <option value="futbol11">
-                                    Cancha Fútbol 11
-                                </option>
-
-                            </select>
-
-                        </div>
+                                <select
+                                    name="cancha"
+                                    id="cancha"
+                                    class="form-select"
+                                    required>
 
 
-                        <div
-                            class="row g-3">
+                                    <option
+                                        value=""
+                                        disabled
+                                        selected>
+
+                                        Selecciona una opción
+
+                                    </option>
 
 
+                                    <option
+                                        value="futbol5">
+
+                                        Cancha Fútbol 5
+
+                                    </option>
+
+
+                                    <option
+                                        value="futbol7">
+
+                                        Cancha Fútbol 7
+
+                                    </option>
+
+
+                                    <option
+                                        value="futbol11">
+
+                                        Cancha Fútbol 11
+
+                                    </option>
+
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- ================================================= -->
                             <!-- FECHA -->
+                            <!-- ================================================= -->
 
                             <div
-                                class="col-md-4">
+                                class="mb-3">
 
                                 <label
                                     for="fecha"
@@ -489,18 +726,21 @@
 
                                 <input
                                     type="date"
-                                    name="fecha"
-                                    id="fecha"
                                     class="form-control"
+                                    id="fecha"
+                                    name="fecha"
                                     required>
 
                             </div>
 
 
+                            <!-- ================================================= -->
                             <!-- HORA -->
+                            <!-- Se conservan los horarios que ya manejaba -->
+                            <!-- ================================================= -->
 
                             <div
-                                class="col-md-4">
+                                class="mb-3">
 
                                 <label
                                     for="hora"
@@ -510,20 +750,50 @@
 
                                 </label>
 
-                                <input
-                                    type="time"
+                                <select
                                     name="hora"
                                     id="hora"
-                                    class="form-control"
+                                    class="form-select"
                                     required>
+
+
+                                    <option
+                                        value=""
+                                        disabled
+                                        selected>
+
+                                        Selecciona una hora
+
+                                    </option>
+
+
+                                    <option value="08:00">08:00</option>
+                                    <option value="09:00">09:00</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="14:00">14:00</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="17:00">17:00</option>
+                                    <option value="18:00">18:00</option>
+                                    <option value="19:00">19:00</option>
+                                    <option value="20:00">20:00</option>
+                                    <option value="21:00">21:00</option>
+
+
+                                </select>
 
                             </div>
 
 
-                            <!-- DURACION -->
+                            <!-- ================================================= -->
+                            <!-- DURACIÓN -->
+                            <!-- ================================================= -->
 
                             <div
-                                class="col-md-4">
+                                class="mb-3">
 
                                 <label
                                     for="duracion"
@@ -539,72 +809,147 @@
                                     class="form-select"
                                     required>
 
+
                                     <option
                                         value=""
-                                        selected
-                                        disabled>
+                                        disabled
+                                        selected>
 
-                                        Seleccione
+                                        Selecciona la duración
 
                                     </option>
 
-                                    <option value="1">
+
+                                    <option
+                                        value="1">
+
                                         1 hora
+
                                     </option>
 
-                                    <option value="2">
+
+                                    <option
+                                        value="2">
+
                                         2 horas
+
                                     </option>
+
 
                                 </select>
 
                             </div>
 
-                        </div>
+
+                            <!-- ================================================= -->
+                            <!-- COMPROBANTE -->
+                            <!-- ================================================= -->
+
+                            <div
+                                class="mb-3">
+
+                                <label
+                                    for="comprobante_pago"
+                                    class="form-label">
+
+                                    Comprobante de pago
+                                    (opcional)
+
+                                </label>
+
+                                <input
+                                    type="file"
+                                    class="form-control"
+                                    id="comprobante_pago"
+                                    name="comprobante_pago"
+                                    accept="image/jpeg,image/png,image/webp">
 
 
-                        <!-- COMPROBANTE -->
+                                <small
+                                    class="form-text text-muted">
+
+                                    Formatos permitidos:
+                                    JPG, JPEG, PNG y WEBP.
+                                    Tamaño máximo: 4 MB.
+
+                                </small>
+
+                            </div>
+
+
+                            <!-- ================================================= -->
+                            <!-- BOTÓN -->
+                            <!-- ================================================= -->
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary">
+
+                                Crear reserva
+
+                            </button>
+
+
+                        </form>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+
+    <!-- ================================================= -->
+    <!-- FOOTER -->
+    <!-- ================================================= -->
+
+    <footer>
+
+        <div
+            class="container-fluid
+                   bg-dark
+                   text-secondary
+                   px-5
+                   mt-5">
+
+            <div
+                class="row gx-5">
+
+                <div
+                    class="col-lg-8
+                           col-md-6">
+
+                    <div
+                        class="row gx-5">
 
                         <div
-                            class="mt-3">
+                            class="col-lg-6">
 
-                            <label
-                                for="comprobante_pago"
-                                class="form-label">
+                            <p
+                                class="text-light">
 
-                                Comprobante de pago
-                                (opcional)
+                                <img
+                                    src="{% static 'img/logo.png' %}"
+                                    alt="Logo"
+                                    width="100px">
 
-                            </label>
+                                2024 &copy;
+                                Futbol y Gol
 
-                            <input
-                                type="file"
-                                name="comprobante_pago"
-                                id="comprobante_pago"
-                                class="form-control"
-                                accept="image/jpeg,image/png,image/webp">
-
-                            <small
-                                class="text-muted">
-
-                                JPG, PNG o WEBP.
-                                Máximo 4 MB.
-
-                            </small>
+                            </p>
 
                         </div>
 
-
-                        <button
-                            type="submit"
-                            class="btn btn-primary mt-4 w-100">
-
-                            Crear reserva
-
-                        </button>
-
-
-                    </form>
+                    </div>
 
                 </div>
 
@@ -612,43 +957,85 @@
 
         </div>
 
-    </div>
 
-</main>
+        <!-- ================================================= -->
+        <!-- BACK TO TOP -->
+        <!-- ================================================= -->
+
+        <a
+            href="#"
+            class="btn btn-dark
+                   py-3 fs-4
+                   back-to-top">
+
+            <i
+                class="bi bi-arrow-up">
+            </i>
+
+        </a>
 
 
-<script>
+        <!-- ================================================= -->
+        <!-- JAVASCRIPT -->
+        <!-- ================================================= -->
 
-    const fecha =
-        document.getElementById(
-            "fecha"
-        );
+        <script
+            src="https://code.jquery.com/jquery-3.4.1.min.js">
+        </script>
 
-    if (fecha) {
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
+        </script>
 
-        const ahora =
-            new Date();
+    </footer>
 
-        const local =
-            new Date(
-                ahora.getTime()
-                - ahora.getTimezoneOffset()
-                * 60000
+
+    <!-- ================================================= -->
+    <!-- IMPEDIR FECHAS ANTERIORES -->
+    <!-- ================================================= -->
+
+    <script>
+
+        const fechaInput =
+            document.getElementById(
+                "fecha"
             );
 
-        fecha.min =
-            local
-            .toISOString()
-            .split("T")[0];
 
-    }
+        if (fechaInput) {
 
-</script>
+            const hoy =
+                new Date();
 
 
-<script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
-</script>
+            const anio =
+                hoy.getFullYear();
+
+
+            const mes =
+                String(
+                    hoy.getMonth() + 1
+                ).padStart(
+                    2,
+                    "0"
+                );
+
+
+            const dia =
+                String(
+                    hoy.getDate()
+                ).padStart(
+                    2,
+                    "0"
+                );
+
+
+            fechaInput.min =
+                `${anio}-${mes}-${dia}`;
+
+        }
+
+    </script>
 
 
 </body>

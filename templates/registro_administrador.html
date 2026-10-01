@@ -1,186 +1,66 @@
 {% load static %}
-
 <!DOCTYPE html>
-
 <html lang="es">
 
 <head>
-
     <meta charset="utf-8">
-
-    <title>
-        Registrar Administrador | Futbol y Gol
-    </title>
+    <title>Registrar Administrador</title>
 
     <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1"
-    >
-
-
-    <!-- ================================================= -->
-    <!-- FAVICON -->
-    <!-- ================================================= -->
+        content="width=device-width, initial-scale=1.0"
+        name="viewport">
 
     <link
         href="{% static 'img/logo.png' %}"
-        rel="icon"
-    >
-
-
-    <!-- ================================================= -->
-    <!-- BOOTSTRAP -->
-    <!-- ================================================= -->
+        rel="icon">
 
     <link
         href="{% static 'css/bootstrap.min.css' %}"
-        rel="stylesheet"
-    >
-
-
-    <!-- ================================================= -->
-    <!-- ESTILOS DEL PROYECTO -->
-    <!-- ================================================= -->
+        rel="stylesheet">
 
     <link
         href="{% static 'css/style.css' %}"
-        rel="stylesheet"
-    >
-
-
-    <style>
-
-        body {
-
-            background-color: #f5f5f5;
-        }
-
-
-        .registro-card {
-
-            border: none;
-
-            border-radius: 12px;
-        }
-
-
-        .registro-header {
-
-            background-color: #212529;
-
-            color: white;
-
-            border-radius: 12px 12px 0 0;
-
-            padding: 20px;
-        }
-
-
-        .registro-header img {
-
-            width: 80px;
-        }
-
-
-        .form-control,
-        .form-select {
-
-            min-height: 45px;
-        }
-
-
-        .ayuda {
-
-            font-size: 0.9rem;
-
-            color: #6c757d;
-        }
-
-    </style>
-
+        rel="stylesheet">
 </head>
-
 
 <body>
 
-
-<!-- ===================================================== -->
-<!-- NAVBAR -->
-<!-- ===================================================== -->
-
 <div class="container-fluid bg-dark px-0">
 
-    <nav
-        class="navbar navbar-expand-lg
-               bg-dark navbar-dark
-               p-3 px-lg-5"
-    >
+    <nav class="navbar navbar-dark bg-dark p-3 px-lg-5">
 
         <a
             href="{% url 'index' %}"
-            class="navbar-brand"
-        >
+            class="navbar-brand">
 
             <img
                 src="{% static 'img/logo.png' %}"
                 width="90"
-                alt="Logo"
-            >
+                alt="Logo Fútbol y Gol">
 
         </a>
 
+        <div class="d-flex gap-2">
 
-        <button
-            type="button"
-            class="navbar-toggler"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarCollapse"
-        >
+            <a
+                href="{% url 'index' %}"
+                class="btn btn-outline-light">
 
-            <span class="navbar-toggler-icon"></span>
+                Regresar a la página principal
 
-        </button>
+            </a>
 
-
-        <div
-            class="collapse navbar-collapse"
-            id="navbarCollapse"
-        >
-
-            <div class="navbar-nav">
-
+            {% if user.is_authenticated and user.is_staff %}
 
                 <a
-                    href="{% url 'index' %}"
-                    class="nav-link"
-                >
+                    href="{% url 'logout' %}"
+                    class="btn btn-light">
 
-                    Inicio
+                    Cerrar sesión
 
                 </a>
 
-
-                <a
-                    href="{% url 'login' %}"
-                    class="nav-link"
-                >
-
-                    Administrador
-
-                </a>
-
-
-                <a
-                    href="{% url 'registrar_administrador' %}"
-                    class="nav-link active"
-                >
-
-                    Registrar Administrador
-
-                </a>
-
-
-            </div>
+            {% endif %}
 
         </div>
 
@@ -189,401 +69,301 @@
 </div>
 
 
-<!-- ===================================================== -->
-<!-- CONTENIDO -->
-<!-- ===================================================== -->
-
 <main class="container py-5">
 
     <div class="row justify-content-center">
 
-        <div class="col-lg-7 col-md-9">
+        <div class="col-lg-9">
 
+            <div class="card shadow-sm">
 
-            <div class="card shadow registro-card">
+                <div class="card-body p-4 p-lg-5">
 
+                    <h1 class="mb-3">
+                        Registrar administrador
+                    </h1>
 
-                <!-- ===================================== -->
-                <!-- ENCABEZADO -->
-                <!-- ===================================== -->
-
-                <div
-                    class="registro-header text-center"
-                >
-
-                    <img
-                        src="{% static 'img/logo.png' %}"
-                        alt="Logo"
-                        class="mb-3"
-                    >
-
-                    <h2 class="mb-1">
-
-                        Registrar Administrador
-
-                    </h2>
-
-                    <p class="mb-0">
-
-                        Crea una nueva cuenta
-                        administrativa para
-                        Futbol y Gol.
-
-                    </p>
-
-                </div>
-
-
-                <!-- ===================================== -->
-                <!-- CUERPO -->
-                <!-- ===================================== -->
-
-                <div class="card-body p-4 p-md-5">
-
-
-                    <div
-                        class="alert alert-info"
-                    >
-
-                        La cuenta se creará con una
-                        <strong>
-                            contraseña temporal
-                        </strong>.
-
-                        <br>
-
-                        El nuevo administrador deberá
-                        cambiarla en su primer inicio
-                        de sesión.
-
+                    <div class="alert alert-info">
+                        La cuenta recibirá una contraseña temporal.
+                        En el primer inicio de sesión deberá
+                        reemplazarse por una contraseña personal.
                     </div>
 
 
-                    <form method="post">
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger">
+
+                            {% for error in form.non_field_errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <form method="post" novalidate>
 
                         {% csrf_token %}
 
 
-                        <!-- ============================= -->
-                        <!-- ERRORES GENERALES -->
-                        <!-- ============================= -->
+                        <div class="mb-3">
 
-                        {% if form.non_field_errors %}
+                            <label class="form-label">
+                                Usuario *
+                            </label>
 
-                            <div class="alert alert-danger">
+                            {{ form.username }}
 
-                                {% for error in form.non_field_errors %}
+                            <small class="text-muted">
+                                Entre 4 y 30 caracteres.
+                            </small>
 
-                                    <div>
+                            {% for error in form.username.errors %}
+                                <div class="text-danger">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Primer nombre *
+                                </label>
+
+                                {{ form.primer_nombre }}
+
+                                <small class="text-muted">
+                                    Máximo 30 caracteres.
+                                </small>
+
+                                {% for error in form.primer_nombre.errors %}
+                                    <div class="text-danger">
                                         {{ error }}
                                     </div>
-
                                 {% endfor %}
 
                             </div>
 
-                        {% endif %}
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Segundo nombre
+                                </label>
+
+                                {{ form.segundo_nombre }}
+
+                                <small class="text-muted">
+                                    Opcional. Máximo 30 caracteres.
+                                </small>
+
+                                {% for error in form.segundo_nombre.errors %}
+                                    <div class="text-danger">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                            </div>
 
 
-                        <!-- ============================= -->
-                        <!-- USUARIO -->
-                        <!-- ============================= -->
+                            <div class="col-md-6">
 
-                        <div class="mb-3">
+                                <label class="form-label">
+                                    Primer apellido *
+                                </label>
 
-                            <label
-                                for="{{ form.username.id_for_label }}"
-                                class="form-label"
-                            >
+                                {{ form.primer_apellido }}
 
-                                Nombre de usuario
+                                <small class="text-muted">
+                                    Máximo 30 caracteres.
+                                </small>
 
-                            </label>
+                                {% for error in form.primer_apellido.errors %}
+                                    <div class="text-danger">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
 
-
-                            {{ form.username }}
-
-
-                            {% for error in form.username.errors %}
-
-                                <div class="text-danger mt-1">
-
-                                    {{ error }}
-
-                                </div>
-
-                            {% endfor %}
+                            </div>
 
 
-                            <div class="ayuda">
+                            <div class="col-md-6">
 
-                                El nombre de usuario debe
-                                ser único.
+                                <label class="form-label">
+                                    Segundo apellido
+                                </label>
+
+                                {{ form.segundo_apellido }}
+
+                                <small class="text-muted">
+                                    Opcional. Máximo 30 caracteres.
+                                </small>
+
+                                {% for error in form.segundo_apellido.errors %}
+                                    <div class="text-danger">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
 
                             </div>
 
                         </div>
 
 
-                        <!-- ============================= -->
-                        <!-- NOMBRE -->
-                        <!-- ============================= -->
+                        <div class="mt-3">
 
-                        <div class="mb-3">
-
-                            <label
-                                for="{{ form.first_name.id_for_label }}"
-                                class="form-label"
-                            >
-
-                                Nombre
-
+                            <label class="form-label">
+                                Correo electrónico *
                             </label>
-
-
-                            {{ form.first_name }}
-
-
-                            {% for error in form.first_name.errors %}
-
-                                <div class="text-danger mt-1">
-
-                                    {{ error }}
-
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-
-                        <!-- ============================= -->
-                        <!-- APELLIDO -->
-                        <!-- ============================= -->
-
-                        <div class="mb-3">
-
-                            <label
-                                for="{{ form.last_name.id_for_label }}"
-                                class="form-label"
-                            >
-
-                                Apellido
-
-                            </label>
-
-
-                            {{ form.last_name }}
-
-
-                            {% for error in form.last_name.errors %}
-
-                                <div class="text-danger mt-1">
-
-                                    {{ error }}
-
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-
-                        <!-- ============================= -->
-                        <!-- CORREO -->
-                        <!-- ============================= -->
-
-                        <div class="mb-3">
-
-                            <label
-                                for="{{ form.email.id_for_label }}"
-                                class="form-label"
-                            >
-
-                                Correo electrónico
-
-                            </label>
-
 
                             {{ form.email }}
 
-
                             {% for error in form.email.errors %}
-
-                                <div class="text-danger mt-1">
-
+                                <div class="text-danger">
                                     {{ error }}
-
                                 </div>
-
                             {% endfor %}
 
+                        </div>
 
-                            <div class="ayuda">
 
-                                Este correo se usará
-                                para recuperación
-                                de contraseña.
+                        <div class="row g-3 mt-1">
+
+                            <div class="col-md-5">
+
+                                <label class="form-label">
+                                    Tipo de documento *
+                                </label>
+
+                                {{ form.tipo_documento }}
+
+                                {% for error in form.tipo_documento.errors %}
+                                    <div class="text-danger">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+
+
+                            <div class="col-md-7">
+
+                                <label class="form-label">
+                                    Número de documento *
+                                </label>
+
+                                {{ form.documento }}
+
+                                <small class="text-muted">
+                                    CC: 10 dígitos.
+                                    TI: 10 dígitos.
+                                    CE: 6 o 7 dígitos.
+                                </small>
+
+                                {% for error in form.documento.errors %}
+                                    <div class="text-danger">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
 
                             </div>
 
                         </div>
 
 
-                        <!-- ============================= -->
-                        <!-- TIPO DE DOCUMENTO -->
-                        <!-- ============================= -->
+                        <div class="row g-3 mt-1">
 
-                        <div class="mb-3">
+                            <div class="col-md-5">
 
-                            <label
-                                for="{{ form.tipo_documento.id_for_label }}"
-                                class="form-label"
-                            >
+                                <label class="form-label">
+                                    Indicativo del país *
+                                </label>
 
-                                Tipo de documento
+                                {{ form.indicativo_pais }}
 
-                            </label>
+                                {% for error in form.indicativo_pais.errors %}
+                                    <div class="text-danger">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
 
-
-                            {{ form.tipo_documento }}
-
-
-                            {% for error in form.tipo_documento.errors %}
-
-                                <div class="text-danger mt-1">
-
-                                    {{ error }}
-
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
+                            </div>
 
 
-                        <!-- ============================= -->
-                        <!-- DOCUMENTO -->
-                        <!-- ============================= -->
+                            <div class="col-md-7">
 
-                        <div class="mb-3">
+                                <label class="form-label">
+                                    Número de celular *
+                                </label>
 
-                            <label
-                                for="{{ form.documento.id_for_label }}"
-                                class="form-label"
-                            >
+                                {{ form.celular }}
 
-                                Número de documento
+                                <small class="text-muted">
+                                    Para Colombia (+57), ingresa
+                                    exactamente 10 dígitos.
+                                </small>
 
-                            </label>
-
-
-                            {{ form.documento }}
-
-
-                            {% for error in form.documento.errors %}
-
-                                <div class="text-danger mt-1">
-
-                                    {{ error }}
-
-                                </div>
-
-                            {% endfor %}
-
-
-                            <div class="ayuda">
-
-                                El documento también
-                                debe ser único.
+                                {% for error in form.celular.errors %}
+                                    <div class="text-danger">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
 
                             </div>
 
                         </div>
 
 
-                        <!-- ============================= -->
-                        <!-- CELULAR -->
-                        <!-- ============================= -->
-
-                        <div class="mb-4">
-
-                            <label
-                                for="{{ form.celular.id_for_label }}"
-                                class="form-label"
-                            >
-
-                                Celular
-
-                            </label>
-
-
-                            {{ form.celular }}
-
-
-                            {% for error in form.celular.errors %}
-
-                                <div class="text-danger mt-1">
-
-                                    {{ error }}
-
-                                </div>
-
-                            {% endfor %}
-
-
-                            <div class="ayuda">
-
-                                Debe contener 10 dígitos
-                                y comenzar por 3.
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- ============================= -->
-                        <!-- BOTONES -->
-                        <!-- ============================= -->
-
-                        <div class="d-grid gap-2">
-
+                        <div class="d-flex flex-wrap gap-2 mt-4">
 
                             <button
                                 type="submit"
-                                class="btn btn-primary btn-lg"
-                            >
+                                class="btn btn-primary">
 
-                                Crear Administrador
+                                Registrar administrador
 
                             </button>
 
-
-                            <a
-                                href="{% url 'login' %}"
-                                class="btn btn-outline-secondary"
-                            >
-
-                                Volver a Administrador
-
-                            </a>
-
-
                             <a
                                 href="{% url 'index' %}"
-                                class="btn btn-outline-dark"
-                            >
+                                class="btn btn-outline-secondary">
 
-                                Volver al Inicio
+                                Regresar a la página principal
 
                             </a>
 
+                            {% if not user.is_authenticated %}
+
+                                <a
+                                    href="{% url 'login' %}"
+                                    class="btn btn-outline-dark">
+
+                                    Ingreso administrador
+
+                                </a>
+
+                            {% else %}
+
+                                <a
+                                    href="{% url 'reservas' %}"
+                                    class="btn btn-outline-dark">
+
+                                    Volver a reservas
+
+                                </a>
+
+                            {% endif %}
 
                         </div>
 
-
                     </form>
-
 
                 </div>
 
@@ -595,17 +375,9 @@
 
 </main>
 
-
-<!-- ===================================================== -->
-<!-- BOOTSTRAP -->
-<!-- ===================================================== -->
-
 <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
->
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
 </script>
 
-
 </body>
-
 </html>
