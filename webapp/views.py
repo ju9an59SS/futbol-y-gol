@@ -1340,9 +1340,29 @@ def login_cliente(request):
 
 
 
-            return redirect(
+            return render(
 
-                "reservas"
+                request,
+
+                "login_cliente.html",
+
+                {
+
+                    "mensaje": (
+
+                        "Actualmente hay una sesión abierta "
+
+                        "como administrador. Cierra sesión "
+
+                        "antes de ingresar como cliente."
+
+                    ),
+
+                    "sesion_bloqueada": True,
+
+                    "tipo_sesion_activa": "administrador",
+
+                },
 
             )
 
@@ -2332,9 +2352,29 @@ def login(request):
 
 
 
-        return redirect(
+        return render(
 
-            "perfil_cliente"
+            request,
+
+            "login.html",
+
+            {
+
+                "mensaje": (
+
+                    "Actualmente hay una sesión abierta "
+
+                    "como cliente. Cierra sesión antes "
+
+                    "de ingresar como administrador."
+
+                ),
+
+                "sesion_bloqueada": True,
+
+                "tipo_sesion_activa": "cliente",
+
+            },
 
         )
 
