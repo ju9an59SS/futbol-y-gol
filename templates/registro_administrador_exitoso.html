@@ -1,26 +1,211 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Administrador creado</title>
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <title>
+        Administrador registrado - Futbol y Gol
+    </title>
+
+    <meta
+        content="width=device-width, initial-scale=1.0"
+        name="viewport">
+
+    <link
+        href="{% static 'img/logo.png' %}"
+        rel="icon">
+
+    <link
+        href="{% static 'css/bootstrap.min.css' %}"
+        rel="stylesheet">
+
+    <link
+        href="{% static 'css/style.css' %}"
+        rel="stylesheet">
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+        rel="stylesheet">
+
 </head>
+
+
 <body>
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-7">
-            <div class="alert alert-success">
-                <h2>Administrador creado correctamente</h2>
-                <p><strong>Usuario:</strong> {{ usuario }}</p>
-                <p><strong>Contraseña temporal:</strong> <code>{{ password_temporal }}</code></p>
-                <p>Guárdala y entrégala de forma segura. Se muestra en esta pantalla una sola vez.</p>
-            </div>
-            <a class="btn btn-primary" href="{% url 'registrar_administrador' %}">Crear otro administrador</a>
-            <a class="btn btn-secondary" href="{% url 'reservas' %}">Volver a reservas</a>
-        </div>
-    </div>
+
+
+<div class="container-fluid bg-dark px-0">
+
+    <nav class="navbar navbar-dark bg-dark p-3 px-lg-5">
+
+        <a
+            href="{% url 'index' %}"
+            class="navbar-brand">
+
+            <img
+                src="{% static 'img/logo.png' %}"
+                width="100px"
+                alt="Logo">
+
+        </a>
+
+    </nav>
+
 </div>
+
+
+<main class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body p-4 p-lg-5">
+
+
+                    <div class="alert alert-success">
+
+                        <h4 class="alert-heading">
+                            Administrador registrado correctamente
+                        </h4>
+
+                        La cuenta administrativa fue creada.
+
+                    </div>
+
+
+                    <div class="alert alert-warning">
+
+                        <strong>
+                            Guarda la contraseña temporal.
+                        </strong>
+
+                        En el primer ingreso deberá
+                        reemplazarse por una contraseña personal.
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Usuario
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="{{ usuario }}"
+                            readonly>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Contraseña temporal
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="{{ password_temporal }}"
+                            readonly>
+
+                    </div>
+
+
+                    <div class="d-flex flex-wrap gap-2">
+
+
+                        {% if user.is_authenticated and user.is_staff %}
+
+                            <a
+                                href="{% url 'reservas' %}"
+                                class="btn btn-primary">
+
+                                Volver a reservas
+
+                            </a>
+
+                        {% else %}
+
+                            <a
+                                href="{% url 'login' %}"
+                                class="btn btn-primary">
+
+                                Ingreso administrador
+
+                            </a>
+
+                        {% endif %}
+
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-secondary"
+                            onclick="volverAtras();">
+
+                            <i class="bi bi-arrow-left"></i>
+
+                            Ir atrás
+
+                        </button>
+
+
+                        <a
+                            href="{% url 'index' %}"
+                            class="btn btn-outline-dark">
+
+                            Regresar a la página principal
+
+                        </a>
+
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<script>
+
+    function volverAtras() {
+
+        if (window.history.length > 1) {
+
+            window.history.back();
+
+        } else {
+
+            window.location.href =
+                "{% url 'index' %}";
+
+        }
+
+    }
+
+</script>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
 </body>
 </html>

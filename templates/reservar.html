@@ -1,1037 +1,2111 @@
 {% load static %}
 
+
+
 <!DOCTYPE html>
+
 <html lang="es">
+
+
 
 <head>
 
-    <meta charset="utf-8">
-
-    <title>
-        Reserva Canchas
-    </title>
-
-    <meta
-        content="width=device-width, initial-scale=1.0"
-        name="viewport">
 
 
-    <!-- ================================================= -->
-    <!-- FAVICON -->
-    <!-- ================================================= -->
-
-    <link
-        href="{% static 'img/logo.png' %}"
-        rel="icon">
+    <meta charset="utf-8">
 
 
-    <!-- ================================================= -->
-    <!-- GOOGLE WEB FONTS -->
-    <!-- ================================================= -->
 
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com">
+    <title>
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap"
-        rel="stylesheet">
+        Reserva Canchas
+
+    </title>
 
 
-    <!-- ================================================= -->
-    <!-- ICONOS -->
-    <!-- ================================================= -->
 
-    <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css"
-        rel="stylesheet">
+    <meta
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
-        rel="stylesheet">
+        content="width=device-width, initial-scale=1.0"
+
+        name="viewport">
 
 
-    <!-- ================================================= -->
-    <!-- BOOTSTRAP -->
-    <!-- ================================================= -->
-
-    <link
-        href="{% static 'css/bootstrap.min.css' %}"
-        rel="stylesheet">
 
 
-    <!-- ================================================= -->
-    <!-- ESTILOS DEL PROYECTO -->
-    <!-- ================================================= -->
 
-    <link
-        href="{% static 'css/style.css' %}"
-        rel="stylesheet">
+    <!-- ================================================= -->
 
+    <!-- FAVICON -->
 
-    <style>
-
-        .cancha-card img {
-
-            width: 100%;
-
-            height: 230px;
-
-            object-fit: cover;
-
-        }
+    <!-- ================================================= -->
 
 
-        .datos-cliente {
 
-            background-color: #f8f9fa;
+    <link
 
-            border-radius: 8px;
+        href="{% static 'img/logo.png' %}"
 
-            padding: 20px;
-
-        }
+        rel="icon">
 
 
-        .campo-solo-lectura {
 
-            background-color: #e9ecef !important;
 
-        }
 
-    </style>
+    <!-- ================================================= -->
+
+    <!-- GOOGLE WEB FONTS -->
+
+    <!-- ================================================= -->
+
+
+
+    <link
+
+        rel="preconnect"
+
+        href="https://fonts.gstatic.com">
+
+
+
+    <link
+
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap"
+
+        rel="stylesheet">
+
+
+
+
+
+    <!-- ================================================= -->
+
+    <!-- ICONOS -->
+
+    <!-- ================================================= -->
+
+
+
+    <link
+
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css"
+
+        rel="stylesheet">
+
+
+
+    <link
+
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+
+        rel="stylesheet">
+
+
+
+
+
+    <!-- ================================================= -->
+
+    <!-- BOOTSTRAP -->
+
+    <!-- ================================================= -->
+
+
+
+    <link
+
+        href="{% static 'css/bootstrap.min.css' %}"
+
+        rel="stylesheet">
+
+
+
+
+
+    <!-- ================================================= -->
+
+    <!-- ESTILOS DEL PROYECTO -->
+
+    <!-- ================================================= -->
+
+
+
+    <link
+
+        href="{% static 'css/style.css' %}"
+
+        rel="stylesheet">
+
+
+
+
+
+    <style>
+
+
+
+        .cancha-card img {
+
+
+
+            width: 100%;
+
+
+
+            height: 230px;
+
+
+
+            object-fit: cover;
+
+
+
+        }
+
+
+
+
+
+        .datos-cliente {
+
+
+
+            background-color: #f8f9fa;
+
+
+
+            border-radius: 8px;
+
+
+
+            padding: 20px;
+
+
+
+        }
+
+
+
+
+
+        .campo-solo-lectura {
+
+
+
+            background-color: #e9ecef !important;
+
+
+
+        }
+
+
+
+    </style>
+
+
 
 </head>
+
+
+
 
 
 <body>
 
 
+
+
+
+    <!-- ================================================= -->
+
+    <!-- HEADER -->
+
+    <!-- ================================================= -->
+
+
+
+    <div class="container-fluid bg-dark px-0">
+
+
+
+        <div class="row gx-0">
+
+
+
+            <nav
+
+                class="navbar navbar-expand-lg
+
+                       bg-dark navbar-dark
+
+                       p-3 p-lg-0 px-lg-5">
+
+
+
+
+
+                <!-- LOGO MÓVIL -->
+
+
+
+                <a
+
+                    href="{% url 'index' %}"
+
+                    class="navbar-brand d-block d-lg-none">
+
+
+
+                    <h1
+
+                        class="m-0 display-4
+
+                               text-primary text-uppercase">
+
+
+
+                        <img
+
+                            src="{% static 'img/logo.png' %}"
+
+                            alt="Logo"
+
+                            width="100px">
+
+
+
+                    </h1>
+
+
+
+                </a>
+
+
+
+
+
+                <!-- BOTÓN RESPONSIVE -->
+
+
+
+                <button
+
+                    type="button"
+
+                    class="navbar-toggler"
+
+                    data-bs-toggle="collapse"
+
+                    data-bs-target="#navbarCollapse">
+
+
+
+                    <span
+
+                        class="navbar-toggler-icon">
+
+                    </span>
+
+
+
+                </button>
+
+
+
+
+
+                <div
+
+                    class="collapse navbar-collapse
+
+                           justify-content-between"
+
+                    id="navbarCollapse">
+
+
+
+
+
+                    <div
+
+                        class="navbar-nav
+
+                               mr-auto py-0">
+
+
+
+
+
+                        <!-- LOGO ESCRITORIO -->
+
+
+
+                        <img
+
+                            src="{% static 'img/logo.png' %}"
+
+                            alt="Logo"
+
+                            width="100px">
+
+
+
+
+
+                        <!-- INICIO -->
+
+
+
+                        <a
+
+                            href="{% url 'index' %}"
+
+                            class="nav-item nav-link">
+
+
+
+                            Inicio
+
+
+
+                        </a>
+
+
+
+
+
+                        <!-- RESERVAR -->
+
+
+
+                        <a
+
+                            href="{% url 'reservar' %}"
+
+                            class="nav-item nav-link active">
+
+
+
+                            Reservar
+
+
+
+                        </a>
+
+
+
+
+
+                        <!-- MIS RESERVAS -->
+
+
+
+                        <a
+
+                            href="{% url 'mis_reservas' %}"
+
+                            class="nav-item nav-link">
+
+
+
+                            Mis Reservas
+
+
+
+                        </a>
+
+
+
+
+
+                        <!-- PERFIL -->
+
+
+
+                        <a
+
+                            href="{% url 'perfil_cliente' %}"
+
+                            class="nav-item nav-link">
+
+
+
+                            Mi Perfil
+
+
+
+                        </a>
+
+
+
+
+
+                        <!-- CERRAR SESIÓN -->
+
+
+
+                        <a
+
+                            href="{% url 'logout_cliente' %}"
+
+                            class="nav-item nav-link">
+
+
+
+                            Cerrar sesión
+
+
+
+                        </a>
+
+
+
+
+
+                    </div>
+
+
+
+
+
+                    <a
+
+                        href="{% url 'index' %}"
+
+                        class="py-md-3 px-md-5
+
+                               d-none d-lg-block">
+
+
+
+                        Futbol y Gol
+
+
+
+                    </a>
+
+
+
+
+
+                </div>
+
+
+
+            </nav>
+
+
+
+        </div>
+
+
+
+    </div>
+
+
+
+
+
+    <!-- ================================================= -->
+
+    <!-- CONTENIDO -->
+
+    <!-- ================================================= -->
+
+
+
+    <main
+
+        class="container p-4">
+
+
+
+
+
+        <!-- ================================================= -->
+
+        <!-- ENCABEZADO -->
+
+        <!-- ================================================= -->
+
+
+
+        <div
+
+            class="d-flex
+
+                   flex-wrap
+
+                   justify-content-between
+
+                   align-items-center
+
+                   gap-2
+
+                   mb-4">
+
+
+
+
+
+            <div>
+
+
+
+                <h1>
+
+                    Reserva de canchas
+
+                </h1>
+
+
+
+                <p
+
+                    class="text-muted">
+
+
+
+                    Selecciona el tipo de cancha,
+
+                    fecha, hora de inicio y duración
+
+                    de tu reserva.
+
+
+
+                </p>
+
+
+
+            </div>
+
+
+
+
+
+            <div
+                class="d-flex flex-wrap gap-2">
+
+                <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    onclick="volverAtras();">
+
+                    <i class="bi bi-arrow-left"></i>
+
+                    Ir atrás
+
+                </button>
+
+
+                <a
+                    href="{% url 'index' %}"
+                    class="btn btn-outline-dark">
+
+                    <i class="bi bi-house-door"></i>
+
+                    Regresar al inicio
+
+                </a>
+
+            </div>
+
+
+
+
+
+        </div>
+
+
+
+
+
+        <!-- ================================================= -->
+
+        <!-- TIPOS DE CANCHA -->
+
+        <!-- ================================================= -->
+
+
+
+        <div
+
+            class="row g-4 mb-5">
+
+
+
+
+
+            <!-- ================================================= -->
+
+            <!-- FUTBOL 5 -->
+
+            <!-- ================================================= -->
+
+
+
+            <div
+
+                class="col-lg-4 col-md-6">
+
+
+
+                <div
+
+                    class="card
+
+                           h-100
+
+                           cancha-card
+
+                           shadow-sm">
+
+
+
+                    <img
+
+                        src="{% static 'img/salon.jpg' %}"
+
+                        class="card-img-top"
+
+                        alt="Cancha Fútbol 5">
+
+
+
+                    <div
+
+                        class="card-body text-center">
+
+
+
+                        <h5
+
+                            class="card-title">
+
+
+
+                            Cancha Fútbol 5
+
+
+
+                        </h5>
+
+
+
+                    </div>
+
+
+
+                </div>
+
+
+
+            </div>
+
+
+
+
+
+            <!-- ================================================= -->
+
+            <!-- FUTBOL 7 -->
+
+            <!-- ================================================= -->
+
+
+
+            <div
+
+                class="col-lg-4 col-md-6">
+
+
+
+                <div
+
+                    class="card
+
+                           h-100
+
+                           cancha-card
+
+                           shadow-sm">
+
+
+
+                    <img
+
+                        src="{% static 'img/terraza.jpg' %}"
+
+                        class="card-img-top"
+
+                        alt="Cancha Fútbol 7">
+
+
+
+                    <div
+
+                        class="card-body text-center">
+
+
+
+                        <h5
+
+                            class="card-title">
+
+
+
+                            Cancha Fútbol 7
+
+
+
+                        </h5>
+
+
+
+                    </div>
+
+
+
+                </div>
+
+
+
+            </div>
+
+
+
+
+
+            <!-- ================================================= -->
+
+            <!-- FUTBOL 11 -->
+
+            <!-- ================================================= -->
+
+
+
+            <div
+
+                class="col-lg-4 col-md-12">
+
+
+
+                <div
+
+                    class="card
+
+                           h-100
+
+                           cancha-card
+
+                           shadow-sm">
+
+
+
+                    <!--
+
+                        Se conserva doble.png para
+
+                        no renombrar el archivo existente.
+
+                    -->
+
+
+
+                    <img
+
+                        src="{% static 'img/doble.png' %}"
+
+                        class="card-img-top"
+
+                        alt="Cancha Fútbol 11">
+
+
+
+                    <div
+
+                        class="card-body text-center">
+
+
+
+                        <h5
+
+                            class="card-title">
+
+
+
+                            Cancha Fútbol 11
+
+
+
+                        </h5>
+
+
+
+                    </div>
+
+
+
+                </div>
+
+
+
+            </div>
+
+
+
+
+
+        </div>
+
+
+
+
+
+        <!-- ================================================= -->
+
+        <!-- MENSAJES -->
+
+        <!-- ================================================= -->
+
+
+
+        {% if mensaje %}
+
+
+
+            {% if tipo_mensaje == 'error' %}
+
+
+
+                <div
+
+                    class="alert alert-danger">
+
+
+
+                    {{ mensaje }}
+
+
+
+                </div>
+
+
+
+            {% else %}
+
+
+
+                <div
+
+                    class="alert alert-success">
+
+
+
+                    {{ mensaje }}
+
+
+
+                </div>
+
+
+
+            {% endif %}
+
+
+
+        {% endif %}
+
+
+
+
+
+        <!-- ================================================= -->
+
+        <!-- FORMULARIO -->
+
+        <!-- ================================================= -->
+
+
+
+        <div
+
+            class="row
+
+                   justify-content-center">
+
+
+
+
+
+            <div
+
+                class="col-lg-9">
+
+
+
+
+
+                <div
+
+                    class="card shadow-sm">
+
+
+
+
+
+                    <div
+
+                        class="card-body p-4">
+
+
+
+
+
+                        <h2
+
+                            class="mb-4">
+
+
+
+                            Formulario de reserva
+
+
+
+                        </h2>
+
+
+
+
+
+                        <!-- ================================================= -->
+
+                        <!-- DATOS CLIENTE -->
+
+                        <!-- ================================================= -->
+
+
+
+                        <div
+
+                            class="datos-cliente mb-4">
+
+
+
+
+
+                            <h5
+
+                                class="mb-3">
+
+
+
+                                Datos del cliente
+
+
+
+                            </h5>
+
+
+
+
+
+                            <div
+
+                                class="row g-3">
+
+
+
+
+
+                                <!-- NOMBRES -->
+
+
+
+                                <div
+
+                                    class="col-md-6">
+
+
+
+                                    <label
+
+                                        class="form-label">
+
+
+
+                                        Nombres
+
+
+
+                                    </label>
+
+
+
+                                    <input
+
+                                        type="text"
+
+                                        class="form-control campo-solo-lectura"
+
+                                        value="{{ nombre_cliente }}"
+
+                                        readonly>
+
+
+
+                                </div>
+
+
+
+
+
+                                <!-- APELLIDOS -->
+
+
+
+                                <div
+
+                                    class="col-md-6">
+
+
+
+                                    <label
+
+                                        class="form-label">
+
+
+
+                                        Apellidos
+
+
+
+                                    </label>
+
+
+
+                                    <input
+
+                                        type="text"
+
+                                        class="form-control campo-solo-lectura"
+
+                                        value="{{ apellido_cliente }}"
+
+                                        readonly>
+
+
+
+                                </div>
+
+
+
+
+
+                                <!-- TIPO DOCUMENTO -->
+
+
+
+                                <div
+
+                                    class="col-md-6">
+
+
+
+                                    <label
+
+                                        class="form-label">
+
+
+
+                                        Tipo de documento
+
+
+
+                                    </label>
+
+
+
+                                    <input
+
+                                        type="text"
+
+                                        class="form-control campo-solo-lectura"
+
+                                        value="{% if tipo_documento_cliente == 'CC' %}Cédula de Ciudadanía{% elif tipo_documento_cliente == 'TI' %}Tarjeta de Identidad{% elif tipo_documento_cliente == 'CE' %}Cédula de Extranjería{% else %}{{ tipo_documento_cliente }}{% endif %}"
+
+                                        readonly>
+
+
+
+                                </div>
+
+
+
+
+
+                                <!-- DOCUMENTO -->
+
+
+
+                                <div
+
+                                    class="col-md-6">
+
+
+
+                                    <label
+
+                                        class="form-label">
+
+
+
+                                        Número de documento
+
+
+
+                                    </label>
+
+
+
+                                    <input
+
+                                        type="text"
+
+                                        class="form-control campo-solo-lectura"
+
+                                        value="{{ documento_cliente }}"
+
+                                        readonly>
+
+
+
+                                </div>
+
+
+
+
+
+                                <!-- INDICATIVO -->
+
+
+
+                                <div
+
+                                    class="col-md-4">
+
+
+
+                                    <label
+
+                                        class="form-label">
+
+
+
+                                        Indicativo del país
+
+
+
+                                    </label>
+
+
+
+                                    <input
+
+                                        type="text"
+
+                                        class="form-control campo-solo-lectura"
+
+                                        value="{{ indicativo_pais_cliente }}"
+
+                                        readonly>
+
+
+
+                                </div>
+
+
+
+
+
+                                <!-- CELULAR -->
+
+
+
+                                <div
+
+                                    class="col-md-8">
+
+
+
+                                    <label
+
+                                        class="form-label">
+
+
+
+                                        Número de celular
+
+
+
+                                    </label>
+
+
+
+                                    <input
+
+                                        type="text"
+
+                                        class="form-control campo-solo-lectura"
+
+                                        value="{{ cel_cliente }}"
+
+                                        readonly>
+
+
+
+                                </div>
+
+
+
+
+
+                            </div>
+
+
+
+
+
+                        </div>
+
+
+
+
+
+                        <!-- ================================================= -->
+
+                        <!-- RESERVA -->
+
+                        <!-- ================================================= -->
+
+
+
+                        <form
+
+                            method="post"
+
+                            enctype="multipart/form-data">
+
+
+
+
+
+                            {% csrf_token %}
+
+
+
+
+
+                            <!-- ================================================= -->
+
+                            <!-- TIPO DE CANCHA -->
+
+                            <!-- ================================================= -->
+
+
+
+                            <div
+
+                                class="mb-3">
+
+
+
+                                <label
+
+                                    for="cancha"
+
+                                    class="form-label">
+
+
+
+                                    Tipo de cancha *
+
+
+
+                                </label>
+
+
+
+                                <select
+
+                                    name="cancha"
+
+                                    id="cancha"
+
+                                    class="form-select"
+
+                                    required>
+
+
+
+
+
+                                    <option
+
+                                        value=""
+
+                                        disabled
+
+                                        selected>
+
+
+
+                                        Selecciona una opción
+
+
+
+                                    </option>
+
+
+
+
+
+                                    <option
+
+                                        value="futbol5">
+
+
+
+                                        Cancha Fútbol 5
+
+
+
+                                    </option>
+
+
+
+
+
+                                    <option
+
+                                        value="futbol7">
+
+
+
+                                        Cancha Fútbol 7
+
+
+
+                                    </option>
+
+
+
+
+
+                                    <option
+
+                                        value="futbol11">
+
+
+
+                                        Cancha Fútbol 11
+
+
+
+                                    </option>
+
+
+
+
+
+                                </select>
+
+
+
+                            </div>
+
+
+
+
+
+                            <!-- ================================================= -->
+
+                            <!-- FECHA -->
+
+                            <!-- ================================================= -->
+
+
+
+                            <div
+
+                                class="mb-3">
+
+
+
+                                <label
+
+                                    for="fecha"
+
+                                    class="form-label">
+
+
+
+                                    Fecha reserva *
+
+
+
+                                </label>
+
+
+
+                                <input
+
+                                    type="date"
+
+                                    class="form-control"
+
+                                    id="fecha"
+
+                                    name="fecha"
+
+                                    required>
+
+
+
+                            </div>
+
+
+
+
+
+                            <!-- ================================================= -->
+
+                            <!-- HORA -->
+
+                            <!-- Se conservan los horarios que ya manejaba -->
+
+                            <!-- ================================================= -->
+
+
+
+                            <div
+
+                                class="mb-3">
+
+
+
+                                <label
+
+                                    for="hora"
+
+                                    class="form-label">
+
+
+
+                                    Hora de inicio *
+
+
+
+                                </label>
+
+
+
+                                <select
+
+                                    name="hora"
+
+                                    id="hora"
+
+                                    class="form-select"
+
+                                    required>
+
+
+
+
+
+                                    <option
+
+                                        value=""
+
+                                        disabled
+
+                                        selected>
+
+
+
+                                        Selecciona una hora
+
+
+
+                                    </option>
+
+
+
+
+
+                                    <option value="08:00">08:00</option>
+
+                                    <option value="09:00">09:00</option>
+
+                                    <option value="10:00">10:00</option>
+
+                                    <option value="11:00">11:00</option>
+
+                                    <option value="12:00">12:00</option>
+
+                                    <option value="13:00">13:00</option>
+
+                                    <option value="14:00">14:00</option>
+
+                                    <option value="15:00">15:00</option>
+
+                                    <option value="16:00">16:00</option>
+
+                                    <option value="17:00">17:00</option>
+
+                                    <option value="18:00">18:00</option>
+
+                                    <option value="19:00">19:00</option>
+
+                                    <option value="20:00">20:00</option>
+
+                                    <option value="21:00">21:00</option>
+
+
+
+
+
+                                </select>
+
+
+
+                            </div>
+
+
+
+
+
+                            <!-- ================================================= -->
+
+                            <!-- DURACIÓN -->
+
+                            <!-- ================================================= -->
+
+
+
+                            <div
+
+                                class="mb-3">
+
+
+
+                                <label
+
+                                    for="duracion"
+
+                                    class="form-label">
+
+
+
+                                    Duración reserva *
+
+
+
+                                </label>
+
+
+
+                                <select
+
+                                    name="duracion"
+
+                                    id="duracion"
+
+                                    class="form-select"
+
+                                    required>
+
+
+
+
+
+                                    <option
+
+                                        value=""
+
+                                        disabled
+
+                                        selected>
+
+
+
+                                        Selecciona la duración
+
+
+
+                                    </option>
+
+
+
+
+
+                                    <option
+
+                                        value="1">
+
+
+
+                                        1 hora
+
+
+
+                                    </option>
+
+
+
+
+
+                                    <option
+
+                                        value="2">
+
+
+
+                                        2 horas
+
+
+
+                                    </option>
+
+
+
+
+
+                                </select>
+
+
+
+                            </div>
+
+
+
+
+
+                            <!-- ================================================= -->
+
+                            <!-- COMPROBANTE -->
+
+                            <!-- ================================================= -->
+
+
+
+                            <div
+
+                                class="mb-3">
+
+
+
+                                <label
+
+                                    for="comprobante_pago"
+
+                                    class="form-label">
+
+
+
+                                    Comprobante de pago
+
+                                    (opcional)
+
+
+
+                                </label>
+
+
+
+                                <input
+
+                                    type="file"
+
+                                    class="form-control"
+
+                                    id="comprobante_pago"
+
+                                    name="comprobante_pago"
+
+                                    accept="image/jpeg,image/png,image/webp">
+
+
+
+
+
+                                <small
+
+                                    class="form-text text-muted">
+
+
+
+                                    Formatos permitidos:
+
+                                    JPG, JPEG, PNG y WEBP.
+
+                                    Tamaño máximo: 4 MB.
+
+
+
+                                </small>
+
+
+
+                            </div>
+
+
+
+
+
+                            <!-- ================================================= -->
+
+                            <!-- BOTÓN -->
+
+                            <!-- ================================================= -->
+
+
+
+                            <button
+
+                                type="submit"
+
+                                class="btn btn-primary">
+
+
+
+                                Crear reserva
+
+
+
+                            </button>
+
+
+
+
+
+                        </form>
+
+
+
+
+
+                    </div>
+
+
+
+
+
+                </div>
+
+
+
+
+
+            </div>
+
+
+
+
+
+        </div>
+
+
+
+
+
+    </main>
+
+
+
+
+
+    <!-- ================================================= -->
+
+    <!-- FOOTER -->
+
+    <!-- ================================================= -->
+
+
+
+    <footer>
+
+
+
+        <div
+
+            class="container-fluid
+
+                   bg-dark
+
+                   text-secondary
+
+                   px-5
+
+                   mt-5">
+
+
+
+            <div
+
+                class="row gx-5">
+
+
+
+                <div
+
+                    class="col-lg-8
+
+                           col-md-6">
+
+
+
+                    <div
+
+                        class="row gx-5">
+
+
+
+                        <div
+
+                            class="col-lg-6">
+
+
+
+                            <p
+
+                                class="text-light">
+
+
+
+                                <img
+
+                                    src="{% static 'img/logo.png' %}"
+
+                                    alt="Logo"
+
+                                    width="100px">
+
+
+
+                                2024 &copy;
+
+                                Futbol y Gol
+
+
+
+                            </p>
+
+
+
+                        </div>
+
+
+
+                    </div>
+
+
+
+                </div>
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+        <!-- ================================================= -->
+
+        <!-- BACK TO TOP -->
+
+        <!-- ================================================= -->
+
+
+
+        <a
+
+            href="#"
+
+            class="btn btn-dark
+
+                   py-3 fs-4
+
+                   back-to-top">
+
+
+
+            <i
+
+                class="bi bi-arrow-up">
+
+            </i>
+
+
+
+        </a>
+
+
+
+
+
+        <!-- ================================================= -->
+
+        <!-- JAVASCRIPT -->
+
+        <!-- ================================================= -->
+
+
+
+        <script
+
+            src="https://code.jquery.com/jquery-3.4.1.min.js">
+
+        </script>
+
+
+
+        <script
+
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
+
+        </script>
+
+
+
+    </footer>
+
+
+
+
+
+    <!-- ================================================= -->
+
+    <!-- IMPEDIR FECHAS ANTERIORES -->
+
+    <!-- ================================================= -->
+
+
+
+    <script>
+
+
+
+        const fechaInput =
+
+            document.getElementById(
+
+                "fecha"
+
+            );
+
+
+
+
+
+        if (fechaInput) {
+
+
+
+            const hoy =
+
+                new Date();
+
+
+
+
+
+            const anio =
+
+                hoy.getFullYear();
+
+
+
+
+
+            const mes =
+
+                String(
+
+                    hoy.getMonth() + 1
+
+                ).padStart(
+
+                    2,
+
+                    "0"
+
+                );
+
+
+
+
+
+            const dia =
+
+                String(
+
+                    hoy.getDate()
+
+                ).padStart(
+
+                    2,
+
+                    "0"
+
+                );
+
+
+
+
+
+            fechaInput.min =
+
+                `${anio}-${mes}-${dia}`;
+
+
+
+        }
+
+
+
+    </script>
+
+
+
+
+
+
     <!-- ================================================= -->
-    <!-- HEADER -->
-    <!-- ================================================= -->
-
-    <div class="container-fluid bg-dark px-0">
-
-        <div class="row gx-0">
-
-            <nav
-                class="navbar navbar-expand-lg
-                       bg-dark navbar-dark
-                       p-3 p-lg-0 px-lg-5">
-
-
-                <!-- LOGO MÓVIL -->
-
-                <a
-                    href="{% url 'index' %}"
-                    class="navbar-brand d-block d-lg-none">
-
-                    <h1
-                        class="m-0 display-4
-                               text-primary text-uppercase">
-
-                        <img
-                            src="{% static 'img/logo.png' %}"
-                            alt="Logo"
-                            width="100px">
-
-                    </h1>
-
-                </a>
-
-
-                <!-- BOTÓN RESPONSIVE -->
-
-                <button
-                    type="button"
-                    class="navbar-toggler"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarCollapse">
-
-                    <span
-                        class="navbar-toggler-icon">
-                    </span>
-
-                </button>
-
-
-                <div
-                    class="collapse navbar-collapse
-                           justify-content-between"
-                    id="navbarCollapse">
-
-
-                    <div
-                        class="navbar-nav
-                               mr-auto py-0">
-
-
-                        <!-- LOGO ESCRITORIO -->
-
-                        <img
-                            src="{% static 'img/logo.png' %}"
-                            alt="Logo"
-                            width="100px">
-
-
-                        <!-- INICIO -->
-
-                        <a
-                            href="{% url 'index' %}"
-                            class="nav-item nav-link">
-
-                            Inicio
-
-                        </a>
-
-
-                        <!-- RESERVAR -->
-
-                        <a
-                            href="{% url 'reservar' %}"
-                            class="nav-item nav-link active">
-
-                            Reservar
-
-                        </a>
-
-
-                        <!-- MIS RESERVAS -->
-
-                        <a
-                            href="{% url 'mis_reservas' %}"
-                            class="nav-item nav-link">
-
-                            Mis Reservas
-
-                        </a>
-
-
-                        <!-- PERFIL -->
-
-                        <a
-                            href="{% url 'perfil_cliente' %}"
-                            class="nav-item nav-link">
-
-                            Mi Perfil
-
-                        </a>
-
-
-                        <!-- CERRAR SESIÓN -->
-
-                        <a
-                            href="{% url 'logout_cliente' %}"
-                            class="nav-item nav-link">
-
-                            Cerrar sesión
-
-                        </a>
-
-
-                    </div>
-
-
-                    <a
-                        href="{% url 'index' %}"
-                        class="py-md-3 px-md-5
-                               d-none d-lg-block">
-
-                        Futbol y Gol
-
-                    </a>
-
-
-                </div>
-
-            </nav>
-
-        </div>
-
-    </div>
-
-
-    <!-- ================================================= -->
-    <!-- CONTENIDO -->
-    <!-- ================================================= -->
-
-    <main
-        class="container p-4">
-
-
-        <!-- ================================================= -->
-        <!-- ENCABEZADO -->
-        <!-- ================================================= -->
-
-        <div
-            class="d-flex
-                   flex-wrap
-                   justify-content-between
-                   align-items-center
-                   gap-2
-                   mb-4">
-
-
-            <div>
-
-                <h1>
-                    Reserva de canchas
-                </h1>
-
-                <p
-                    class="text-muted">
-
-                    Selecciona el tipo de cancha,
-                    fecha, hora de inicio y duración
-                    de tu reserva.
-
-                </p>
-
-            </div>
-
-
-            <a
-                href="{% url 'index' %}"
-                class="btn btn-outline-dark">
-
-                <i class="bi bi-house-door"></i>
-
-                Regresar al inicio
-
-            </a>
-
-
-        </div>
-
-
-        <!-- ================================================= -->
-        <!-- TIPOS DE CANCHA -->
-        <!-- ================================================= -->
-
-        <div
-            class="row g-4 mb-5">
-
-
-            <!-- ================================================= -->
-            <!-- FUTBOL 5 -->
-            <!-- ================================================= -->
-
-            <div
-                class="col-lg-4 col-md-6">
-
-                <div
-                    class="card
-                           h-100
-                           cancha-card
-                           shadow-sm">
-
-                    <img
-                        src="{% static 'img/salon.jpg' %}"
-                        class="card-img-top"
-                        alt="Cancha Fútbol 5">
-
-                    <div
-                        class="card-body text-center">
-
-                        <h5
-                            class="card-title">
-
-                            Cancha Fútbol 5
-
-                        </h5>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- ================================================= -->
-            <!-- FUTBOL 7 -->
-            <!-- ================================================= -->
-
-            <div
-                class="col-lg-4 col-md-6">
-
-                <div
-                    class="card
-                           h-100
-                           cancha-card
-                           shadow-sm">
-
-                    <img
-                        src="{% static 'img/terraza.jpg' %}"
-                        class="card-img-top"
-                        alt="Cancha Fútbol 7">
-
-                    <div
-                        class="card-body text-center">
-
-                        <h5
-                            class="card-title">
-
-                            Cancha Fútbol 7
-
-                        </h5>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- ================================================= -->
-            <!-- FUTBOL 11 -->
-            <!-- ================================================= -->
-
-            <div
-                class="col-lg-4 col-md-12">
-
-                <div
-                    class="card
-                           h-100
-                           cancha-card
-                           shadow-sm">
-
-                    <!--
-                        Se conserva doble.png para
-                        no renombrar el archivo existente.
-                    -->
-
-                    <img
-                        src="{% static 'img/doble.png' %}"
-                        class="card-img-top"
-                        alt="Cancha Fútbol 11">
-
-                    <div
-                        class="card-body text-center">
-
-                        <h5
-                            class="card-title">
-
-                            Cancha Fútbol 11
-
-                        </h5>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-        <!-- ================================================= -->
-        <!-- MENSAJES -->
-        <!-- ================================================= -->
-
-        {% if mensaje %}
-
-            {% if tipo_mensaje == 'error' %}
-
-                <div
-                    class="alert alert-danger">
-
-                    {{ mensaje }}
-
-                </div>
-
-            {% else %}
-
-                <div
-                    class="alert alert-success">
-
-                    {{ mensaje }}
-
-                </div>
-
-            {% endif %}
-
-        {% endif %}
-
-
-        <!-- ================================================= -->
-        <!-- FORMULARIO -->
-        <!-- ================================================= -->
-
-        <div
-            class="row
-                   justify-content-center">
-
-
-            <div
-                class="col-lg-9">
-
-
-                <div
-                    class="card shadow-sm">
-
-
-                    <div
-                        class="card-body p-4">
-
-
-                        <h2
-                            class="mb-4">
-
-                            Formulario de reserva
-
-                        </h2>
-
-
-                        <!-- ================================================= -->
-                        <!-- DATOS CLIENTE -->
-                        <!-- ================================================= -->
-
-                        <div
-                            class="datos-cliente mb-4">
-
-
-                            <h5
-                                class="mb-3">
-
-                                Datos del cliente
-
-                            </h5>
-
-
-                            <div
-                                class="row g-3">
-
-
-                                <!-- NOMBRES -->
-
-                                <div
-                                    class="col-md-6">
-
-                                    <label
-                                        class="form-label">
-
-                                        Nombres
-
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        class="form-control campo-solo-lectura"
-                                        value="{{ nombre_cliente }}"
-                                        readonly>
-
-                                </div>
-
-
-                                <!-- APELLIDOS -->
-
-                                <div
-                                    class="col-md-6">
-
-                                    <label
-                                        class="form-label">
-
-                                        Apellidos
-
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        class="form-control campo-solo-lectura"
-                                        value="{{ apellido_cliente }}"
-                                        readonly>
-
-                                </div>
-
-
-                                <!-- TIPO DOCUMENTO -->
-
-                                <div
-                                    class="col-md-6">
-
-                                    <label
-                                        class="form-label">
-
-                                        Tipo de documento
-
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        class="form-control campo-solo-lectura"
-                                        value="{% if tipo_documento_cliente == 'CC' %}Cédula de Ciudadanía{% elif tipo_documento_cliente == 'TI' %}Tarjeta de Identidad{% elif tipo_documento_cliente == 'CE' %}Cédula de Extranjería{% else %}{{ tipo_documento_cliente }}{% endif %}"
-                                        readonly>
-
-                                </div>
-
-
-                                <!-- DOCUMENTO -->
-
-                                <div
-                                    class="col-md-6">
-
-                                    <label
-                                        class="form-label">
-
-                                        Número de documento
-
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        class="form-control campo-solo-lectura"
-                                        value="{{ documento_cliente }}"
-                                        readonly>
-
-                                </div>
-
-
-                                <!-- INDICATIVO -->
-
-                                <div
-                                    class="col-md-4">
-
-                                    <label
-                                        class="form-label">
-
-                                        Indicativo del país
-
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        class="form-control campo-solo-lectura"
-                                        value="{{ indicativo_pais_cliente }}"
-                                        readonly>
-
-                                </div>
-
-
-                                <!-- CELULAR -->
-
-                                <div
-                                    class="col-md-8">
-
-                                    <label
-                                        class="form-label">
-
-                                        Número de celular
-
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        class="form-control campo-solo-lectura"
-                                        value="{{ cel_cliente }}"
-                                        readonly>
-
-                                </div>
-
-
-                            </div>
-
-
-                        </div>
-
-
-                        <!-- ================================================= -->
-                        <!-- RESERVA -->
-                        <!-- ================================================= -->
-
-                        <form
-                            method="post"
-                            enctype="multipart/form-data">
-
-
-                            {% csrf_token %}
-
-
-                            <!-- ================================================= -->
-                            <!-- TIPO DE CANCHA -->
-                            <!-- ================================================= -->
-
-                            <div
-                                class="mb-3">
-
-                                <label
-                                    for="cancha"
-                                    class="form-label">
-
-                                    Tipo de cancha *
-
-                                </label>
-
-                                <select
-                                    name="cancha"
-                                    id="cancha"
-                                    class="form-select"
-                                    required>
-
-
-                                    <option
-                                        value=""
-                                        disabled
-                                        selected>
-
-                                        Selecciona una opción
-
-                                    </option>
-
-
-                                    <option
-                                        value="futbol5">
-
-                                        Cancha Fútbol 5
-
-                                    </option>
-
-
-                                    <option
-                                        value="futbol7">
-
-                                        Cancha Fútbol 7
-
-                                    </option>
-
-
-                                    <option
-                                        value="futbol11">
-
-                                        Cancha Fútbol 11
-
-                                    </option>
-
-
-                                </select>
-
-                            </div>
-
-
-                            <!-- ================================================= -->
-                            <!-- FECHA -->
-                            <!-- ================================================= -->
-
-                            <div
-                                class="mb-3">
-
-                                <label
-                                    for="fecha"
-                                    class="form-label">
-
-                                    Fecha reserva *
-
-                                </label>
-
-                                <input
-                                    type="date"
-                                    class="form-control"
-                                    id="fecha"
-                                    name="fecha"
-                                    required>
-
-                            </div>
-
-
-                            <!-- ================================================= -->
-                            <!-- HORA -->
-                            <!-- Se conservan los horarios que ya manejaba -->
-                            <!-- ================================================= -->
-
-                            <div
-                                class="mb-3">
-
-                                <label
-                                    for="hora"
-                                    class="form-label">
-
-                                    Hora de inicio *
-
-                                </label>
-
-                                <select
-                                    name="hora"
-                                    id="hora"
-                                    class="form-select"
-                                    required>
-
-
-                                    <option
-                                        value=""
-                                        disabled
-                                        selected>
-
-                                        Selecciona una hora
-
-                                    </option>
-
-
-                                    <option value="08:00">08:00</option>
-                                    <option value="09:00">09:00</option>
-                                    <option value="10:00">10:00</option>
-                                    <option value="11:00">11:00</option>
-                                    <option value="12:00">12:00</option>
-                                    <option value="13:00">13:00</option>
-                                    <option value="14:00">14:00</option>
-                                    <option value="15:00">15:00</option>
-                                    <option value="16:00">16:00</option>
-                                    <option value="17:00">17:00</option>
-                                    <option value="18:00">18:00</option>
-                                    <option value="19:00">19:00</option>
-                                    <option value="20:00">20:00</option>
-                                    <option value="21:00">21:00</option>
-
-
-                                </select>
-
-                            </div>
-
-
-                            <!-- ================================================= -->
-                            <!-- DURACIÓN -->
-                            <!-- ================================================= -->
-
-                            <div
-                                class="mb-3">
-
-                                <label
-                                    for="duracion"
-                                    class="form-label">
-
-                                    Duración reserva *
-
-                                </label>
-
-                                <select
-                                    name="duracion"
-                                    id="duracion"
-                                    class="form-select"
-                                    required>
-
-
-                                    <option
-                                        value=""
-                                        disabled
-                                        selected>
-
-                                        Selecciona la duración
-
-                                    </option>
-
-
-                                    <option
-                                        value="1">
-
-                                        1 hora
-
-                                    </option>
-
-
-                                    <option
-                                        value="2">
-
-                                        2 horas
-
-                                    </option>
-
-
-                                </select>
-
-                            </div>
-
-
-                            <!-- ================================================= -->
-                            <!-- COMPROBANTE -->
-                            <!-- ================================================= -->
-
-                            <div
-                                class="mb-3">
-
-                                <label
-                                    for="comprobante_pago"
-                                    class="form-label">
-
-                                    Comprobante de pago
-                                    (opcional)
-
-                                </label>
-
-                                <input
-                                    type="file"
-                                    class="form-control"
-                                    id="comprobante_pago"
-                                    name="comprobante_pago"
-                                    accept="image/jpeg,image/png,image/webp">
-
-
-                                <small
-                                    class="form-text text-muted">
-
-                                    Formatos permitidos:
-                                    JPG, JPEG, PNG y WEBP.
-                                    Tamaño máximo: 4 MB.
-
-                                </small>
-
-                            </div>
-
-
-                            <!-- ================================================= -->
-                            <!-- BOTÓN -->
-                            <!-- ================================================= -->
-
-                            <button
-                                type="submit"
-                                class="btn btn-primary">
-
-                                Crear reserva
-
-                            </button>
-
-
-                        </form>
-
-
-                    </div>
-
-
-                </div>
-
-
-            </div>
-
-
-        </div>
-
-
-    </main>
-
-
-    <!-- ================================================= -->
-    <!-- FOOTER -->
-    <!-- ================================================= -->
-
-    <footer>
-
-        <div
-            class="container-fluid
-                   bg-dark
-                   text-secondary
-                   px-5
-                   mt-5">
-
-            <div
-                class="row gx-5">
-
-                <div
-                    class="col-lg-8
-                           col-md-6">
-
-                    <div
-                        class="row gx-5">
-
-                        <div
-                            class="col-lg-6">
-
-                            <p
-                                class="text-light">
-
-                                <img
-                                    src="{% static 'img/logo.png' %}"
-                                    alt="Logo"
-                                    width="100px">
-
-                                2024 &copy;
-                                Futbol y Gol
-
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ================================================= -->
-        <!-- BACK TO TOP -->
-        <!-- ================================================= -->
-
-        <a
-            href="#"
-            class="btn btn-dark
-                   py-3 fs-4
-                   back-to-top">
-
-            <i
-                class="bi bi-arrow-up">
-            </i>
-
-        </a>
-
-
-        <!-- ================================================= -->
-        <!-- JAVASCRIPT -->
-        <!-- ================================================= -->
-
-        <script
-            src="https://code.jquery.com/jquery-3.4.1.min.js">
-        </script>
-
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
-        </script>
-
-    </footer>
-
-
-    <!-- ================================================= -->
-    <!-- IMPEDIR FECHAS ANTERIORES -->
+    <!-- BOTÓN IR ATRÁS -->
     <!-- ================================================= -->
 
     <script>
 
-        const fechaInput =
-            document.getElementById(
-                "fecha"
-            );
+        function volverAtras() {
 
+            if (window.history.length > 1) {
 
-        if (fechaInput) {
+                window.history.back();
 
-            const hoy =
-                new Date();
+            } else {
 
+                window.location.href =
+                    "{% url 'index' %}";
 
-            const anio =
-                hoy.getFullYear();
-
-
-            const mes =
-                String(
-                    hoy.getMonth() + 1
-                ).padStart(
-                    2,
-                    "0"
-                );
-
-
-            const dia =
-                String(
-                    hoy.getDate()
-                ).padStart(
-                    2,
-                    "0"
-                );
-
-
-            fechaInput.min =
-                `${anio}-${mes}-${dia}`;
+            }
 
         }
 
@@ -1039,5 +2113,7 @@
 
 
 </body>
+
+
 
 </html>

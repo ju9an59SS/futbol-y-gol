@@ -12,8 +12,8 @@
     </title>
 
     <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
+        content="width=device-width, initial-scale=1.0"
+        name="viewport">
 
     <link
         href="{% static 'img/logo.png' %}"
@@ -28,7 +28,7 @@
         rel="stylesheet">
 
     <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
         rel="stylesheet">
 
 </head>
@@ -37,288 +37,236 @@
 <body>
 
 
-    <!-- HEADER -->
+<div class="container-fluid bg-dark px-0">
 
-    <div class="container-fluid bg-dark px-0">
+    <nav class="navbar navbar-dark bg-dark p-3 px-lg-5">
 
-        <div class="container">
+        <a
+            href="{% url 'index' %}"
+            class="navbar-brand">
 
-            <div
-                class="d-flex
-                       align-items-center
-                       py-3">
+            <img
+                src="{% static 'img/logo.png' %}"
+                width="100px"
+                alt="Logo">
 
-                <a
-                    href="{% url 'index' %}">
+        </a>
 
-                    <img
-                        src="{% static 'img/logo.png' %}"
-                        alt="Logo"
-                        width="100">
 
-                </a>
+        <div class="d-flex flex-wrap gap-2">
 
-                <span class="text-light ms-4">
+            <button
+                type="button"
+                class="btn btn-outline-light"
+                onclick="volverAtras();">
 
-                    Futbol y Gol
+                <i class="bi bi-arrow-left"></i>
 
-                </span>
+                Ir atrás
 
-            </div>
+            </button>
+
+
+            <a
+                href="{% url 'index' %}"
+                class="btn btn-outline-light">
+
+                Regresar al inicio
+
+            </a>
 
         </div>
 
-    </div>
+    </nav>
 
+</div>
 
-    <!-- CONTENIDO -->
 
-    <main class="container py-5">
+<main class="container py-5">
 
-        <div class="row justify-content-center">
+    <div class="row justify-content-center">
 
-            <div class="col-lg-6 col-md-8">
+        <div class="col-lg-6 col-md-8">
 
-                <div class="card shadow border-0">
+            <div class="card shadow-sm">
 
-                    <div class="card-body p-5">
+                <div class="card-body p-4 p-lg-5">
 
 
-                        {% if cambiada %}
+                    {% if cambiada %}
 
 
-                            <!-- CONTRASEÑA CAMBIADA -->
+                        <div class="alert alert-success">
 
-                            <div class="text-center">
+                            <h4 class="alert-heading">
+                                Contraseña actualizada
+                            </h4>
 
+                            <p class="mb-0">
 
-                                <i
-                                    class="fas fa-check-circle
-                                           fa-4x
-                                           text-success
-                                           mb-4">
-                                </i>
+                                Tu contraseña fue cambiada
+                                correctamente.
 
+                            </p>
 
-                                <h2>
+                        </div>
 
-                                    Contraseña cambiada
 
-                                </h2>
+                        {% if tipo == "admin" %}
 
+                            <a
+                                href="{% url 'login' %}"
+                                class="btn btn-primary">
 
-                                <div
-                                    class="alert alert-success mt-4">
+                                Ir al ingreso administrador
 
-                                    Su contraseña fue
-                                    actualizada correctamente.
-
-                                </div>
-
-
-                                {% if tipo == "admin" %}
-
-                                    <a
-                                        href="{% url 'login' %}"
-                                        class="btn btn-primary">
-
-                                        Ingresar como administrador
-
-                                    </a>
-
-                                {% else %}
-
-                                    <a
-                                        href="{% url 'login_cliente' %}"
-                                        class="btn btn-primary">
-
-                                        Ingresar como cliente
-
-                                    </a>
-
-                                {% endif %}
-
-
-                            </div>
-
-
-                        {% elif valido %}
-
-
-                            <!-- NUEVA CONTRASEÑA -->
-
-                            <h2 class="text-center mb-4">
-
-                                Crear nueva contraseña
-
-                            </h2>
-
-
-                            <div class="alert alert-success">
-
-                                Código verificado correctamente.
-
-                                Ahora puede crear
-                                una nueva contraseña.
-
-                            </div>
-
-
-                            {% if mensaje %}
-
-                                <div class="alert alert-danger">
-
-                                    {{ mensaje }}
-
-                                </div>
-
-                            {% endif %}
-
-
-                            <form method="post">
-
-                                {% csrf_token %}
-
-
-                                <div class="mb-3">
-
-                                    <label
-                                        for="password1"
-                                        class="form-label">
-
-                                        Nueva contraseña
-
-                                    </label>
-
-
-                                    <input
-                                        type="password"
-                                        class="form-control"
-                                        id="password1"
-                                        name="password1"
-                                        required
-                                        autocomplete="new-password">
-
-                                </div>
-
-
-                                <div class="mb-4">
-
-                                    <label
-                                        for="password2"
-                                        class="form-label">
-
-                                        Confirmar nueva contraseña
-
-                                    </label>
-
-
-                                    <input
-                                        type="password"
-                                        class="form-control"
-                                        id="password2"
-                                        name="password2"
-                                        required
-                                        autocomplete="new-password">
-
-                                </div>
-
-
-                                <div class="alert alert-info">
-
-                                    La nueva contraseña debe
-                                    cumplir las reglas de
-                                    seguridad configuradas
-                                    en Django.
-
-                                </div>
-
-
-                                <div class="d-grid">
-
-                                    <button
-                                        type="submit"
-                                        class="btn btn-success">
-
-                                        Guardar nueva contraseña
-
-                                    </button>
-
-                                </div>
-
-
-                            </form>
-
+                            </a>
 
                         {% else %}
 
+                            <a
+                                href="{% url 'login_cliente' %}"
+                                class="btn btn-primary">
 
-                            <!-- RECUPERACIÓN INVÁLIDA -->
+                                Ir al ingreso cliente
 
-                            <div class="text-center">
-
-
-                                <i
-                                    class="fas fa-exclamation-triangle
-                                           fa-4x
-                                           text-warning
-                                           mb-4">
-                                </i>
-
-
-                                <h2>
-
-                                    Recuperación inválida
-
-                                </h2>
-
-
-                                <div class="alert alert-danger">
-
-                                    {% if mensaje %}
-
-                                        {{ mensaje }}
-
-                                    {% else %}
-
-                                        La recuperación
-                                        no es válida o expiró.
-
-                                    {% endif %}
-
-                                </div>
-
-
-                                {% if tipo == "admin" %}
-
-                                    <a
-                                        href="{% url 'recuperar_password_admin' %}"
-                                        class="btn btn-primary">
-
-                                        Intentar nuevamente
-
-                                    </a>
-
-                                {% else %}
-
-                                    <a
-                                        href="{% url 'recuperar_password_cliente' %}"
-                                        class="btn btn-primary">
-
-                                        Intentar nuevamente
-
-                                    </a>
-
-                                {% endif %}
-
-
-                            </div>
-
+                            </a>
 
                         {% endif %}
 
 
-                    </div>
+                    {% elif not valido %}
+
+
+                        <h1 class="mb-3">
+                            Recuperación no disponible
+                        </h1>
+
+
+                        <div class="alert alert-danger">
+
+                            {{ mensaje }}
+
+                        </div>
+
+
+                        {% if tipo == "admin" %}
+
+                            <a
+                                href="{% url 'recuperar_password_admin' %}"
+                                class="btn btn-primary">
+
+                                Solicitar un nuevo código
+
+                            </a>
+
+                        {% else %}
+
+                            <a
+                                href="{% url 'recuperar_password_cliente' %}"
+                                class="btn btn-primary">
+
+                                Solicitar un nuevo código
+
+                            </a>
+
+                        {% endif %}
+
+
+                    {% else %}
+
+
+                        <h1 class="mb-3">
+                            Crear nueva contraseña
+                        </h1>
+
+
+                        <p class="text-muted">
+
+                            La nueva contraseña debe cumplir
+                            las reglas de seguridad configuradas
+                            en el sistema.
+
+                        </p>
+
+
+                        {% if mensaje %}
+
+                            <div class="alert alert-danger">
+
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+
+                                {{ mensaje }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <form
+                            method="post"
+                            action="{% url 'confirmar_recuperacion' %}">
+
+                            {% csrf_token %}
+
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="password1"
+                                    class="form-label">
+
+                                    Nueva contraseña *
+
+                                </label>
+
+
+                                <input
+                                    type="password"
+                                    id="password1"
+                                    name="password1"
+                                    class="form-control"
+                                    autocomplete="new-password"
+                                    required>
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="password2"
+                                    class="form-label">
+
+                                    Confirmar nueva contraseña *
+
+                                </label>
+
+
+                                <input
+                                    type="password"
+                                    id="password2"
+                                    name="password2"
+                                    class="form-control"
+                                    autocomplete="new-password"
+                                    required>
+
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary">
+
+                                Cambiar contraseña
+
+                            </button>
+
+                        </form>
+
+
+                    {% endif %}
+
 
                 </div>
 
@@ -326,14 +274,35 @@
 
         </div>
 
-    </main>
+    </div>
+
+</main>
 
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
-    </script>
+<script>
+
+    function volverAtras() {
+
+        if (window.history.length > 1) {
+
+            window.history.back();
+
+        } else {
+
+            window.location.href =
+                "{% url 'index' %}";
+
+        }
+
+    }
+
+</script>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
+</script>
 
 
 </body>
-
 </html>

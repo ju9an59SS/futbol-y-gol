@@ -1,7 +1,6 @@
 {% load static %}
 
 <!DOCTYPE html>
-
 <html lang="es">
 
 <head>
@@ -9,14 +8,28 @@
     <meta charset="utf-8">
 
     <title>
-        Administrador Creado
+        Registro exitoso - Futbol y Gol
     </title>
 
+    <meta
+        content="width=device-width, initial-scale=1.0"
+        name="viewport">
+
+    <link
+        href="{% static 'img/logo.png' %}"
+        rel="icon">
 
     <link
         href="{% static 'css/bootstrap.min.css' %}"
-        rel="stylesheet"
-    >
+        rel="stylesheet">
+
+    <link
+        href="{% static 'css/style.css' %}"
+        rel="stylesheet">
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+        rel="stylesheet">
 
 </head>
 
@@ -24,60 +37,167 @@
 <body>
 
 
-<div class="container py-5">
+<div class="container-fluid bg-dark px-0">
 
-    <div class="alert alert-success">
+    <nav class="navbar navbar-dark bg-dark p-3 px-lg-5">
 
-        <h2>
-            Administrador creado correctamente
-        </h2>
+        <a
+            href="{% url 'index' %}"
+            class="navbar-brand">
 
+            <img
+                src="{% static 'img/logo.png' %}"
+                width="100px"
+                alt="Logo">
 
-        <p>
+        </a>
 
-            Usuario:
-
-            <strong>
-                {{ usuario }}
-            </strong>
-
-        </p>
-
-
-        <p>
-
-            Contraseña temporal:
-
-            <strong>
-                {{ password_temporal }}
-            </strong>
-
-        </p>
-
-
-        <p>
-
-            El administrador deberá cambiar
-            esta contraseña al iniciar sesión
-            por primera vez.
-
-        </p>
-
-    </div>
-
-
-    <a
-        href="{% url 'reservas' %}"
-        class="btn btn-primary"
-    >
-
-        Volver a Reservas
-
-    </a>
+    </nav>
 
 </div>
 
 
-</body>
+<main class="container py-5">
 
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body p-4 p-lg-5">
+
+
+                    <div class="alert alert-success">
+
+                        <h4 class="alert-heading">
+                            Cliente registrado correctamente
+                        </h4>
+
+                        Tu cuenta fue creada exitosamente.
+
+                    </div>
+
+
+                    <div class="alert alert-warning">
+
+                        <strong>
+                            Guarda esta información ahora.
+                        </strong>
+
+                        La contraseña temporal se muestra
+                        únicamente en esta pantalla.
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Usuario
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="{{ usuario }}"
+                            readonly>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Contraseña temporal
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="{{ password_temporal }}"
+                            readonly>
+
+                    </div>
+
+
+                    <p class="text-muted">
+
+                        En tu primer inicio de sesión deberás
+                        cambiar obligatoriamente esta contraseña.
+
+                    </p>
+
+
+                    <div class="d-flex flex-wrap gap-2">
+
+                        <a
+                            href="{% url 'login_cliente' %}"
+                            class="btn btn-primary">
+
+                            Ingresar como cliente
+
+                        </a>
+
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-secondary"
+                            onclick="volverAtras();">
+
+                            <i class="bi bi-arrow-left"></i>
+
+                            Ir atrás
+
+                        </button>
+
+
+                        <a
+                            href="{% url 'index' %}"
+                            class="btn btn-outline-dark">
+
+                            Regresar a la página principal
+
+                        </a>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<script>
+
+    function volverAtras() {
+
+        if (window.history.length > 1) {
+
+            window.history.back();
+
+        } else {
+
+            window.location.href =
+                "{% url 'index' %}";
+
+        }
+
+    }
+
+</script>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
 </html>

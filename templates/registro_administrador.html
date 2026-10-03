@@ -40,7 +40,16 @@
 
         </a>
 
-        <div class="d-flex gap-2">
+        <div class="d-flex flex-wrap gap-2">
+
+            <button
+                type="button"
+                class="btn btn-outline-light"
+                onclick="volverAtras();">
+
+                ← Ir atrás
+
+            </button>
 
             <a
                 href="{% url 'index' %}"
@@ -262,8 +271,8 @@
                                 {{ form.documento }}
 
                                 <small class="text-muted">
-                                    CC: 10 dígitos.
-                                    TI: 10 dígitos.
+                                    CC: exactamente 10 dígitos.
+                                    TI: exactamente 10 dígitos.
                                     CE: 6 o 7 dígitos.
                                 </small>
 
@@ -331,6 +340,15 @@
 
                             </button>
 
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                onclick="volverAtras();">
+
+                                ← Ir atrás
+
+                            </button>
+
                             <a
                                 href="{% url 'index' %}"
                                 class="btn btn-outline-secondary">
@@ -374,6 +392,16 @@
     </div>
 
 </main>
+
+<script>
+    function volverAtras() {
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.location.href = "{% url 'index' %}";
+        }
+    }
+</script>
 
 <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">

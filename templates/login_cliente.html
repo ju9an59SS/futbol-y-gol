@@ -16,10 +16,18 @@
         name="viewport">
 
 
+    <!-- ================================================= -->
+    <!-- FAVICON -->
+    <!-- ================================================= -->
+
     <link
         href="{% static 'img/logo.png' %}"
         rel="icon">
 
+
+    <!-- ================================================= -->
+    <!-- GOOGLE WEB FONTS -->
+    <!-- ================================================= -->
 
     <link
         rel="preconnect"
@@ -30,6 +38,10 @@
         rel="stylesheet">
 
 
+    <!-- ================================================= -->
+    <!-- ICONOS -->
+    <!-- ================================================= -->
+
     <link
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css"
         rel="stylesheet">
@@ -39,9 +51,18 @@
         rel="stylesheet">
 
 
+    <!-- ================================================= -->
+    <!-- BOOTSTRAP -->
+    <!-- ================================================= -->
+
     <link
         href="{% static 'css/bootstrap.min.css' %}"
         rel="stylesheet">
+
+
+    <!-- ================================================= -->
+    <!-- ESTILOS DEL PROYECTO -->
+    <!-- ================================================= -->
 
     <link
         href="{% static 'css/style.css' %}"
@@ -53,7 +74,9 @@
 <body>
 
 
+    <!-- ================================================= -->
     <!-- HEADER -->
+    <!-- ================================================= -->
 
     <div class="container-fluid bg-dark px-0">
 
@@ -64,6 +87,10 @@
                        bg-dark navbar-dark
                        p-3 p-lg-0 px-lg-5">
 
+
+                <!-- ================================================= -->
+                <!-- LOGO MÓVIL -->
+                <!-- ================================================= -->
 
                 <a
                     href="{% url 'index' %}"
@@ -76,6 +103,10 @@
 
                 </a>
 
+
+                <!-- ================================================= -->
+                <!-- BOTÓN RESPONSIVE -->
+                <!-- ================================================= -->
 
                 <button
                     type="button"
@@ -96,14 +127,24 @@
                     id="navbarCollapse">
 
 
-                    <div class="navbar-nav mr-auto py-0">
+                    <div
+                        class="navbar-nav
+                               mr-auto py-0">
 
+
+                        <!-- ================================================= -->
+                        <!-- LOGO ESCRITORIO -->
+                        <!-- ================================================= -->
 
                         <img
                             src="{% static 'img/logo.png' %}"
                             alt="Logo"
                             width="100px">
 
+
+                        <!-- ================================================= -->
+                        <!-- INICIO -->
+                        <!-- ================================================= -->
 
                         <a
                             href="{% url 'index' %}"
@@ -114,6 +155,10 @@
                         </a>
 
 
+                        <!-- ================================================= -->
+                        <!-- INGRESO CLIENTE -->
+                        <!-- ================================================= -->
+
                         <a
                             href="{% url 'login_cliente' %}"
                             class="nav-item nav-link active">
@@ -122,6 +167,10 @@
 
                         </a>
 
+
+                        <!-- ================================================= -->
+                        <!-- INGRESO ADMINISTRADOR -->
+                        <!-- ================================================= -->
 
                         <a
                             href="{% url 'login' %}"
@@ -152,13 +201,57 @@
     </div>
 
 
-    <!-- LOGIN -->
+    <!-- ================================================= -->
+    <!-- LOGIN CLIENTE -->
+    <!-- ================================================= -->
 
     <main class="container p-4">
 
+
+        <!-- ================================================= -->
+        <!-- ACCIONES DE NAVEGACIÓN -->
+        <!-- ================================================= -->
+
         <div
-            class="row justify-content-center
-                   align-items-center g-2">
+            class="d-flex
+                   flex-wrap
+                   justify-content-end
+                   gap-2
+                   mb-3">
+
+
+            <button
+                type="button"
+                class="btn btn-outline-secondary"
+                onclick="volverAtras();">
+
+                <i class="bi bi-arrow-left"></i>
+
+                Ir atrás
+
+            </button>
+
+
+            <a
+                href="{% url 'index' %}"
+                class="btn btn-outline-dark">
+
+                <i class="bi bi-house-door"></i>
+
+                Regresar al inicio
+
+            </a>
+
+
+        </div>
+
+
+        <div
+            class="row
+                   justify-content-center
+                   align-items-center
+                   g-2">
+
 
             <div
                 class="col-lg-6
@@ -174,10 +267,19 @@
                 </h1>
 
 
+                <!-- ================================================= -->
+                <!-- MENSAJE DE ERROR -->
+                <!-- ================================================= -->
+
                 {% if mensaje %}
 
                     <div
-                        class="alert alert-danger">
+                        class="alert alert-danger"
+                        role="alert">
+
+                        <i
+                            class="bi bi-exclamation-triangle-fill">
+                        </i>
 
                         {{ mensaje }}
 
@@ -186,12 +288,20 @@
                 {% endif %}
 
 
+                <!-- ================================================= -->
+                <!-- FORMULARIO LOGIN -->
+                <!-- ================================================= -->
+
                 <form
                     method="post"
                     action="{% url 'login_cliente' %}">
 
                     {% csrf_token %}
 
+
+                    <!-- ================================================= -->
+                    <!-- USUARIO -->
+                    <!-- ================================================= -->
 
                     <div class="mb-3">
 
@@ -203,16 +313,22 @@
 
                         </label>
 
+
                         <input
                             type="text"
                             class="form-control"
                             id="usuario"
                             name="usuario"
                             required
-                            autocomplete="username">
+                            autocomplete="username"
+                            maxlength="150">
 
                     </div>
 
+
+                    <!-- ================================================= -->
+                    <!-- CONTRASEÑA -->
+                    <!-- ================================================= -->
 
                     <div class="mb-3">
 
@@ -223,6 +339,7 @@
                             Contraseña:
 
                         </label>
+
 
                         <input
                             type="password"
@@ -235,9 +352,15 @@
                     </div>
 
 
+                    <!-- ================================================= -->
+                    <!-- BOTÓN INICIAR SESIÓN -->
+                    <!-- ================================================= -->
+
                     <button
                         type="submit"
                         class="btn btn-primary">
+
+                        <i class="bi bi-box-arrow-in-right"></i>
 
                         Iniciar sesión
 
@@ -249,6 +372,10 @@
 
                 <hr class="my-4">
 
+
+                <!-- ================================================= -->
+                <!-- REGISTRO / RECUPERACIÓN -->
+                <!-- ================================================= -->
 
                 <div class="text-center">
 
@@ -284,6 +411,7 @@
 
                 </div>
 
+
             </div>
 
         </div>
@@ -291,14 +419,18 @@
     </main>
 
 
+    <!-- ================================================= -->
     <!-- FOOTER -->
+    <!-- ================================================= -->
 
     <footer>
 
         <div
             class="container-fluid
-                   bg-dark text-secondary
-                   px-5 mt-5">
+                   bg-dark
+                   text-secondary
+                   px-5
+                   mt-5">
 
             <div class="row gx-5">
 
@@ -322,15 +454,44 @@
         </div>
 
 
+        <!-- ================================================= -->
+        <!-- JAVASCRIPT -->
+        <!-- ================================================= -->
+
         <script
             src="https://code.jquery.com/jquery-3.4.1.min.js">
         </script>
+
 
         <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
         </script>
 
     </footer>
+
+
+    <!-- ================================================= -->
+    <!-- FUNCIÓN IR ATRÁS -->
+    <!-- ================================================= -->
+
+    <script>
+
+        function volverAtras() {
+
+            if (window.history.length > 1) {
+
+                window.history.back();
+
+            } else {
+
+                window.location.href =
+                    "{% url 'index' %}";
+
+            }
+
+        }
+
+    </script>
 
 
 </body>

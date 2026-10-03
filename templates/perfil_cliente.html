@@ -123,13 +123,28 @@
 
         </div>
 
-        <a
-            href="{% url 'index' %}"
-            class="btn btn-outline-dark">
 
-            Regresar al inicio
+        <div class="d-flex flex-wrap gap-2">
 
-        </a>
+            <button
+                type="button"
+                class="btn btn-outline-secondary"
+                onclick="volverAtras();">
+
+                ← Ir atrás
+
+            </button>
+
+
+            <a
+                href="{% url 'index' %}"
+                class="btn btn-outline-dark">
+
+                Regresar al inicio
+
+            </a>
+
+        </div>
 
     </div>
 
@@ -146,7 +161,9 @@
 
                         <div class="col-md-6">
 
-                            <strong>Usuario</strong>
+                            <strong>
+                                Usuario
+                            </strong>
 
                             <div>
                                 {{ user.username }}
@@ -157,7 +174,9 @@
 
                         <div class="col-md-6">
 
-                            <strong>Correo electrónico</strong>
+                            <strong>
+                                Correo electrónico
+                            </strong>
 
                             <div>
                                 {{ user.email }}
@@ -168,7 +187,9 @@
 
                         <div class="col-md-6">
 
-                            <strong>Nombres</strong>
+                            <strong>
+                                Nombres
+                            </strong>
 
                             <div>
                                 {{ perfil.nombres_completos }}
@@ -179,7 +200,9 @@
 
                         <div class="col-md-6">
 
-                            <strong>Apellidos</strong>
+                            <strong>
+                                Apellidos
+                            </strong>
 
                             <div>
                                 {{ perfil.apellidos_completos }}
@@ -190,7 +213,9 @@
 
                         <div class="col-md-6">
 
-                            <strong>Tipo de documento</strong>
+                            <strong>
+                                Tipo de documento
+                            </strong>
 
                             <div>
                                 {{ perfil.get_tipo_documento_display }}
@@ -201,7 +226,9 @@
 
                         <div class="col-md-6">
 
-                            <strong>Número de documento</strong>
+                            <strong>
+                                Número de documento
+                            </strong>
 
                             <div>
                                 {{ perfil.documento }}
@@ -212,7 +239,9 @@
 
                         <div class="col-md-6">
 
-                            <strong>Número de celular</strong>
+                            <strong>
+                                Número de celular
+                            </strong>
 
                             <div>
                                 {{ perfil.indicativo_pais }}
@@ -224,7 +253,9 @@
 
                         <div class="col-md-6">
 
-                            <strong>Total de reservas</strong>
+                            <strong>
+                                Total de reservas
+                            </strong>
 
                             <div>
                                 {{ total_reservas }}
@@ -235,7 +266,8 @@
                     </div>
 
 
-                    <div class="d-flex flex-wrap gap-2 mt-4">
+                    <div
+                        class="d-flex flex-wrap gap-2 mt-4">
 
                         <a
                             href="{% url 'reservar' %}"
@@ -273,9 +305,31 @@
 
 </main>
 
+
+<script>
+
+    function volverAtras() {
+
+        if (window.history.length > 1) {
+
+            window.history.back();
+
+        } else {
+
+            window.location.href =
+                "{% url 'index' %}";
+
+        }
+
+    }
+
+</script>
+
+
 <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
 </script>
 
 </body>
+
 </html>
