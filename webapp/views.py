@@ -134,6 +134,9 @@ from django.utils.crypto import (
 
 
 
+from django.views.decorators.cache import never_cache
+
+
 from vercel.blob import (
 
     BlobClient,
@@ -818,19 +821,13 @@ def _valor_blob(
 
 
 
+@never_cache
 def index(request):
 
-
-
     return render(
-
         request,
-
         "index.html",
-
     )
-
-
 
 
 
@@ -842,53 +839,21 @@ def index(request):
 
 
 
+@never_cache
 def registrar_cliente(request):
-
-
 
     if request.user.is_authenticated:
 
-
-
-        if requiere_cambio_password(
-
-            request.user
-
-        ):
-
-
-
-            return redirect(
-
-                "cambiar_password_inicial"
-
-            )
-
-
-
         if (
-
             request.user.is_staff
-
             or request.user.is_superuser
-
         ):
+            return redirect("login_cliente")
 
+        if requiere_cambio_password(request.user):
+            return redirect("cambiar_password_inicial")
 
-
-            return redirect(
-                "login_cliente"
-            )
-
-
-
-        return redirect(
-
-            "perfil_cliente"
-
-        )
-
-
+        return redirect("perfil_cliente")
 
     if request.method == "POST":
 
@@ -1316,78 +1281,43 @@ def registro_cliente_exitoso(request):
 
 
 
+@never_cache
 def login_cliente(request):
 
     mensaje = ""
-    sesion_bloqueada = False
-    sesion_activa = ""
 
-    # Si ya existe una sesión administrativa, no se reemplaza
-    # por una sesión de cliente.
     if request.user.is_authenticated:
 
         if (
             request.user.is_staff
             or request.user.is_superuser
         ):
-
-            mensaje = (
-                "Actualmente hay una sesión abierta como "
-                "administrador. Cierra esa sesión antes de "
-                "ingresar como cliente."
-            )
-
-            sesion_bloqueada = True
-            sesion_activa = "administrador"
-
             return render(
                 request,
                 "login_cliente.html",
                 {
-                    "mensaje": mensaje,
-                    "sesion_bloqueada": sesion_bloqueada,
-                    "sesion_activa": sesion_activa,
+                    "mensaje": (
+                        "Actualmente hay una sesión abierta como administrador. "
+                        "Cierra esa sesión antes de ingresar como cliente."
+                    ),
+                    "sesion_bloqueada": True,
+                    "rol_activo": "administrador",
                 },
             )
 
-        if requiere_cambio_password(
-            request.user
-        ):
+        if requiere_cambio_password(request.user):
+            return redirect("cambiar_password_inicial")
 
-            return redirect(
-                "cambiar_password_inicial"
-            )
-
-        return redirect(
-            "perfil_cliente"
-        )
+        return redirect("perfil_cliente")
 
     if request.method == "POST":
 
-        usuario = (
-            request.POST.get(
-                "usuario",
-                "",
-            ).strip()
-        )
+        usuario = request.POST.get("usuario", "").strip()
+        password = request.POST.get("password", "")
 
-        password = request.POST.get(
-            "password",
-            "",
-        )
-
-        if (
-            not usuario
-            or not password
-        ):
-
-            mensaje = (
-                "Debe ingresar el usuario "
-                "y la contraseña."
-            )
-
+        if not usuario or not password:
+            mensaje = "Debe ingresar el usuario y la contraseña."
         else:
-
             user = authenticate(
                 request,
                 username=usuario,
@@ -1399,38 +1329,33 @@ def login_cliente(request):
                 and not user.is_staff
                 and not user.is_superuser
             ):
+                auth_login(request, user)
 
-                auth_login(
-                    request,
-                    user,
-                )
+                if requiere_cambio_password(user):
+                    return redirect("cambiar_password_inicial")
 
-                if requiere_cambio_password(
-                    user
-                ):
+                return redirect("perfil_cliente")
 
-                    return redirect(
-                        "cambiar_password_inicial"
-                    )
-
-                return redirect(
-                    "perfil_cliente"
-                )
-
-            mensaje = (
-                "Credenciales de cliente "
-                "inválidas."
-            )
+            mensaje = "Credenciales de cliente inválidas."
 
     return render(
         request,
         "login_cliente.html",
         {
             "mensaje": mensaje,
-            "sesion_bloqueada": sesion_bloqueada,
-            "sesion_activa": sesion_activa,
+            "sesion_bloqueada": False,
+            "rol_activo": "",
         },
     )
+
+
+
+# =========================================================
+
+# LOGOUT CLIENTE
+
+# =========================================================
+
 
 
 def logout_cliente(request):
@@ -1803,45 +1728,19 @@ def perfil_cliente(request):
 
 
 
+@never_cache
 def registrar_administrador(request):
-
-
 
     if request.user.is_authenticated:
 
-
-
-        if requiere_cambio_password(
-
-            request.user
-
-        ):
-
-
-
-            return redirect(
-
-                "cambiar_password_inicial"
-
-            )
-
-
-
         if not (
-
             request.user.is_staff
-
             or request.user.is_superuser
-
         ):
+            return redirect("login")
 
-
-
-            return redirect(
-                "login"
-            )
-
-
+        if requiere_cambio_password(request.user):
+            return redirect("cambiar_password_inicial")
 
     if request.method == "POST":
 
@@ -2197,77 +2096,43 @@ def registrar_administrador(request):
 
 
 
+@never_cache
 def login(request):
 
     mensaje = ""
-    sesion_bloqueada = False
-    sesion_activa = ""
 
-    # Si ya existe una sesión de cliente, no se reemplaza
-    # por una sesión administrativa.
     if request.user.is_authenticated:
 
         if (
             request.user.is_staff
             or request.user.is_superuser
         ):
+            if requiere_cambio_password(request.user):
+                return redirect("cambiar_password_inicial")
 
-            if requiere_cambio_password(
-                request.user
-            ):
-
-                return redirect(
-                    "cambiar_password_inicial"
-                )
-
-            return redirect(
-                "reservas"
-            )
-
-        mensaje = (
-            "Actualmente hay una sesión abierta como cliente. "
-            "Cierra esa sesión antes de ingresar como administrador."
-        )
-
-        sesion_bloqueada = True
-        sesion_activa = "cliente"
+            return redirect("reservas")
 
         return render(
             request,
             "login.html",
             {
-                "mensaje": mensaje,
-                "sesion_bloqueada": sesion_bloqueada,
-                "sesion_activa": sesion_activa,
+                "mensaje": (
+                    "Actualmente hay una sesión abierta como cliente. "
+                    "Cierra esa sesión antes de ingresar como administrador."
+                ),
+                "sesion_bloqueada": True,
+                "rol_activo": "cliente",
             },
         )
 
     if request.method == "POST":
 
-        usuario = (
-            request.POST.get(
-                "usuario",
-                "",
-            ).strip()
-        )
+        usuario = request.POST.get("usuario", "").strip()
+        password = request.POST.get("password", "")
 
-        password = request.POST.get(
-            "password",
-            "",
-        )
-
-        if (
-            not usuario
-            or not password
-        ):
-
-            mensaje = (
-                "Debe ingresar el usuario "
-                "y la contraseña."
-            )
-
+        if not usuario or not password:
+            mensaje = "Debe ingresar el usuario y la contraseña."
         else:
-
             user = authenticate(
                 request,
                 username=usuario,
@@ -2276,43 +2141,35 @@ def login(request):
 
             if (
                 user is not None
-                and (
-                    user.is_staff
-                    or user.is_superuser
-                )
+                and (user.is_staff or user.is_superuser)
             ):
+                auth_login(request, user)
 
-                auth_login(
-                    request,
-                    user,
-                )
+                if requiere_cambio_password(user):
+                    return redirect("cambiar_password_inicial")
 
-                if requiere_cambio_password(
-                    user
-                ):
+                return redirect("reservas")
 
-                    return redirect(
-                        "cambiar_password_inicial"
-                    )
-
-                return redirect(
-                    "reservas"
-                )
-
-            mensaje = (
-                "Credenciales administrativas "
-                "inválidas."
-            )
+            mensaje = "Credenciales administrativas inválidas."
 
     return render(
         request,
         "login.html",
         {
             "mensaje": mensaje,
-            "sesion_bloqueada": sesion_bloqueada,
-            "sesion_activa": sesion_activa,
+            "sesion_bloqueada": False,
+            "rol_activo": "",
         },
     )
+
+
+
+# =========================================================
+
+# LOGOUT ADMINISTRADOR
+
+# =========================================================
+
 
 
 def logout(request):
@@ -2887,35 +2744,26 @@ def recuperar_password(
 
 
 
+@never_cache
 def recuperar_password_cliente(request):
 
+    if request.user.is_authenticated:
+        if request.user.is_staff or request.user.is_superuser:
+            return redirect("login_cliente")
+        return redirect("perfil_cliente")
+
+    return recuperar_password(request, "cliente")
 
 
-    return recuperar_password(
-
-        request,
-
-        "cliente",
-
-    )
-
-
-
-
-
+@never_cache
 def recuperar_password_admin(request):
 
+    if request.user.is_authenticated:
+        if not (request.user.is_staff or request.user.is_superuser):
+            return redirect("login")
+        return redirect("reservas")
 
-
-    return recuperar_password(
-
-        request,
-
-        "admin",
-
-    )
-
-
+    return recuperar_password(request, "admin")
 
 
 
