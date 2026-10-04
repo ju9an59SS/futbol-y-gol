@@ -26,7 +26,7 @@
 
 
     <!-- ================================================= -->
-    <!-- GOOGLE WEB FONTS -->
+    <!-- GOOGLE FONTS -->
     <!-- ================================================= -->
 
     <link
@@ -61,7 +61,7 @@
 
 
     <!-- ================================================= -->
-    <!-- ESTILOS DEL PROYECTO -->
+    <!-- CSS DEL PROYECTO -->
     <!-- ================================================= -->
 
     <link
@@ -69,223 +69,141 @@
         rel="stylesheet">
 
 
-    <!-- ================================================= -->
-    <!-- ESTILOS DEL HOME -->
-    <!-- ================================================= -->
-
     <style>
 
-        /* =================================================
-           LOGO
-        ================================================= */
+        /* ================================================ */
+        /* AJUSTES HOME */
+        /* ================================================ */
 
-        .logo-principal {
+        body {
+            overflow-x: hidden;
+        }
 
+
+        .navbar-brand img,
+        .logo-escritorio {
             width: 95px;
-
             height: auto;
-
             object-fit: contain;
-
         }
 
 
-        /* =================================================
-           BANNER
-        ================================================= */
+        .hero-home {
+            min-height: 430px;
 
-        .banner-principal {
+            display: flex;
+            align-items: center;
 
-            width: 100%;
+            background:
+                linear-gradient(
+                    rgba(0, 0, 0, 0.58),
+                    rgba(0, 0, 0, 0.58)
+                ),
+                url("{% static 'img/carousel-1.jpg' %}");
 
-            overflow: hidden;
+            background-size: cover;
+            background-position: center;
 
-            background-color: #111;
-
+            color: white;
         }
 
 
-        .banner-principal img {
-
-            display: block;
-
-            width: 100%;
-
-            height: auto;
-
-            max-height: 600px;
-
-            object-fit: cover;
-
+        .hero-home h1 {
+            font-size: clamp(
+                2.2rem,
+                5vw,
+                4.5rem
+            );
         }
 
 
-        /*
-            IMPORTANTE:
+        .hero-contenido {
+            max-width: 760px;
+        }
 
-            El banner únicamente contiene la imagen.
-
-            NO se agrega encima ni debajo el bloque:
-
-            "Reserva y Gol
-             Consulta los tipos de cancha..."
-
-            solicitado para eliminar.
-        */
-
-
-        /* =================================================
-           SECCIÓN CANCHAS
-        ================================================= */
 
         .seccion-canchas {
-
             padding-top: 60px;
-
             padding-bottom: 60px;
-
         }
 
-
-        .titulo-canchas {
-
-            font-size: 2.5rem;
-
-            font-weight: 700;
-
-            text-transform: uppercase;
-
-            margin-bottom: 10px;
-
-        }
-
-
-        .subtitulo-canchas {
-
-            color: #6c757d;
-
-            margin-bottom: 40px;
-
-        }
-
-
-        /* =================================================
-           TARJETAS
-        ================================================= */
 
         .cancha-card {
+            border: 0;
+            border-radius: 12px;
+
+            overflow: hidden;
 
             height: 100%;
 
-            border: 1px solid #ddd;
-
-            border-radius: 5px;
-
-            overflow: hidden;
-
-            background-color: #fff;
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease;
-
-        }
-
-
-        .cancha-card:hover {
-
-            transform: translateY(-4px);
-
             box-shadow:
-                0 8px 20px
+                0 4px 16px
                 rgba(0, 0, 0, 0.12);
-
         }
 
 
         .cancha-card img {
-
-            display: block;
-
             width: 100%;
-
-            height: 310px;
+            height: 230px;
 
             object-fit: cover;
-
         }
 
 
-        .cancha-card-body {
+        .cancha-card .card-body {
+            min-height: 130px;
 
-            padding: 22px;
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: center;
 
             text-align: center;
-
         }
 
 
-        .cancha-card-title {
-
-            font-size: 1.7rem;
-
-            font-weight: 700;
-
-            margin-bottom: 10px;
-
+        .mensaje-sesion {
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
 
-        .cancha-card-text {
-
-            color: #666;
-
-            margin-bottom: 0;
-
+        .acciones-home {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
-
-        /* =================================================
-           RESPONSIVE
-        ================================================= */
 
         @media (
-            max-width: 991.98px
+            max-width: 991px
         ) {
 
-            .cancha-card img {
+            .hero-home {
+                min-height: 360px;
+            }
 
-                height: 280px;
-
+            .acciones-home {
+                justify-content: center;
             }
 
         }
 
 
         @media (
-            max-width: 767.98px
+            max-width: 576px
         ) {
 
-            .titulo-canchas {
+            .hero-home {
+                min-height: 320px;
 
-                font-size: 2rem;
-
+                text-align: center;
             }
-
 
             .cancha-card img {
-
-                height: 250px;
-
-            }
-
-
-            .seccion-canchas {
-
-                padding-top: 40px;
-
-                padding-bottom: 40px;
-
+                height: 210px;
             }
 
         }
@@ -303,315 +221,479 @@
     <!-- ================================================= -->
 
     <div
-        class="container-fluid
-               bg-dark
-               px-0">
+        class="container-fluid bg-dark px-0">
 
 
-        <div class="row gx-0">
+        <nav
+            class="navbar
+                   navbar-expand-lg
+                   bg-dark
+                   navbar-dark
+                   p-3
+                   p-lg-0
+                   px-lg-5">
 
 
-            <nav
-                class="navbar
-                       navbar-expand-lg
-                       bg-dark
-                       navbar-dark
-                       p-3
-                       p-lg-0
-                       px-lg-5">
+            <!-- ========================================= -->
+            <!-- LOGO MÓVIL -->
+            <!-- ========================================= -->
+
+            <a
+                href="{% url 'index' %}"
+                class="navbar-brand d-block d-lg-none">
+
+                <img
+                    src="{% static 'img/logo.png' %}"
+                    alt="Logo Futbol y Gol">
+
+            </a>
 
 
-                <!-- ================================================= -->
-                <!-- LOGO MÓVIL -->
-                <!-- ================================================= -->
+            <!-- ========================================= -->
+            <!-- BOTÓN RESPONSIVE -->
+            <!-- ========================================= -->
 
-                <a
-                    href="{% url 'index' %}"
-                    class="navbar-brand
-                           d-block
-                           d-lg-none">
+            <button
+                type="button"
+                class="navbar-toggler"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarCollapse"
+                aria-controls="navbarCollapse"
+                aria-expanded="false"
+                aria-label="Mostrar navegación">
 
+                <span
+                    class="navbar-toggler-icon">
+                </span>
 
-                    <img
-                        src="{% static 'img/logo.png' %}"
-                        alt="Logo Futbol y Gol"
-                        class="logo-principal">
-
-
-                </a>
-
-
-                <!-- ================================================= -->
-                <!-- BOTÓN RESPONSIVE -->
-                <!-- ================================================= -->
-
-                <button
-                    type="button"
-                    class="navbar-toggler"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarCollapse"
-                    aria-controls="navbarCollapse"
-                    aria-expanded="false"
-                    aria-label="Mostrar navegación">
+            </button>
 
 
-                    <span
-                        class="navbar-toggler-icon">
-                    </span>
+            <!-- ========================================= -->
+            <!-- MENÚ -->
+            <!-- ========================================= -->
 
+            <div
+                class="collapse
+                       navbar-collapse
+                       justify-content-between"
+                id="navbarCollapse">
 
-                </button>
-
-
-                <!-- ================================================= -->
-                <!-- MENÚ -->
-                <!-- ================================================= -->
 
                 <div
-                    class="collapse
-                           navbar-collapse
-                           justify-content-between"
-                    id="navbarCollapse">
+                    class="navbar-nav
+                           align-items-lg-center
+                           py-0">
 
 
-                    <div
-                        class="navbar-nav
-                               align-items-lg-center
-                               mr-auto
-                               py-0">
+                    <!-- LOGO ESCRITORIO -->
+
+                    <a
+                        href="{% url 'index' %}"
+                        class="d-none
+                               d-lg-flex
+                               align-items-center
+                               me-lg-3">
+
+                        <img
+                            src="{% static 'img/logo.png' %}"
+                            alt="Logo Futbol y Gol"
+                            class="logo-escritorio">
+
+                    </a>
 
 
-                        <!-- LOGO ESCRITORIO -->
+                    <!-- INICIO -->
 
-                        <a
-                            href="{% url 'index' %}"
-                            class="nav-link
-                                   p-0
-                                   me-lg-4">
+                    <a
+                        href="{% url 'index' %}"
+                        class="nav-item
+                               nav-link
+                               active">
 
+                        Inicio
 
-                            <img
-                                src="{% static 'img/logo.png' %}"
-                                alt="Logo Futbol y Gol"
-                                class="logo-principal">
+                    </a>
 
 
-                        </a>
+                    <!-- ================================= -->
+                    <!-- INGRESO CLIENTE -->
+                    <!-- ================================= -->
+
+                    {% if user.is_authenticated %}
 
 
-                        <!-- ================================================= -->
-                        <!-- INICIO -->
-                        <!-- ================================================= -->
-
-                        <a
-                            href="{% url 'index' %}"
-                            class="nav-item
-                                   nav-link
-                                   active">
-
-
-                            Inicio
-
-
-                        </a>
-
-
-                        <!-- ================================================= -->
-                        <!-- INGRESO CLIENTE -->
-                        <!-- ================================================= -->
-
-
-                        {% if user.is_authenticated %}
-
-
-                            {% if user.is_staff or user.is_superuser %}
-
-
-                                <!--
-                                    Hay sesión ADMIN activa.
-                                    No permitimos abrir acceso cliente.
-                                -->
-
-                                <a
-                                    href="#"
-                                    class="nav-item nav-link"
-                                    onclick="
-                                        mostrarSesionAdministrador();
-                                        return false;
-                                    ">
-
-
-                                    Ingreso Cliente
-
-
-                                </a>
-
-
-                            {% else %}
-
-
-                                <!--
-                                    Ya existe sesión CLIENTE.
-                                    En lugar de pedir login otra vez,
-                                    puede continuar hacia su perfil.
-                                -->
-
-                                <a
-                                    href="{% url 'perfil_cliente' %}"
-                                    class="nav-item nav-link">
-
-
-                                    Ingreso Cliente
-
-
-                                </a>
-
-
-                            {% endif %}
-
-
-                        {% else %}
-
+                        {% if user.is_staff or user.is_superuser %}
 
                             <a
-                                href="{% url 'login_cliente' %}"
-                                class="nav-item nav-link">
-
+                                href="#"
+                                class="nav-item nav-link"
+                                onclick="
+                                    avisarSesionAdministrador();
+                                    return false;
+                                ">
 
                                 Ingreso Cliente
 
-
                             </a>
-
-
-                        {% endif %}
-
-
-                        <!-- ================================================= -->
-                        <!-- INGRESO ADMINISTRADOR -->
-                        <!-- ================================================= -->
-
-
-                        {% if user.is_authenticated %}
-
-
-                            {% if user.is_staff or user.is_superuser %}
-
-
-                                <!--
-                                    Ya existe sesión ADMIN.
-                                    Continúa al panel.
-                                -->
-
-                                <a
-                                    href="{% url 'reservas' %}"
-                                    class="nav-item nav-link">
-
-
-                                    Ingreso Administrador
-
-
-                                </a>
-
-
-                            {% else %}
-
-
-                                <!--
-                                    Hay sesión CLIENTE activa.
-                                    No permitimos abrir acceso admin.
-                                -->
-
-                                <a
-                                    href="#"
-                                    class="nav-item nav-link"
-                                    onclick="
-                                        mostrarSesionCliente();
-                                        return false;
-                                    ">
-
-
-                                    Ingreso Administrador
-
-
-                                </a>
-
-
-                            {% endif %}
 
 
                         {% else %}
 
-
                             <a
-                                href="{% url 'login' %}"
+                                href="{% url 'perfil_cliente' %}"
                                 class="nav-item nav-link">
 
-
-                                Ingreso Administrador
-
+                                Ingreso Cliente
 
                             </a>
-
 
                         {% endif %}
 
 
-                    </div>
+                    {% else %}
+
+                        <a
+                            href="{% url 'login_cliente' %}"
+                            class="nav-item nav-link">
+
+                            Ingreso Cliente
+
+                        </a>
+
+                    {% endif %}
 
 
-                    <span
-                        class="py-md-3
-                               px-md-5
-                               d-none
-                               d-lg-block
-                               text-light">
+                    <!-- ================================= -->
+                    <!-- INGRESO ADMINISTRADOR -->
+                    <!-- ================================= -->
+
+                    {% if user.is_authenticated %}
 
 
-                        Futbol y Gol
+                        {% if user.is_staff or user.is_superuser %}
+
+                            <a
+                                href="{% url 'reservas' %}"
+                                class="nav-item nav-link">
+
+                                Ingreso Administrador
+
+                            </a>
 
 
-                    </span>
+                        {% else %}
+
+                            <a
+                                href="#"
+                                class="nav-item nav-link"
+                                onclick="
+                                    avisarSesionCliente();
+                                    return false;
+                                ">
+
+                                Ingreso Administrador
+
+                            </a>
+
+                        {% endif %}
+
+
+                    {% else %}
+
+                        <a
+                            href="{% url 'login' %}"
+                            class="nav-item nav-link">
+
+                            Ingreso Administrador
+
+                        </a>
+
+                    {% endif %}
 
 
                 </div>
 
 
-            </nav>
+                <span
+                    class="py-md-3
+                           px-md-5
+                           d-none
+                           d-lg-block
+                           text-light">
+
+                    Futbol y Gol
+
+                </span>
 
 
-        </div>
+            </div>
 
+        </nav>
 
     </div>
 
 
     <!-- ================================================= -->
-    <!-- BANNER PRINCIPAL -->
-    <!-- SOLO IMAGEN -->
+    <!-- AVISO DE SESIÓN ACTIVA -->
+    <!-- ================================================= -->
+
+    {% if user.is_authenticated %}
+
+        <div
+            class="container pt-4">
+
+
+            {% if user.is_staff or user.is_superuser %}
+
+                <div
+                    class="alert
+                           alert-warning
+                           mensaje-sesion">
+
+                    <i
+                        class="bi bi-shield-lock-fill">
+                    </i>
+
+                    Actualmente tienes una sesión abierta
+                    como
+
+                    <strong>
+                        administrador
+                    </strong>.
+
+                    Para ingresar como cliente primero debes
+                    cerrar la sesión actual.
+
+                    <a
+                        href="{% url 'reservas' %}"
+                        class="alert-link ms-1">
+
+                        Ir al panel administrador
+
+                    </a>
+
+                </div>
+
+
+            {% else %}
+
+                <div
+                    class="alert
+                           alert-info
+                           mensaje-sesion">
+
+                    <i
+                        class="bi bi-person-check-fill">
+                    </i>
+
+                    Actualmente tienes una sesión abierta
+                    como
+
+                    <strong>
+                        cliente
+                    </strong>.
+
+                    Para ingresar como administrador primero
+                    debes cerrar la sesión actual.
+
+                    <a
+                        href="{% url 'perfil_cliente' %}"
+                        class="alert-link ms-1">
+
+                        Ir a Mi Perfil
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- ================================================= -->
+    <!-- HERO / PORTADA -->
     <!-- ================================================= -->
 
     <section
-        class="banner-principal"
-        aria-label="Banner principal">
+        class="hero-home">
 
 
-        <!--
-            IMPORTANTE:
-
-            Si el archivo de tu banner actual tiene otro nombre,
-            conserva aquí el mismo nombre que ya utilizabas.
-
-            No agregues texto dentro de esta sección.
-        -->
+        <div
+            class="container">
 
 
-        <img
-            src="{% static 'img/carousel-1.jpg' %}"
-            alt="Cancha de fútbol"
-            onerror="
-                this.parentElement.style.display='none';
-            ">
+            <div
+                class="hero-contenido">
+
+
+                <h1
+                    class="text-uppercase
+                           mb-3">
+
+                    Futbol y Gol
+
+                </h1>
+
+
+                <h3
+                    class="text-light
+                           mb-3">
+
+                    Reserva tu cancha de fútbol
+
+                </h3>
+
+
+                <p
+                    class="lead
+                           mb-4">
+
+                    Consulta nuestras canchas e ingresa
+                    como cliente para realizar y gestionar
+                    tus reservas.
+
+                </p>
+
+
+                <div
+                    class="acciones-home">
+
+
+                    {% if user.is_authenticated %}
+
+
+                        {% if user.is_staff or user.is_superuser %}
+
+                            <a
+                                href="{% url 'reservas' %}"
+                                class="btn
+                                       btn-primary
+                                       py-2
+                                       px-4">
+
+                                <i
+                                    class="bi bi-speedometer2">
+                                </i>
+
+                                Panel administrador
+
+                            </a>
+
+
+                            <a
+                                href="{% url 'logout' %}"
+                                class="btn
+                                       btn-outline-light
+                                       py-2
+                                       px-4">
+
+                                <i
+                                    class="bi bi-box-arrow-right">
+                                </i>
+
+                                Cerrar sesión
+
+                            </a>
+
+
+                        {% else %}
+
+                            <a
+                                href="{% url 'reservar' %}"
+                                class="btn
+                                       btn-primary
+                                       py-2
+                                       px-4">
+
+                                <i
+                                    class="bi bi-calendar-plus">
+                                </i>
+
+                                Crear reserva
+
+                            </a>
+
+
+                            <a
+                                href="{% url 'perfil_cliente' %}"
+                                class="btn
+                                       btn-outline-light
+                                       py-2
+                                       px-4">
+
+                                <i
+                                    class="bi bi-person">
+                                </i>
+
+                                Mi Perfil
+
+                            </a>
+
+
+                            <a
+                                href="{% url 'logout_cliente' %}"
+                                class="btn
+                                       btn-outline-light
+                                       py-2
+                                       px-4">
+
+                                Cerrar sesión
+
+                            </a>
+
+                        {% endif %}
+
+
+                    {% else %}
+
+
+                        <a
+                            href="{% url 'login_cliente' %}"
+                            class="btn
+                                   btn-primary
+                                   py-2
+                                   px-4">
+
+                            <i
+                                class="bi bi-person">
+                            </i>
+
+                            Ingreso Cliente
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'login' %}"
+                            class="btn
+                                   btn-outline-light
+                                   py-2
+                                   px-4">
+
+                            <i
+                                class="bi bi-shield-lock">
+                            </i>
+
+                            Ingreso Administrador
+
+                        </a>
+
+
+                    {% endif %}
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
 
 
     </section>
@@ -621,40 +703,31 @@
     <!-- TIPOS DE CANCHA -->
     <!-- ================================================= -->
 
-    <main>
+    <section
+        class="seccion-canchas">
 
 
-        <section
-            class="container
-                   seccion-canchas">
+        <div
+            class="container">
 
-
-            <!-- ================================================= -->
-            <!-- ENCABEZADO DE CANCHAS -->
-            <!-- ================================================= -->
 
             <div
-                class="text-center">
+                class="text-center mb-5">
 
 
-                <h1
-                    class="titulo-canchas">
+                <h2
+                    class="text-uppercase">
 
+                    Nuestras canchas
 
-                    Tipos de cancha
-
-
-                </h1>
+                </h2>
 
 
                 <p
-                    class="subtitulo-canchas">
+                    class="text-muted">
 
-
-                    Selecciona la modalidad
-                    que mejor se adapte
-                    a tu partido.
-
+                    Selecciona el tipo de cancha
+                    que necesitas.
 
                 </p>
 
@@ -662,55 +735,51 @@
             </div>
 
 
-            <!-- ================================================= -->
-            <!-- TARJETAS -->
-            <!-- ================================================= -->
-
             <div
                 class="row
                        g-4
                        justify-content-center">
 
 
-                <!-- ================================================= -->
+                <!-- ===================================== -->
                 <!-- FÚTBOL 5 -->
-                <!-- ================================================= -->
+                <!-- ===================================== -->
 
                 <div
                     class="col-lg-4
                            col-md-6">
 
 
-                    <article
-                        class="cancha-card">
+                    <div
+                        class="card
+                               cancha-card">
 
 
                         <img
                             src="{% static 'img/salon.jpg' %}"
+                            class="card-img-top"
                             alt="Cancha Fútbol 5">
 
 
                         <div
-                            class="cancha-card-body">
+                            class="card-body">
 
 
-                            <h2
-                                class="cancha-card-title">
+                            <h4
+                                class="card-title">
 
+                                Cancha Fútbol 5
 
-                                Fútbol 5
-
-
-                            </h2>
+                            </h4>
 
 
                             <p
-                                class="cancha-card-text">
+                                class="card-text
+                                       text-muted
+                                       mb-0">
 
-
-                                Cancha para partidos rápidos
-                                y grupos reducidos.
-
+                                Espacio ideal para partidos
+                                rápidos y equipos reducidos.
 
                             </p>
 
@@ -718,51 +787,52 @@
                         </div>
 
 
-                    </article>
+                    </div>
 
 
                 </div>
 
 
-                <!-- ================================================= -->
+                <!-- ===================================== -->
                 <!-- FÚTBOL 7 -->
-                <!-- ================================================= -->
+                <!-- ===================================== -->
 
                 <div
                     class="col-lg-4
                            col-md-6">
 
 
-                    <article
-                        class="cancha-card">
+                    <div
+                        class="card
+                               cancha-card">
 
 
                         <img
                             src="{% static 'img/terraza.jpg' %}"
+                            class="card-img-top"
                             alt="Cancha Fútbol 7">
 
 
                         <div
-                            class="cancha-card-body">
+                            class="card-body">
 
 
-                            <h2
-                                class="cancha-card-title">
+                            <h4
+                                class="card-title">
 
+                                Cancha Fútbol 7
 
-                                Fútbol 7
-
-
-                            </h2>
+                            </h4>
 
 
                             <p
-                                class="cancha-card-text">
+                                class="card-text
+                                       text-muted
+                                       mb-0">
 
-
-                                Espacio intermedio para encuentros
-                                con más jugadores.
-
+                                Una alternativa de mayor
+                                espacio para disfrutar con
+                                tu equipo.
 
                             </p>
 
@@ -770,56 +840,51 @@
                         </div>
 
 
-                    </article>
+                    </div>
 
 
                 </div>
 
 
-                <!-- ================================================= -->
+                <!-- ===================================== -->
                 <!-- FÚTBOL 11 -->
-                <!-- ================================================= -->
+                <!-- ===================================== -->
 
                 <div
                     class="col-lg-4
-                           col-md-12">
+                           col-md-6">
 
 
-                    <article
-                        class="cancha-card">
+                    <div
+                        class="card
+                               cancha-card">
 
-
-                        <!--
-                            Conservamos doble.png porque
-                            ese nombre ya existe en el proyecto.
-                        -->
 
                         <img
                             src="{% static 'img/doble.png' %}"
+                            class="card-img-top"
                             alt="Cancha Fútbol 11">
 
 
                         <div
-                            class="cancha-card-body">
+                            class="card-body">
 
 
-                            <h2
-                                class="cancha-card-title">
+                            <h4
+                                class="card-title">
 
+                                Cancha Fútbol 11
 
-                                Fútbol 11
-
-
-                            </h2>
+                            </h4>
 
 
                             <p
-                                class="cancha-card-text">
+                                class="card-text
+                                       text-muted
+                                       mb-0">
 
-
-                                Modalidad completa para equipos
-                                y partidos tradicionales.
-
+                                Cancha para encuentros con
+                                equipos completos.
 
                             </p>
 
@@ -827,7 +892,7 @@
                         </div>
 
 
-                    </article>
+                    </div>
 
 
                 </div>
@@ -836,84 +901,70 @@
             </div>
 
 
-            <!--
-                NO AGREGAR AQUÍ:
-
-                "Reserva y Gol"
-
-                "Consulta los tipos de cancha,
-                 ingresa con tu cuenta de cliente..."
-
-                Ese bloque fue eliminado del Home.
-            -->
+        </div>
 
 
-        </section>
-
-
-    </main>
+    </section>
 
 
     <!-- ================================================= -->
     <!-- FOOTER -->
     <!-- ================================================= -->
 
-    <footer>
+    <footer
+        class="bg-dark
+               text-light
+               mt-4">
 
 
         <div
-            class="container-fluid
-                   bg-dark
-                   text-secondary
-                   px-5
+            class="container
                    py-4">
 
 
             <div
-                class="row
-                       align-items-center">
+                class="d-flex
+                       flex-wrap
+                       align-items-center
+                       justify-content-between
+                       gap-3">
 
 
                 <div
-                    class="col-md-6">
+                    class="d-flex
+                           align-items-center
+                           gap-3">
 
 
-                    <p
-                        class="text-light
-                               mb-0">
+                    <img
+                        src="{% static 'img/logo.png' %}"
+                        alt="Logo Futbol y Gol"
+                        width="80">
 
 
-                        <img
-                            src="{% static 'img/logo.png' %}"
-                            alt="Logo Futbol y Gol"
-                            width="90">
+                    <div>
 
+                        <strong>
+                            Futbol y Gol
+                        </strong>
 
-                        Futbol y Gol
+                        <div
+                            class="text-secondary">
 
+                            Sistema de reserva de canchas
 
-                    </p>
+                        </div>
+
+                    </div>
 
 
                 </div>
 
 
                 <div
-                    class="col-md-6
-                           text-md-end
-                           mt-3
-                           mt-md-0">
+                    class="text-secondary">
 
-
-                    <span
-                        class="text-secondary">
-
-
-                        Sistema de reserva de canchas
-
-
-                    </span>
-
+                    &copy; 2026 Futbol y Gol
 
                 </div>
 
@@ -928,25 +979,35 @@
 
 
     <!-- ================================================= -->
-    <!-- BACK TO TOP -->
+    <!-- ALERTAS DE SESIÓN -->
     <!-- ================================================= -->
 
-    <a
-        href="#"
-        class="btn
-               btn-dark
-               py-3
-               fs-4
-               back-to-top">
+    <script>
+
+        function avisarSesionAdministrador() {
+
+            alert(
+                "Actualmente tienes una sesión abierta "
+                + "como administrador. "
+                + "Para ingresar como cliente debes "
+                + "cerrar primero la sesión administrativa."
+            );
+
+        }
 
 
-        <i
-            class="bi
-                   bi-arrow-up">
-        </i>
+        function avisarSesionCliente() {
 
+            alert(
+                "Actualmente tienes una sesión abierta "
+                + "como cliente. "
+                + "Para ingresar como administrador debes "
+                + "cerrar primero la sesión del cliente."
+            );
 
-    </a>
+        }
+
+    </script>
 
 
     <!-- ================================================= -->
@@ -960,38 +1021,6 @@
 
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js">
-    </script>
-
-
-    <!-- ================================================= -->
-    <!-- CONTROL VISUAL DE SESIONES -->
-    <!-- ================================================= -->
-
-    <script>
-
-        function mostrarSesionAdministrador() {
-
-            alert(
-                "Actualmente tienes una sesión abierta "
-                + "como administrador. "
-                + "Debes cerrar sesión antes de ingresar "
-                + "como cliente."
-            );
-
-        }
-
-
-        function mostrarSesionCliente() {
-
-            alert(
-                "Actualmente tienes una sesión abierta "
-                + "como cliente. "
-                + "Debes cerrar sesión antes de ingresar "
-                + "como administrador."
-            );
-
-        }
-
     </script>
 
 
