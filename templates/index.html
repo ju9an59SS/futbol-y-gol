@@ -26,7 +26,7 @@
 
 
     <!-- ================================================= -->
-    <!-- GOOGLE FONTS -->
+    <!-- GOOGLE WEB FONTS -->
     <!-- ================================================= -->
 
     <link
@@ -61,7 +61,7 @@
 
 
     <!-- ================================================= -->
-    <!-- CSS DEL PROYECTO -->
+    <!-- ESTILOS DEL PROYECTO -->
     <!-- ================================================= -->
 
     <link
@@ -69,48 +69,103 @@
         rel="stylesheet">
 
 
+    <!-- ================================================= -->
+    <!-- ESTILOS PROPIOS DE ESTA VISTA -->
+    <!-- ================================================= -->
+
     <style>
 
-        .home-hero {
-            padding: 70px 20px;
-            text-align: center;
-            background: #f8f9fa;
+        .hero-principal {
+
+            position: relative;
+
+            min-height: 480px;
+
+            display: flex;
+
+            align-items: center;
+
+            background:
+
+                linear-gradient(
+                    rgba(0, 0, 0, 0.68),
+                    rgba(0, 0, 0, 0.68)
+                ),
+
+                url("{% static 'img/salon.jpg' %}");
+
+            background-size: cover;
+
+            background-position: center;
+
         }
 
-        .home-hero h1 {
-            font-size: 3rem;
-            margin-bottom: 15px;
+
+        .hero-principal h1 {
+
+            font-size: clamp(
+                2.4rem,
+                6vw,
+                5rem
+            );
+
         }
 
-        .home-hero p {
-            max-width: 750px;
-            margin: 0 auto 25px auto;
-            font-size: 1.1rem;
-        }
 
         .cancha-card {
+
             height: 100%;
-            border: 0;
-            box-shadow:
-                0 3px 12px
-                rgba(0, 0, 0, 0.10);
+
+            overflow: hidden;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+
         }
+
+
+        .cancha-card:hover {
+
+            transform: translateY(-4px);
+
+            box-shadow:
+                0 0.5rem 1.5rem
+                rgba(0, 0, 0, 0.15);
+
+        }
+
 
         .cancha-card img {
+
             width: 100%;
+
             height: 240px;
+
             object-fit: cover;
+
         }
 
-        .cancha-card .card-body {
-            text-align: center;
+
+        .sesion-activa {
+
+            border-left:
+                5px solid #ff5e14;
+
         }
 
-        .sesion-aviso {
-            max-width: 900px;
-            margin:
-                25px auto
-                0 auto;
+
+        .modal-header {
+
+            border-bottom: 0;
+
+        }
+
+
+        .modal-footer {
+
+            border-top: 0;
+
         }
 
     </style>
@@ -122,34 +177,36 @@
 
 
     <!-- ================================================= -->
-    <!-- HEADER -->
+    <!-- HEADER / NAVEGACIÓN -->
     <!-- ================================================= -->
 
-    <div class="container-fluid bg-dark px-0">
+    <div
+        class="container-fluid
+               bg-dark
+               px-0">
 
         <div class="row gx-0">
 
+
             <nav
-                class="
-                    navbar
-                    navbar-expand-lg
-                    bg-dark
-                    navbar-dark
-                    p-3
-                    p-lg-0
-                    px-lg-5
-                ">
+                class="navbar
+                       navbar-expand-lg
+                       bg-dark
+                       navbar-dark
+                       p-3
+                       p-lg-0
+                       px-lg-5">
 
 
+                <!-- ================================================= -->
                 <!-- LOGO MÓVIL -->
+                <!-- ================================================= -->
 
                 <a
                     href="{% url 'index' %}"
-                    class="
-                        navbar-brand
-                        d-block
-                        d-lg-none
-                    ">
+                    class="navbar-brand
+                           d-block
+                           d-lg-none">
 
                     <img
                         src="{% static 'img/logo.png' %}"
@@ -159,7 +216,9 @@
                 </a>
 
 
+                <!-- ================================================= -->
                 <!-- BOTÓN RESPONSIVE -->
+                <!-- ================================================= -->
 
                 <button
                     type="button"
@@ -168,7 +227,7 @@
                     data-bs-target="#navbarCollapse"
                     aria-controls="navbarCollapse"
                     aria-expanded="false"
-                    aria-label="Abrir navegación">
+                    aria-label="Abrir menú">
 
                     <span
                         class="navbar-toggler-icon">
@@ -177,33 +236,31 @@
                 </button>
 
 
+                <!-- ================================================= -->
+                <!-- MENÚ -->
+                <!-- ================================================= -->
+
                 <div
-                    class="
-                        collapse
-                        navbar-collapse
-                        justify-content-between
-                    "
+                    class="collapse
+                           navbar-collapse
+                           justify-content-between"
                     id="navbarCollapse">
 
 
                     <div
-                        class="
-                            navbar-nav
-                            mr-auto
-                            py-0
-                        ">
+                        class="navbar-nav
+                               mr-auto
+                               py-0">
 
 
                         <!-- LOGO ESCRITORIO -->
 
                         <a
                             href="{% url 'index' %}"
-                            class="
-                                d-none
-                                d-lg-flex
-                                align-items-center
-                                me-3
-                            ">
+                            class="d-none
+                                   d-lg-flex
+                                   align-items-center
+                                   me-3">
 
                             <img
                                 src="{% static 'img/logo.png' %}"
@@ -217,11 +274,9 @@
 
                         <a
                             href="{% url 'index' %}"
-                            class="
-                                nav-item
-                                nav-link
-                                active
-                            ">
+                            class="nav-item
+                                   nav-link
+                                   active">
 
                             Inicio
 
@@ -232,63 +287,66 @@
                         <!-- INGRESO CLIENTE -->
                         <!-- ================================================= -->
 
+
                         {% if user.is_authenticated %}
+
 
                             {% if user.is_staff or user.is_superuser %}
 
+
                                 <!--
-                                    Hay una sesión administrativa.
-                                    No dejamos navegar visualmente
-                                    hacia el ingreso de cliente.
+                                    Existe sesión ADMINISTRADOR.
+                                    No permitimos abrir el ingreso Cliente.
                                 -->
 
                                 <a
                                     href="#"
-                                    class="
-                                        nav-item
-                                        nav-link
-                                    "
-                                    onclick="
-                                        mostrarSesionAdministrador();
-                                        return false;
-                                    ">
+                                    class="nav-item nav-link"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalSesionAdministrador"
+                                    onclick="return false;">
 
                                     Ingreso Cliente
 
                                 </a>
 
+
                             {% else %}
 
+
                                 <!--
-                                    Ya existe una sesión de cliente.
-                                    Lo devolvemos a su perfil.
+                                    Existe sesión CLIENTE.
+                                    El acceso Cliente vuelve a su perfil.
                                 -->
 
                                 <a
                                     href="{% url 'perfil_cliente' %}"
-                                    class="
-                                        nav-item
-                                        nav-link
-                                    ">
+                                    class="nav-item nav-link">
 
-                                    Mi Perfil
+                                    Ingreso Cliente
 
                                 </a>
 
+
                             {% endif %}
+
 
                         {% else %}
 
+
+                            <!--
+                                No existe sesión.
+                                Comportamiento público normal.
+                            -->
+
                             <a
                                 href="{% url 'login_cliente' %}"
-                                class="
-                                    nav-item
-                                    nav-link
-                                ">
+                                class="nav-item nav-link">
 
                                 Ingreso Cliente
 
                             </a>
+
 
                         {% endif %}
 
@@ -297,96 +355,61 @@
                         <!-- INGRESO ADMINISTRADOR -->
                         <!-- ================================================= -->
 
+
                         {% if user.is_authenticated %}
+
 
                             {% if user.is_staff or user.is_superuser %}
 
-                                <!-- Sesión administrativa activa -->
-
-                                <a
-                                    href="{% url 'reservas' %}"
-                                    class="
-                                        nav-item
-                                        nav-link
-                                    ">
-
-                                    Panel Administrador
-
-                                </a>
-
-                            {% else %}
 
                                 <!--
-                                    Existe sesión de cliente.
-                                    Evitamos visualmente ir al login admin.
+                                    Existe sesión ADMINISTRADOR.
+                                    Vuelve directamente a Reservas.
                                 -->
 
                                 <a
-                                    href="#"
-                                    class="
-                                        nav-item
-                                        nav-link
-                                    "
-                                    onclick="
-                                        mostrarSesionCliente();
-                                        return false;
-                                    ">
+                                    href="{% url 'reservas' %}"
+                                    class="nav-item nav-link">
 
                                     Ingreso Administrador
 
                                 </a>
 
+
+                            {% else %}
+
+
+                                <!--
+                                    Existe sesión CLIENTE.
+                                    No permitimos abrir ingreso administrador.
+                                -->
+
+                                <a
+                                    href="#"
+                                    class="nav-item nav-link"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalSesionCliente"
+                                    onclick="return false;">
+
+                                    Ingreso Administrador
+
+                                </a>
+
+
                             {% endif %}
+
 
                         {% else %}
 
+
                             <a
                                 href="{% url 'login' %}"
-                                class="
-                                    nav-item
-                                    nav-link
-                                ">
+                                class="nav-item nav-link">
 
                                 Ingreso Administrador
 
                             </a>
 
-                        {% endif %}
-
-
-                        <!-- ================================================= -->
-                        <!-- CERRAR SESIÓN CUANDO HAY UNA SESIÓN ACTIVA -->
-                        <!-- ================================================= -->
-
-                        {% if user.is_authenticated %}
-
-                            {% if user.is_staff or user.is_superuser %}
-
-                                <a
-                                    href="{% url 'logout' %}"
-                                    class="
-                                        nav-item
-                                        nav-link
-                                    ">
-
-                                    Cerrar sesión
-
-                                </a>
-
-                            {% else %}
-
-                                <a
-                                    href="{% url 'logout_cliente' %}"
-                                    class="
-                                        nav-item
-                                        nav-link
-                                    ">
-
-                                    Cerrar sesión
-
-                                </a>
-
-                            {% endif %}
 
                         {% endif %}
 
@@ -395,13 +418,11 @@
 
 
                     <span
-                        class="
-                            py-md-3
-                            px-md-5
-                            d-none
-                            d-lg-block
-                            text-light
-                        ">
+                        class="py-md-3
+                               px-md-5
+                               d-none
+                               d-lg-block
+                               text-light">
 
                         Futbol y Gol
 
@@ -421,223 +442,225 @@
     <!-- AVISO DE SESIÓN ACTIVA -->
     <!-- ================================================= -->
 
+
     {% if user.is_authenticated %}
 
-        <div class="container sesion-aviso">
+
+        <div
+            class="container
+                   mt-4">
+
 
             {% if user.is_staff or user.is_superuser %}
 
+
                 <div
-                    class="
-                        alert
-                        alert-info
-                        d-flex
-                        flex-wrap
-                        justify-content-between
-                        align-items-center
-                        gap-2
-                    "
-                    role="alert">
+                    class="alert
+                           alert-warning
+                           sesion-activa
+                           d-flex
+                           flex-wrap
+                           justify-content-between
+                           align-items-center
+                           gap-2">
+
 
                     <div>
 
-                        <i
-                            class="
-                                bi
-                                bi-shield-check
-                            ">
-                        </i>
-
-                        Actualmente hay una sesión abierta
-                        como
-
                         <strong>
-                            administrador
-                        </strong>.
+
+                            <i
+                                class="bi
+                                       bi-person-badge">
+                            </i>
+
+                            Sesión activa como administrador.
+
+                        </strong>
+
+
+                        <span>
+
+                            Usuario:
+                            {{ user.username }}
+
+                        </span>
 
                     </div>
 
 
-                    <a
-                        href="{% url 'reservas' %}"
-                        class="
-                            btn
-                            btn-sm
-                            btn-primary
-                        ">
+                    <div
+                        class="d-flex
+                               flex-wrap
+                               gap-2">
 
-                        Ir al panel
 
-                    </a>
+                        <a
+                            href="{% url 'reservas' %}"
+                            class="btn
+                                   btn-sm
+                                   btn-warning">
+
+                            Ir a Reservas
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'logout' %}"
+                            class="btn
+                                   btn-sm
+                                   btn-outline-danger">
+
+                            Cerrar sesión
+
+                        </a>
+
+
+                    </div>
 
                 </div>
+
 
             {% else %}
 
+
                 <div
-                    class="
-                        alert
-                        alert-info
-                        d-flex
-                        flex-wrap
-                        justify-content-between
-                        align-items-center
-                        gap-2
-                    "
-                    role="alert">
+                    class="alert
+                           alert-info
+                           sesion-activa
+                           d-flex
+                           flex-wrap
+                           justify-content-between
+                           align-items-center
+                           gap-2">
+
 
                     <div>
 
-                        <i
-                            class="
-                                bi
-                                bi-person-check
-                            ">
-                        </i>
-
-                        Actualmente hay una sesión abierta
-                        como
-
                         <strong>
-                            cliente
-                        </strong>.
+
+                            <i
+                                class="bi
+                                       bi-person-check">
+                            </i>
+
+                            Sesión activa como cliente.
+
+                        </strong>
+
+
+                        <span>
+
+                            Usuario:
+                            {{ user.username }}
+
+                        </span>
 
                     </div>
 
 
-                    <a
-                        href="{% url 'perfil_cliente' %}"
-                        class="
-                            btn
-                            btn-sm
-                            btn-primary
-                        ">
+                    <div
+                        class="d-flex
+                               flex-wrap
+                               gap-2">
 
-                        Ir a mi perfil
 
-                    </a>
+                        <a
+                            href="{% url 'perfil_cliente' %}"
+                            class="btn
+                                   btn-sm
+                                   btn-info">
+
+                            Ir a Mi Perfil
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'logout_cliente' %}"
+                            class="btn
+                                   btn-sm
+                                   btn-outline-danger">
+
+                            Cerrar sesión
+
+                        </a>
+
+
+                    </div>
 
                 </div>
 
+
             {% endif %}
 
+
         </div>
+
 
     {% endif %}
 
 
     <!-- ================================================= -->
-    <!-- PRESENTACIÓN -->
+    <!-- BANNER PRINCIPAL -->
     <!-- ================================================= -->
 
-    <section class="home-hero">
-
-        <div class="container">
-
-            <img
-                src="{% static 'img/logo.png' %}"
-                alt="Futbol y Gol"
-                width="100"
-                class="mb-3">
+    <section
+        class="hero-principal">
 
 
-            <h1>
+        <div
+            class="container
+                   text-center
+                   text-white
+                   py-5">
+
+
+            <h1
+                class="display-2
+                       text-uppercase
+                       mb-3">
+
                 Futbol y Gol
+
             </h1>
 
 
-            <p class="text-muted">
+            <p
+                class="fs-4
+                       mb-4">
 
-                Sistema de reserva de canchas de fútbol.
-                Consulta nuestras opciones y accede como
-                cliente o administrador según corresponda.
+                Reserva tu cancha de fútbol
+                de forma rápida y sencilla.
 
             </p>
 
 
             <!-- ================================================= -->
-            <!-- BOTONES PRINCIPALES -->
+            <!-- BOTÓN PRINCIPAL SEGÚN SESIÓN -->
             <!-- ================================================= -->
 
-            <div
-                class="
-                    d-flex
-                    flex-wrap
-                    justify-content-center
-                    gap-2
-                ">
+
+            {% if user.is_authenticated %}
 
 
-                {% if not user.is_authenticated %}
-
-                    <a
-                        href="{% url 'login_cliente' %}"
-                        class="
-                            btn
-                            btn-primary
-                        ">
-
-                        <i class="fas fa-user"></i>
-
-                        Ingreso Cliente
-
-                    </a>
-
-
-                    <a
-                        href="{% url 'login' %}"
-                        class="
-                            btn
-                            btn-outline-dark
-                        ">
-
-                        <i class="fas fa-user-shield"></i>
-
-                        Ingreso Administrador
-
-                    </a>
-
-
-                {% elif user.is_staff or user.is_superuser %}
+                {% if user.is_staff or user.is_superuser %}
 
 
                     <a
                         href="{% url 'reservas' %}"
-                        class="
-                            btn
-                            btn-primary
-                        ">
+                        class="btn
+                               btn-primary
+                               py-3
+                               px-5">
 
-                        <i class="fas fa-user-shield"></i>
+                        <i
+                            class="bi
+                                   bi-list-check">
+                        </i>
 
-                        Panel Administrador
-
-                    </a>
-
-
-                    <button
-                        type="button"
-                        class="
-                            btn
-                            btn-outline-dark
-                        "
-                        onclick="mostrarSesionAdministrador();">
-
-                        <i class="fas fa-user"></i>
-
-                        Ingreso Cliente
-
-                    </button>
-
-
-                    <a
-                        href="{% url 'logout' %}"
-                        class="
-                            btn
-                            btn-outline-danger
-                        ">
-
-                        Cerrar sesión
+                        Administrar reservas
 
                     </a>
 
@@ -646,42 +669,18 @@
 
 
                     <a
-                        href="{% url 'perfil_cliente' %}"
-                        class="
-                            btn
-                            btn-primary
-                        ">
+                        href="{% url 'reservar' %}"
+                        class="btn
+                               btn-primary
+                               py-3
+                               px-5">
 
-                        <i class="fas fa-user"></i>
+                        <i
+                            class="bi
+                                   bi-calendar-check">
+                        </i>
 
-                        Mi Perfil
-
-                    </a>
-
-
-                    <button
-                        type="button"
-                        class="
-                            btn
-                            btn-outline-dark
-                        "
-                        onclick="mostrarSesionCliente();">
-
-                        <i class="fas fa-user-shield"></i>
-
-                        Ingreso Administrador
-
-                    </button>
-
-
-                    <a
-                        href="{% url 'logout_cliente' %}"
-                        class="
-                            btn
-                            btn-outline-danger
-                        ">
-
-                        Cerrar sesión
+                        Reservar cancha
 
                     </a>
 
@@ -689,7 +688,28 @@
                 {% endif %}
 
 
-            </div>
+            {% else %}
+
+
+                <a
+                    href="{% url 'login_cliente' %}"
+                    class="btn
+                           btn-primary
+                           py-3
+                           px-5">
+
+                    <i
+                        class="bi
+                               bi-box-arrow-in-right">
+                    </i>
+
+                    Ingreso Cliente
+
+                </a>
+
+
+            {% endif %}
+
 
         </div>
 
@@ -700,43 +720,56 @@
     <!-- TIPOS DE CANCHA -->
     <!-- ================================================= -->
 
-    <section class="container py-5">
+    <section
+        class="container
+               py-5">
 
 
-        <div class="text-center mb-5">
+        <div
+            class="text-center
+                   mb-5">
 
-            <h2>
+
+            <h2
+                class="display-5
+                       text-uppercase">
+
                 Nuestras canchas
+
             </h2>
 
-            <p class="text-muted">
 
-                Selecciona la opción que mejor se adapte
-                a tu partido.
+            <p
+                class="text-muted">
+
+                Selecciona el tipo de cancha
+                que necesitas para tu reserva.
 
             </p>
+
 
         </div>
 
 
-        <div class="row g-4">
+        <div
+            class="row
+                   g-4">
 
 
             <!-- ================================================= -->
-            <!-- FÚTBOL 5 -->
+            <!-- FUTBOL 5 -->
             <!-- ================================================= -->
 
             <div
-                class="
-                    col-lg-4
-                    col-md-6
-                ">
+                class="col-lg-4
+                       col-md-6">
+
 
                 <div
-                    class="
-                        card
-                        cancha-card
-                    ">
+                    class="card
+                           cancha-card
+                           shadow-sm">
+
 
                     <img
                         src="{% static 'img/salon.jpg' %}"
@@ -744,24 +777,28 @@
                         alt="Cancha Fútbol 5">
 
 
-                    <div class="card-body">
+                    <div
+                        class="card-body
+                               text-center">
 
-                        <h4 class="card-title">
+
+                        <h4
+                            class="card-title">
 
                             Cancha Fútbol 5
 
                         </h4>
 
-                        <p
-                            class="
-                                card-text
-                                text-muted
-                            ">
 
-                            Una opción ideal para partidos
-                            rápidos y grupos pequeños.
+                        <p
+                            class="card-text
+                                   text-muted">
+
+                            Espacio ideal para partidos
+                            rápidos y equipos pequeños.
 
                         </p>
+
 
                     </div>
 
@@ -771,20 +808,19 @@
 
 
             <!-- ================================================= -->
-            <!-- FÚTBOL 7 -->
+            <!-- FUTBOL 7 -->
             <!-- ================================================= -->
 
             <div
-                class="
-                    col-lg-4
-                    col-md-6
-                ">
+                class="col-lg-4
+                       col-md-6">
+
 
                 <div
-                    class="
-                        card
-                        cancha-card
-                    ">
+                    class="card
+                           cancha-card
+                           shadow-sm">
+
 
                     <img
                         src="{% static 'img/terraza.jpg' %}"
@@ -792,24 +828,28 @@
                         alt="Cancha Fútbol 7">
 
 
-                    <div class="card-body">
+                    <div
+                        class="card-body
+                               text-center">
 
-                        <h4 class="card-title">
+
+                        <h4
+                            class="card-title">
 
                             Cancha Fútbol 7
 
                         </h4>
 
-                        <p
-                            class="
-                                card-text
-                                text-muted
-                            ">
 
-                            Espacio para encuentros de
-                            equipos medianos.
+                        <p
+                            class="card-text
+                                   text-muted">
+
+                            Una alternativa intermedia
+                            para grupos más amplios.
 
                         </p>
+
 
                     </div>
 
@@ -819,20 +859,19 @@
 
 
             <!-- ================================================= -->
-            <!-- FÚTBOL 11 -->
+            <!-- FUTBOL 11 -->
             <!-- ================================================= -->
 
             <div
-                class="
-                    col-lg-4
-                    col-md-12
-                ">
+                class="col-lg-4
+                       col-md-12">
+
 
                 <div
-                    class="
-                        card
-                        cancha-card
-                    ">
+                    class="card
+                           cancha-card
+                           shadow-sm">
+
 
                     <img
                         src="{% static 'img/doble.png' %}"
@@ -840,24 +879,28 @@
                         alt="Cancha Fútbol 11">
 
 
-                    <div class="card-body">
+                    <div
+                        class="card-body
+                               text-center">
 
-                        <h4 class="card-title">
+
+                        <h4
+                            class="card-title">
 
                             Cancha Fútbol 11
 
                         </h4>
 
-                        <p
-                            class="
-                                card-text
-                                text-muted
-                            ">
 
-                            La opción de mayor capacidad
-                            para encuentros completos.
+                        <p
+                            class="card-text
+                                   text-muted">
+
+                            Cancha para partidos
+                            con equipos completos.
 
                         </p>
+
 
                     </div>
 
@@ -872,78 +915,44 @@
 
 
     <!-- ================================================= -->
-    <!-- FOOTER -->
-    <!-- ================================================= -->
-
-    <footer>
-
-        <div
-            class="
-                container-fluid
-                bg-dark
-                text-secondary
-                px-5
-                mt-5
-            ">
-
-            <div class="row gx-5">
-
-                <div class="col-lg-8 col-md-6">
-
-                    <p
-                        class="
-                            text-light
-                            py-4
-                            mb-0
-                        ">
-
-                        <img
-                            src="{% static 'img/logo.png' %}"
-                            alt="Logo"
-                            width="90">
-
-                        Futbol y Gol
-
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </footer>
-
-
-    <!-- ================================================= -->
-    <!-- MODAL / AVISO DE SESIÓN -->
+    <!-- MODAL: HAY SESIÓN CLIENTE Y QUIERE ADMIN -->
     <!-- ================================================= -->
 
     <div
         class="modal fade"
-        id="modalSesion"
+        id="modalSesionCliente"
         tabindex="-1"
-        aria-labelledby="modalSesionTitulo"
+        aria-labelledby="modalSesionClienteTitulo"
         aria-hidden="true">
 
+
         <div
-            class="
-                modal-dialog
-                modal-dialog-centered
-            ">
-
-            <div class="modal-content">
+            class="modal-dialog
+                   modal-dialog-centered">
 
 
-                <div class="modal-header">
+            <div
+                class="modal-content">
+
+
+                <div
+                    class="modal-header">
+
 
                     <h5
                         class="modal-title"
-                        id="modalSesionTitulo">
+                        id="modalSesionClienteTitulo">
 
-                        Sesión activa
+                        <i
+                            class="bi
+                                   bi-exclamation-triangle
+                                   text-warning">
+                        </i>
+
+                        Sesión de cliente activa
 
                     </h5>
+
 
                     <button
                         type="button"
@@ -952,46 +961,58 @@
                         aria-label="Cerrar">
                     </button>
 
-                </div>
-
-
-                <div class="modal-body">
-
-                    <div
-                        class="
-                            alert
-                            alert-warning
-                            mb-0
-                        ">
-
-                        <i
-                            class="
-                                bi
-                                bi-exclamation-triangle-fill
-                            ">
-                        </i>
-
-                        <span id="mensajeSesion">
-                        </span>
-
-                    </div>
 
                 </div>
 
 
-                <div class="modal-footer">
+                <div
+                    class="modal-body">
+
+
+                    <p class="mb-2">
+
+                        Actualmente hay una sesión
+                        abierta como cliente.
+
+                    </p>
+
+
+                    <p class="mb-0">
+
+                        Debes cerrar la sesión actual
+                        antes de ingresar como
+                        administrador.
+
+                    </p>
+
+
+                </div>
+
+
+                <div
+                    class="modal-footer">
+
 
                     <button
                         type="button"
-                        class="
-                            btn
-                            btn-secondary
-                        "
+                        class="btn
+                               btn-secondary"
                         data-bs-dismiss="modal">
 
-                        Entendido
+                        Continuar como cliente
 
                     </button>
+
+
+                    <a
+                        href="{% url 'logout_cliente' %}"
+                        class="btn
+                               btn-danger">
+
+                        Cerrar sesión de cliente
+
+                    </a>
+
 
                 </div>
 
@@ -1001,6 +1022,189 @@
         </div>
 
     </div>
+
+
+    <!-- ================================================= -->
+    <!-- MODAL: HAY SESIÓN ADMIN Y QUIERE CLIENTE -->
+    <!-- ================================================= -->
+
+    <div
+        class="modal fade"
+        id="modalSesionAdministrador"
+        tabindex="-1"
+        aria-labelledby="modalSesionAdministradorTitulo"
+        aria-hidden="true">
+
+
+        <div
+            class="modal-dialog
+                   modal-dialog-centered">
+
+
+            <div
+                class="modal-content">
+
+
+                <div
+                    class="modal-header">
+
+
+                    <h5
+                        class="modal-title"
+                        id="modalSesionAdministradorTitulo">
+
+                        <i
+                            class="bi
+                                   bi-exclamation-triangle
+                                   text-warning">
+                        </i>
+
+                        Sesión de administrador activa
+
+                    </h5>
+
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    </button>
+
+
+                </div>
+
+
+                <div
+                    class="modal-body">
+
+
+                    <p class="mb-2">
+
+                        Actualmente hay una sesión
+                        abierta como administrador.
+
+                    </p>
+
+
+                    <p class="mb-0">
+
+                        Debes cerrar la sesión actual
+                        antes de ingresar como cliente.
+
+                    </p>
+
+
+                </div>
+
+
+                <div
+                    class="modal-footer">
+
+
+                    <button
+                        type="button"
+                        class="btn
+                               btn-secondary"
+                        data-bs-dismiss="modal">
+
+                        Continuar como administrador
+
+                    </button>
+
+
+                    <a
+                        href="{% url 'logout' %}"
+                        class="btn
+                               btn-danger">
+
+                        Cerrar sesión de administrador
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- FOOTER -->
+    <!-- ================================================= -->
+
+    <footer>
+
+
+        <div
+            class="container-fluid
+                   bg-dark
+                   text-secondary
+                   px-5
+                   mt-5">
+
+
+            <div
+                class="row
+                       gx-5
+                       py-4">
+
+
+                <div
+                    class="col-lg-8
+                           col-md-6">
+
+
+                    <p
+                        class="text-light
+                               mb-0">
+
+
+                        <img
+                            src="{% static 'img/logo.png' %}"
+                            alt="Logo Futbol y Gol"
+                            width="100">
+
+
+                        Futbol y Gol
+
+                    </p>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </footer>
+
+
+    <!-- ================================================= -->
+    <!-- BACK TO TOP -->
+    <!-- ================================================= -->
+
+    <a
+        href="#"
+        class="btn
+               btn-dark
+               py-3
+               fs-4
+               back-to-top">
+
+        <i
+            class="bi
+                   bi-arrow-up">
+        </i>
+
+    </a>
 
 
     <!-- ================================================= -->
@@ -1017,57 +1221,24 @@
     </script>
 
 
+    <!-- ================================================= -->
+    <!-- EVITAR PÁGINAS ANTIGUAS AL VOLVER CON EL NAVEGADOR -->
+    <!-- ================================================= -->
+
     <script>
 
-        function mostrarAvisoSesion(mensaje) {
+        window.addEventListener(
+            "pageshow",
+            function (event) {
 
-            const elementoMensaje =
-                document.getElementById(
-                    "mensajeSesion"
-                );
+                if (event.persisted) {
 
+                    window.location.reload();
 
-            elementoMensaje.textContent =
-                mensaje;
+                }
 
-
-            const elementoModal =
-                document.getElementById(
-                    "modalSesion"
-                );
-
-
-            const modal =
-                new bootstrap.Modal(
-                    elementoModal
-                );
-
-
-            modal.show();
-
-        }
-
-
-        function mostrarSesionCliente() {
-
-            mostrarAvisoSesion(
-                "Actualmente hay una sesión abierta como cliente. "
-                + "Debes cerrar la sesión del cliente antes de "
-                + "ingresar como administrador."
-            );
-
-        }
-
-
-        function mostrarSesionAdministrador() {
-
-            mostrarAvisoSesion(
-                "Actualmente hay una sesión abierta como administrador. "
-                + "Debes cerrar la sesión administrativa antes de "
-                + "ingresar como cliente."
-            );
-
-        }
+            }
+        );
 
     </script>
 
