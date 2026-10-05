@@ -602,40 +602,96 @@
     {% endif %}
 
 
-    <!-- ================================================= -->
-    <!-- BANNER PRINCIPAL -->
-    <!-- ================================================= -->
+     <!-- ================================================= -->
+     <!-- BANNER PRINCIPAL -->
+     <!-- ================================================= -->
 
-    <section
-        class="hero-principal">
+     <section class="container-fluid p-0">
 
+     <div
+        class="position-relative"
+        style="
+            width: 100%;
+            min-height: 450px;
+            overflow: hidden;
+        ">
+
+        <!-- IMAGEN DEL BANNER -->
+
+        <img
+            src="{% static 'img/banner.png' %}"
+            alt="Canchas de fútbol - Futbol y Gol"
+            style="
+                width: 100%;
+                height: 450px;
+                object-fit: cover;
+                object-position: center;
+                display: block;
+            ">
+
+
+        <!-- CAPA OSCURA PARA LEER EL TEXTO -->
 
         <div
-            class="container
-                   text-center
-                   text-white
-                   py-5">
+            class="position-absolute
+                   top-0 start-0
+                   w-100 h-100
+                   d-flex
+                   align-items-center
+                   justify-content-center"
+            style="
+                background: rgba(0, 0, 0, 0.38);
+            ">
+
+            <div class="text-center px-3">
+
+                <h1
+                    class="display-3
+                           text-uppercase
+                           mb-3"
+                    style="
+                        color: white;
+                        text-shadow:
+                            0 2px 5px rgba(0,0,0,.65);
+                    ">
+
+                    Futbol y Gol
+
+                </h1>
 
 
-            <h1
-                class="display-2
-                       text-uppercase
-                       mb-3">
+                <p
+                    class="fs-4 mb-4"
+                    style="
+                        color: white;
+                        text-shadow:
+                            0 2px 5px rgba(0,0,0,.65);
+                    ">
 
-                Futbol y Gol
+                    Reserva tu cancha de fútbol
+                    de forma rápida y sencilla.
 
-            </h1>
+                </p>
 
 
-            <p
-                class="fs-4
-                       mb-4">
+                <a
+                    href="{% url 'login_cliente' %}"
+                    class="btn btn-primary
+                           py-3 px-5">
 
-                Reserva tu cancha de fútbol
-                de forma rápida y sencilla.
+                    <i class="fas fa-sign-in-alt"></i>
 
-            </p>
+                    Ingreso Cliente
 
+                </a>
+
+            </div>
+
+         </div>
+
+         </div>
+
+        </section>
 
             <!-- ================================================= -->
             <!-- BOTÓN PRINCIPAL SEGÚN SESIÓN -->
